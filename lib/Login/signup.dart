@@ -1,4 +1,4 @@
-import 'package:cpr_application/home.dart';
+import 'package:car_parking_reservation/home.dart';
 import 'package:flutter/material.dart';
 
 class Signup extends StatefulWidget {
@@ -26,7 +26,7 @@ class _SignupState extends State<Signup> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
+              SizedBox(
                 height: 250,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -83,7 +83,7 @@ class _SignupState extends State<Signup> {
               SizedBox(
                 height: 15,
               ),
-              Container(
+              SizedBox(
                 height: 200,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -146,7 +146,7 @@ class _SignupState extends State<Signup> {
                   ],
                 ),
               ),
-              Container(
+              SizedBox(
                 height: 250,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,

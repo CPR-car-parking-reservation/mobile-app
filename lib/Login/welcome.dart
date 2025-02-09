@@ -1,6 +1,6 @@
 
-import 'package:cpr_application/Login/signin.dart';
-import 'package:cpr_application/Login/signup.dart';
+import 'package:car_parking_reservation/Login/signin.dart';
+import 'package:car_parking_reservation/Login/signup.dart';
 import 'package:flutter/material.dart';
 
 class Welcome extends StatelessWidget {
