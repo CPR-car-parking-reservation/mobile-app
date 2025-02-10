@@ -1,22 +1,28 @@
 import 'package:flutter/material.dart';
 
 class Reserv extends StatefulWidget {
-  const Reserv({super.key});
+  final String? bookingSlots;
+  final String? bookingDate;
+  const Reserv({super.key, this.bookingSlots, this.bookingDate});
 
   @override
   State<Reserv> createState() => _ReservState();
 }
 
 class _ReservState extends State<Reserv> {
-  bool isVisible = true;
-  String _dropdownValue = 'one';
+  String? selectedTime;
+  bool isVisible = false;
+  final List<String> timeSlots = [
+    "07:00",
+    "08:00",
+    "09:00",
+    "10:00",
+  ];
 
-  void Dropdowncallback(String? selectedValue) {
-    if (selectedValue != null) {
-      setState(() {
-        _dropdownValue = selectedValue;
-      });
-    }
+  void _onDropdownChanged(String? newValue) {
+    setState(() {
+      selectedTime = newValue;
+    });
   }
 
   @override
@@ -37,13 +43,9 @@ class _ReservState extends State<Reserv> {
                       fontWeight: FontWeight.w700,
                       color: Colors.white),
                 ),
-                Divider(
-                  height: 10,
-                  endIndent: 40,
-                  indent: 40,
-                ),
+                Divider(height: 10, endIndent: 40, indent: 40),
                 Text(
-                  "B1",
+                  "${widget.bookingSlots}",
                   style: TextStyle(
                       fontFamily: "Amiko",
                       fontSize: 38,
@@ -55,7 +57,7 @@ class _ReservState extends State<Reserv> {
                   height: 300,
                 ),
                 Text(
-                  "PARKING ZONE A1",
+                  "PARKING ZONE: ${widget.bookingSlots}",
                   style: TextStyle(
                       fontFamily: "Amiko",
                       fontSize: 20,
@@ -63,7 +65,7 @@ class _ReservState extends State<Reserv> {
                       color: Colors.white),
                 ),
                 Text(
-                  "Date : 31 / 01 / 2568",
+                  "Date : 31 / 01 / 2568", //"Date: ${widget.bookingDate}",
                   style: TextStyle(
                       fontFamily: "Amiko",
                       fontSize: 20,
@@ -79,10 +81,10 @@ class _ReservState extends State<Reserv> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: DropdownButton<String>(
-                      hint: Text("time"),
+                      hint: Text("Select Time"),
                       borderRadius: BorderRadius.circular(20),
                       dropdownColor: Colors.white,
-                      value: _dropdownValue,
+                      value: selectedTime,
                       icon: Icon(
                         Icons.arrow_drop_down_rounded,
                         size: 36,
@@ -91,22 +93,14 @@ class _ReservState extends State<Reserv> {
                           color: Colors.black,
                           fontFamily: "Amiko",
                           fontWeight: FontWeight.w600),
-                      onChanged: Dropdowncallback,
+                      onChanged: _onDropdownChanged,
                       isExpanded: true,
-                      items: const [
-                        DropdownMenuItem(
-                          value: "one",
-                          child: Text("One"),
-                        ),
-                        DropdownMenuItem(
-                          value: "two",
-                          child: Text("Two"),
-                        ),
-                        DropdownMenuItem(
-                          value: "three",
-                          child: Text("Three"),
-                        ),
-                      ],
+                      items: timeSlots.map((String time) {
+                        return DropdownMenuItem(
+                          value: time,
+                          child: Text(time),
+                        );
+                      }).toList(),
                     ),
                   ),
                 ),
@@ -162,26 +156,24 @@ class _ReservState extends State<Reserv> {
                             ),
                           ),
                           Positioned(
-                            child: Container(
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFF29CE79)),
-                                onPressed: () {
-                                  setState(() {
-                                    isVisible = !isVisible;
-                                  });
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 10),
-                                  child: Text(
-                                    "Reserve",
-                                    style: TextStyle(
-                                        fontFamily: "Amiko",
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w700,
-                                        color: Colors.white),
-                                  ),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF29CE79)),
+                              onPressed: () {
+                                setState(() {
+                                  isVisible = !isVisible;
+                                });
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 10),
+                                child: Text(
+                                  "Reserve",
+                                  style: TextStyle(
+                                      fontFamily: "Amiko",
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.white),
                                 ),
                               ),
                             ),
