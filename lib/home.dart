@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:car_parking_reservation/history.dart';
 import 'package:car_parking_reservation/reserv.dart';
-import 'package:car_parking_reservation/setting.dart';
+import 'package:car_parking_reservation/setting/setting_page.dart';
+
+
 
 class Home extends StatefulWidget {
   const Home({super.key});
