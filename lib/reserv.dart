@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 
 class Reserv extends StatefulWidget {
-  const Reserv({super.key});
+  final String? slot_number;
+  final String? floor_id;
+  final String? status;
+
+  const Reserv({super.key, this.slot_number, this.floor_id, this.status});
 
   @override
-  State<Reserv> createState() => _ReservState();
+  _ReservState createState() => _ReservState();
 }
 
 class _ReservState extends State<Reserv> {
@@ -43,7 +47,7 @@ class _ReservState extends State<Reserv> {
                   indent: 40,
                 ),
                 Text(
-                  "B1",
+                  "${widget.slot_number}",
                   style: TextStyle(
                       fontFamily: "Amiko",
                       fontSize: 38,
@@ -55,7 +59,7 @@ class _ReservState extends State<Reserv> {
                   height: 300,
                 ),
                 Text(
-                  "PARKING ZONE A1",
+                  "PARKING ZONE: ${widget.slot_number}",
                   style: TextStyle(
                       fontFamily: "Amiko",
                       fontSize: 20,
