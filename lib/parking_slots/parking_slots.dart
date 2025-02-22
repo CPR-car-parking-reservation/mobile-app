@@ -1,13 +1,10 @@
-import 'dart:convert';
 import 'package:car_parking_reservation/home.dart';
+import 'package:car_parking_reservation/model/parking_slot.dart';
+import '../parking_slots/parking_cubit.dart';
 import 'package:flutter/material.dart';
-import '../model/parking_slot.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ParkingSlotService {
-  static List<ParkingSlot> floorParkSlot = [];
-}
-
+/// Widget หลักที่ใช้แสดงที่จอดรถทั้งหมด
 class ParkingSlots extends StatefulWidget {
   const ParkingSlots({super.key});
 
@@ -15,6 +12,7 @@ class ParkingSlots extends StatefulWidget {
   // ignore: library_private_types_in_public_api
   _ParkingSlots createState() => _ParkingSlots();
 
+  // กำหนดสีของที่จอดรถตามสถานะ
   static getStatusColor(String status) {
     switch (status) {
       case "WORKING":
@@ -28,64 +26,21 @@ class ParkingSlots extends StatefulWidget {
   }
 }
 
+// State ของ ParkingSlots
 class _ParkingSlots extends State<ParkingSlots> {
-  String selectedFloor = "F1";
-  static const String baseUrl =
-      "https://myself-gourmet-discount-cindy.trycloudflare.com";
+  String selectedFloor = "F1"; // กำหนดชั้นที่เลือกเริ่มต้นเป็น F1
 
-  Future<List<ParkingSlot>> fetchAndSetSlots() async {
-    try {
-      final response = await http.get(Uri.parse('$baseUrl/parking_slots'));
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> responseJson = json.decode(response.body);
-        final List<dynamic> parkingSlotList = responseJson['data'];
-        return parkingSlotList
-            .map((slot) => ParkingSlot.fromJson(slot))
-            .toList();
-      } else {
-        throw Exception('Failed to load data!');
-      }
-    } catch (error) {
-      debugPrint("Error fetching slots: $error");
-      return [];
-    }
-  }
-
-  Future<void> reserveSlot(ParkingSlot parking) async {
-    final String url = '$baseUrl/parking_slots';
-    final Map<String, String> body = {
-      "slot_number": parking.slot_number,
-      "floor_id": parking.floor.id,
-      "status": parking.status,
-    };
-
-    try {
-      final response = await http.post(
-        Uri.parse(url),
-        headers: {"Content-Type": "application/json"},
-        body: json.encode(body),
-      );
-      if (response.statusCode == 200) {
-        debugPrint("Slot reserved successfully!");
-      } else {
-        debugPrint("Failed to reserve slot: ${response.body}");
-      }
-    } catch (error) {
-      debugPrint("Error reserving slot: $error");
-    }
-  }
-
-  List<ParkingSlot> getFilteredSlots() {
-    return ParkingSlotService.floorParkSlot
+  // กรองเฉพาะที่จอดรถที่อยู่ในชั้นที่เลือก
+  List<ParkingSlot> getFilteredSlots(List<ParkingSlot> slots) {
+    return slots
         .where((slot) => slot.floor.floor_number == selectedFloor)
         .toList();
   }
 
-  void changeFloor(bool next) {
-    List<String> floors = ParkingSlotService.floorParkSlot
-        .map((slot) => slot.floor.floor_number)
-        .toSet()
-        .toList();
+  // เปลี่ยนชั้นของที่จอดรถ (ไปชั้นถัดไปหรือย้อนกลับ)
+  void changeFloor(bool next, List<ParkingSlot> slots) {
+    List<String> floors =
+        slots.map((slot) => slot.floor.floor_number).toSet().toList();
     floors.sort();
     int currentIndex = floors.indexOf(selectedFloor);
 
@@ -102,127 +57,128 @@ class _ParkingSlots extends State<ParkingSlots> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<ParkingSlot>>(
-      future: fetchAndSetSlots(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text("Error: ${snapshot.error}"));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text("No parking slots available"));
-        }
-
-        List<List<ParkingSlot>> leftSlots = [];
-        List<List<ParkingSlot>> rightSlots = [];
-
-        List<ParkingSlot> slots = snapshot.data!;
-        List<String> floors = slots
-            .map((slot) => slot.floor.floor_number)
-            .toSet()
-            .toList()
-          ..sort();
-        slots
-            .where((slot) => slot.floor.floor_number == selectedFloor)
-            .toList();
-
-        for (var slot in slots) {
-          if (leftSlots.isEmpty || leftSlots.last.length < 3) {
-            if (leftSlots.isEmpty || leftSlots.last.length >= 3) {
-              leftSlots.add([]);
-            }
-            leftSlots.last.add(slot);
-          } else {
-            if (rightSlots.isEmpty || rightSlots.last.length >= 3) {
-              rightSlots.add([]);
-            }
-            rightSlots.last.add(slot);
+    return BlocProvider(
+      create: (_) => ParkingSlotCubit()..fetchAndSetSlots(),
+      child: BlocBuilder<ParkingSlotCubit, List<ParkingSlot>>(
+        builder: (context, slots) {
+          if (slots.isEmpty) {
+            return const Center(
+                child: CircularProgressIndicator()); // แสดงโหลดเมื่อไม่มีข้อมูล
           }
-        }
 
-        return Stack(
-          children: [
-            Column(
-              children: [
-                Text(
-                  'Parking Zone: $selectedFloor',
-                  style: const TextStyle(
+          List<List<ParkingSlot>> leftSlots = [];
+          List<List<ParkingSlot>> rightSlots = [];
+
+          List<String> floors = slots
+              .map((slot) => slot.floor.floor_number)
+              .toSet()
+              .toList()
+            ..sort();
+          List<ParkingSlot> filteredSlots = getFilteredSlots(slots);
+
+          // จัดที่จอดรถเป็นสองฝั่ง (ซ้าย-ขวา) โดยแต่ละแถวมีไม่เกิน 3 ช่อง
+          for (var slot in filteredSlots) {
+            if (leftSlots.isEmpty || leftSlots.last.length < 3) {
+              if (leftSlots.isEmpty || leftSlots.last.length >= 3) {
+                leftSlots.add([]);
+              }
+              leftSlots.last.add(slot);
+            } else {
+              if (rightSlots.isEmpty || rightSlots.last.length >= 3) {
+                rightSlots.add([]);
+              }
+              rightSlots.last.add(slot);
+            }
+          }
+
+          return Stack(
+            children: [
+              Column(
+                children: [
+                  Text(
+                    'Parking Zone: $selectedFloor',
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 26,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: "Amiko"),
+                  ),
+                  const Divider(
                       color: Colors.white,
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: "Amiko"),
-                ),
-                const Divider(
-                    color: Colors.white,
-                    thickness: 1.5,
-                    indent: 100,
-                    endIndent: 100),
-                Expanded(
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage("assets/images/parkzone.png"),
-                          fit: BoxFit.cover),
+                      thickness: 1.5,
+                      indent: 100,
+                      endIndent: 100),
+                  Expanded(
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                            image: AssetImage("assets/images/parkzone.png"),
+                            fit: BoxFit.cover),
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            Positioned(
-              left: 20,
-              top: MediaQuery.of(context).size.height * 0.29,
-              child: Column(
-                children: leftSlots
-                    .map((column) => Column(
-                        children: column.reversed
-                            .map((slot) => ParkingSlotButton(parking: slot))
-                            .toList()))
-                    .toList(),
+                ],
               ),
-            ),
-            Positioned(
-              right: 20,
-              top: MediaQuery.of(context).size.height * 0.29,
-              child: Column(
-                children: rightSlots
-                    .map((column) => Column(
-                        children: column.reversed
-                            .map((slot) => ParkingSlotButton(parking: slot))
-                            .toList()))
-                    .toList(),
-              ),
-            ),
-            Padding(
-                padding: const EdgeInsets.all(10.0),
+              // แสดงที่จอดฝั่งซ้าย
+              Positioned(
+                left: 20,
+                top: MediaQuery.of(context).size.height * 0.29,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        if (floors.indexOf(selectedFloor) == 0)
-                          const SizedBox(width: 50),
-                        if (floors.indexOf(selectedFloor) > 0)
-                          FloatingActionButton(
-                            onPressed: () => changeFloor(false),
-                            child: const Icon(Icons.arrow_back_ios),
-                          ),
-                        if (floors.indexOf(selectedFloor) < floors.length - 1)
-                          FloatingActionButton(
-                            onPressed: () => changeFloor(true),
-                            child: const Icon(Icons.arrow_forward_ios),
-                          ),
-                      ],
-                    ),
-                  ],
-                ))
-          ],
-        );
-      },
+                  children: leftSlots
+                      .map((column) => Column(
+                          children: column.reversed
+                              .map((slot) => ParkingSlotButton(parking: slot))
+                              .toList()))
+                      .toList(),
+                ),
+              ),
+              // แสดงที่จอดฝั่งขวา
+              Positioned(
+                right: 20,
+                top: MediaQuery.of(context).size.height * 0.29,
+                child: Column(
+                  children: rightSlots
+                      .map((column) => Column(
+                          children: column.reversed
+                              .map((slot) => ParkingSlotButton(parking: slot))
+                              .toList()))
+                      .toList(),
+                ),
+              ),
+              // ปุ่มเปลี่ยนชั้น (ไปชั้นก่อนหน้า/ถัดไป)
+              Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          if (floors.indexOf(selectedFloor) == 0)
+                            const SizedBox(width: 50),
+                          if (floors.indexOf(selectedFloor) > 0)
+                            FloatingActionButton(
+                              onPressed: () => changeFloor(false, slots),
+                              child: const Icon(Icons.arrow_back_ios),
+                            ),
+                          if (floors.indexOf(selectedFloor) < floors.length - 1)
+                            FloatingActionButton(
+                              onPressed: () => changeFloor(true, slots),
+                              child: const Icon(Icons.arrow_forward_ios),
+                            ),
+                        ],
+                      ),
+                    ],
+                  ))
+            ],
+          );
+        },
+      ),
     );
   }
 }
 
+// class สำหรับปุ่มสำหรับที่จอดรถแต่ละช่อง
 class ParkingSlotButton extends StatelessWidget {
   final ParkingSlot parking;
 
@@ -236,7 +192,7 @@ class ParkingSlotButton extends StatelessWidget {
           width: 135,
           height: 72,
           child: FloatingActionButton(
-            heroTag: "btn_${parking.slot_number}",
+            heroTag: "btn_${parking.slot_number}", // ป้องกัน error tag ซ้ำกัน
             backgroundColor: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
@@ -252,6 +208,7 @@ class ParkingSlotButton extends StatelessWidget {
             ),
             onPressed: () {
               if (parking.status == "IDLE") {
+                // กดแล้วไปหน้าหลัก พร้อมส่งข้อมูลช่องที่เลือกไป
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => Home(initialIndex: 1, slot: parking),
@@ -261,6 +218,8 @@ class ParkingSlotButton extends StatelessWidget {
             },
           ),
         ),
+
+        // แสดงสถานะของที่จอดรถ
         Container(
           width: 145,
           height: 20,
