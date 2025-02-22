@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:car_parking_reservation/history.dart';
 import 'package:car_parking_reservation/reserv.dart';
 import 'package:car_parking_reservation/setting/setting_page.dart';
+import 'package:car_parking_reservation/model/parking_slot.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key});
+  final int initialIndex;
+  final ParkingSlot? slot;
+  const Home({super.key, this.initialIndex = 0, this.slot});
 
   @override
   State<Home> createState() => _HomeState();
@@ -15,8 +18,12 @@ class _HomeState extends State<Home> {
   int _selectedIndex = 0;
 
   static final List<Widget> _widgetOptions = <Widget>[
-    ParkingSlots(),
-    const Reserv(),
+    ParkingSlots(), // ✅ เพิ่มหน้าจอ Home เข้ามา
+    Reserv(
+      slot_number: '',
+      floor_id: '',
+      status: '',
+    ),
     const History(),
     const Setting(),
   ];
@@ -25,6 +32,12 @@ class _HomeState extends State<Home> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.initialIndex;
   }
 
   @override
@@ -41,7 +54,13 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
-      body: _widgetOptions[_selectedIndex],
+      body: _selectedIndex == 1 && widget.slot != null
+          ? Reserv(
+              slot_number: widget.slot!.slot_number,
+              floor_id: widget.slot!.floor.id,
+              status: widget.slot!.status,
+            )
+          : _widgetOptions[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         backgroundColor: const Color.fromRGBO(3, 23, 76, 1),
