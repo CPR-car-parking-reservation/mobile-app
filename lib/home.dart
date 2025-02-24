@@ -52,8 +52,9 @@ class _HomeState extends State<Home> {
       ),
       body: _selectedIndex == 1 && widget.slot != null
           ? Reserv(
+              parking_slots_id : widget.slot!.id,
               slot_number: widget.slot!.slot_number,
-              floor_id: widget.slot!.floor.id,
+              floor_number: widget.slot!.floor.floor_number,
               status: widget.slot!.status,
             )
           : _widgetOptions[_selectedIndex],
