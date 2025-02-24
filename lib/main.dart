@@ -1,5 +1,5 @@
 import 'package:car_parking_reservation/reserv.dart';
-import 'package:car_parking_reservation/setting.dart';
+import 'package:car_parking_reservation/setting/setting_page.dart';
 import 'package:flutter/material.dart';
 import 'Login/signin.dart';
 import 'Login/signup.dart';
@@ -45,9 +45,6 @@ class CprHomePage extends StatelessWidget {
         '/signin': (context) => Signin(),
         '/signup': (context) => Signup(),
         '/home': (context) => Home(),
-        '/reserv': (context) => Reserv(),
-        '/history': (context) => History(),
-        '/setting': (context) => Setting(),
       },
     );
   }
