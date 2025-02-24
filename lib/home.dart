@@ -1,4 +1,4 @@
-import 'package:car_parking_reservation/parking_slots/parking_slots.dart';
+import 'package:car_parking_reservation/page/parking_slot.dart';
 import 'package:flutter/material.dart';
 import 'package:car_parking_reservation/history.dart';
 import 'package:car_parking_reservation/reserv.dart';
@@ -18,7 +18,7 @@ class _HomeState extends State<Home> {
   int _selectedIndex = 0;
 
   static final List<Widget> _widgetOptions = <Widget>[
-    ParkingSlots(), // ✅ เพิ่มหน้าจอ Home เข้ามา
+    ParkingSlotsPage(), // ✅ เพิ่มหน้าจอ Home เข้ามา
     Reserv(
       slot_number: '',
       floor_id: '',
