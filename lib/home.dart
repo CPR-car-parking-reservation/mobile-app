@@ -19,11 +19,7 @@ class _HomeState extends State<Home> {
 
   static final List<Widget> _widgetOptions = <Widget>[
     ParkingSlotsPage(), // ✅ เพิ่มหน้าจอ Home เข้ามา
-    Reserv(
-      slot_number: '',
-      floor_id: '',
-      status: '',
-    ),
+    Reserv(),
     const History(),
     const Setting(),
   ];
