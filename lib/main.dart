@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'Login/signin.dart';
 import 'Login/signup.dart';
 import 'Login/welcome.dart';
-import 'home.dart';
+import 'Widget/home.dart';
 import 'history.dart';
 
 void main() {

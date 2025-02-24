@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:car_parking_reservation/model/parking_slot.dart';
-import 'package:car_parking_reservation/home.dart';
+import 'package:car_parking_reservation/Widget/home.dart';
 import 'parking_slots.dart';
 
 class ParkingSlotButton extends StatelessWidget {
@@ -35,8 +35,8 @@ class ParkingSlotButton extends StatelessWidget {
                 // กดแล้วไปหน้าหลัก พร้อมส่งข้อมูลช่องที่เลือกไป
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => Home(initialIndex: 1, slot: parking),
-                  ),
+                      // builder: (context) => Home(initialIndex: 1, slot: parking),
+                      builder: (context) => Home()),
                 );
               }
             },

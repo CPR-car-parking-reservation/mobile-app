@@ -1,5 +1,6 @@
 import 'package:car_parking_reservation/bloc/navigator/navigator_bloc.dart';
 import 'package:car_parking_reservation/history.dart';
+import 'package:car_parking_reservation/page/parking_slot.dart';
 import 'package:car_parking_reservation/reserv.dart';
 import 'package:car_parking_reservation/setting/setting_page.dart';
 import 'package:flutter/material.dart';
@@ -12,10 +13,7 @@ class Home extends StatelessWidget {
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
 
   static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      "Homeee",
-      style: optionStyle,
-    ),
+    ParkingSlotsPage(),
     Reserv(),
     History(),
     Setting(),
