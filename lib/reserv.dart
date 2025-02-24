@@ -19,7 +19,7 @@ class Reserv extends StatefulWidget {
       this.slot_number});
 
   @override
-  State<Reserv> createState() => _ReservState();
+  _ReservState createState() => _ReservState();
 }
 
 class _ReservState extends State<Reserv> {
