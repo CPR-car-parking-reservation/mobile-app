@@ -1,26 +1,14 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:car_parking_reservation/model/car.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:car_parking_reservation/bloc/setting/setting_bloc.dart';
 import 'package:car_parking_reservation/bloc/setting/setting_event.dart';
 import 'package:car_parking_reservation/bloc/setting/setting_state.dart';
-
-class Car {
-  final String image;
-  final String plateNumber;
-  final String model;
-  final String type;
-
-  Car({
-    required this.image,
-    required this.plateNumber,
-    required this.model,
-    required this.type,
-    required String id,
-  });
-}
+import 'package:image_picker/image_picker.dart';
 
 class EditCarPage extends StatefulWidget {
+  // ignore: non_constant_identifier_names
   final String car_id;
   // ignore: non_constant_identifier_names
   const EditCarPage({super.key, required this.car_id});
@@ -35,8 +23,11 @@ class _EditCarPageState extends State<EditCarPage> {
   late TextEditingController plateController;
   late TextEditingController modelController;
   late TextEditingController typeController;
+  final ValueNotifier<File?> imageNotifier = ValueNotifier<File?>(null);
+  File? imageFile;
+  String? imagePath;
 
-  String baseImgUrl = 'https://titten-recorded-multi-describes.trycloudflare.com';
+  String baseImgUrl = 'https://legend-trees-tee-shed.trycloudflare.com';
 
   @override
   void initState() {
@@ -56,33 +47,55 @@ class _EditCarPageState extends State<EditCarPage> {
     super.dispose();
   }
 
+  Future<void> pickImage() async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      String fileExtension = pickedFile.path.split('.').last.toLowerCase();
+      if (['png', 'jpg', 'jpeg'].contains(fileExtension)) {
+        setState(() {
+          imageFile = File(pickedFile.path);
+          imagePath = pickedFile.path;
+        });
+      }
+    }
+  }
+
+  void _showSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: const TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.blueAccent,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        margin: const EdgeInsets.all(10),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<SettingBloc, SettingState>(
       listener: (context, state) {
         if (state is SettingSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
-          Navigator.pop(context); // ปิดหน้า EditCarPage
+          _showSnackBar(context, state.message);
+          Navigator.pop(context);
         } else if (state is SettingError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
+          _showSnackBar(context, state.message);
         }
       },
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: const Color(0xFF03174C),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => Navigator.pop(context),
-          ),
           title: const Text(
-            "Edit Car",
-            style: TextStyle(
-                color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+            'Edit Car',
+            style: TextStyle(color: Colors.white),
           ),
+          backgroundColor: const Color(0xFF03174C),
           centerTitle: true,
         ),
         backgroundColor: const Color(0xFF03174C),
@@ -110,28 +123,16 @@ class _EditCarPageState extends State<EditCarPage> {
                           const SizedBox(height: 10),
                           Divider(color: Colors.white70, thickness: 1.5),
                           const SizedBox(height: 16),
-                          Stack(
-                            alignment: Alignment.bottomRight,
-                            children: [
-                              Image(
-                                  image: NetworkImage(
-                                      "$baseImgUrl${car.image_url}")),
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.orange,
-                                  shape: BoxShape.circle,
-                                  border:
-                                      Border.all(color: Colors.white, width: 2),
-                                ),
-                                child: IconButton(
-                                  icon: const Icon(Icons.edit,
-                                      size: 16, color: Colors.white),
-                                  onPressed: () {
-                                    // ฟังก์ชันเปลี่ยนรูป
-                                  },
-                                ),
-                              ),
-                            ],
+                          ImageSection(
+                            baseImgUrl: baseImgUrl,
+                            car: car,
+                            imageFile: imageFile,
+                            onImagePicked: (file, path) {
+                              setState(() {
+                                imageFile = file;
+                                imagePath = path;
+                              });
+                            },
                           ),
                           const SizedBox(height: 20),
                           buildTextField("ป้ายทะเบียนรถ", Icons.directions_car,
@@ -155,8 +156,8 @@ class _EditCarPageState extends State<EditCarPage> {
                                   plate: plateController.text,
                                   model: modelController.text,
                                   type: typeController.text,
+                                  imageFile: imagePath != null ? File(imagePath!) : null,
                                 ));
-                                
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.green,
@@ -242,6 +243,67 @@ class _EditCarPageState extends State<EditCarPage> {
           ],
         );
       },
+    );
+  }
+}
+
+class ImageSection extends StatefulWidget {
+  final String baseImgUrl;
+  final car_data car;
+  final File? imageFile;
+  final Function(File, String) onImagePicked;
+
+  const ImageSection({
+    Key? key,
+    required this.baseImgUrl,
+    required this.car,
+    required this.imageFile,
+    required this.onImagePicked,
+  }) : super(key: key);
+
+  @override
+  _ImageSectionState createState() => _ImageSectionState();
+}
+
+class _ImageSectionState extends State<ImageSection> {
+  Future<void> pickImage() async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      String fileExtension = pickedFile.path.split('.').last.toLowerCase();
+      if (['png', 'jpg', 'jpeg'].contains(fileExtension)) {
+        widget.onImagePicked(File(pickedFile.path), pickedFile.path);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.bottomRight,
+      children: [
+        if (widget.imageFile != null)
+          Image.file(widget.imageFile!, height: 200, width: 200),
+        if (widget.imageFile == null)
+          Image.network(
+            '${widget.baseImgUrl}${widget.car.image_url}',
+            height: 200,
+            width: 200,
+          ),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.orange,
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.white, width: 2),
+          ),
+          child: IconButton(
+            icon: const Icon(Icons.edit, size: 16, color: Colors.white),
+            onPressed: () {
+              pickImage();
+            },
+          ),
+        ),
+      ],
     );
   }
 }

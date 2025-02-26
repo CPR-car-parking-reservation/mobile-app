@@ -36,28 +36,41 @@ class _AddCarPageState extends State<AddCarPage> {
   }
 
   void _showSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: const TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.blueAccent,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        margin: const EdgeInsets.all(10),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<SettingBloc, SettingState>(
       listener: (context, state) {
-        if (state is SettingError) {
+        if (state is SettingSuccess) {
+          if (Navigator.canPop(context)) {
+            Navigator.pop(context, state.message);
+          }
+        } else if (state is SettingError) {
           _showSnackBar(context, state.message);
-        } else if (state is SettingSuccess) {
-          Navigator.pop(context, true); // Pop the page with message
         }
       },
-      
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: const Color(0xFF03174C),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => Navigator.pop(context),
-          ),
+          // leading: IconButton(
+          //   icon: const Icon(Icons.arrow_back, color: Colors.white),
+          //   onPressed: () => Navigator.pop(context),
+          // ),
           title: const Text(
             "Add Car",
             style: TextStyle(
@@ -78,6 +91,9 @@ class _AddCarPageState extends State<AddCarPage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    const SizedBox(height: 10),
+                    Divider(color: Colors.white70, thickness: 1.5),
+                    const SizedBox(height: 16),
                     if (imageFile != null)
                       Image.file(imageFile!, height: 200, width: 200)
                     else
@@ -126,7 +142,6 @@ class _AddCarPageState extends State<AddCarPage> {
                         } else {
                           _showSnackBar(context, 'กรุณาเลือกภาพ');
                         }
-
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,
@@ -137,7 +152,7 @@ class _AddCarPageState extends State<AddCarPage> {
                             double.infinity, 50), // Set width and height
                       ),
                       child: const Text(
-                        "Update Car",
+                        "Add Car",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,

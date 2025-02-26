@@ -16,7 +16,6 @@ class Profile {
   final String phone;
   final String avatar;
 
-  
   Profile({required this.name, required this.phone, required this.avatar});
 }
 
@@ -33,22 +32,18 @@ class _SettingState extends State<Setting> with RouteAware {
     phone: "094-468-xxxx",
     avatar: "assets/images/profile.png",
   );
-  
-  
+
+  @override
+  void didPopNext() {
+    context.read<SettingBloc>().add(LoadCars()); // โหลดข้อมูลใหม่เมื่อกลับมา
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     routeObserver.subscribe(
         this, ModalRoute.of(context)! as PageRoute<dynamic>);
   }
-
-  @override
-  void dispose() {
-    routeObserver.unsubscribe(this);
-    super.dispose();
-  }
-
-  
 
   void logout(BuildContext context) {
     Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
@@ -68,7 +63,7 @@ class _SettingState extends State<Setting> with RouteAware {
           child: Row(
             children: [
               Image.network(
-                'https://bored-discuss-returned-keith.trycloudflare.com${car[index].image_url}',
+                'https://legend-trees-tee-shed.trycloudflare.com${car[index].image_url}',
                 width: 100,
                 height: 60,
                 fit: BoxFit.cover,
@@ -91,17 +86,12 @@ class _SettingState extends State<Setting> with RouteAware {
               const Spacer(),
               IconButton(
                 onPressed: () async {
-                  final result = await Navigator.push(
+                  await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => EditCarPage(car_id: car[index].id),
                     ),
                   );
-
-                  // ถ้า result เป็น true (จากการอัปเดตหรือลบรถ) ให้โหลดข้อมูลใหม่
-                  if (result == true) {
-                    context.read<SettingBloc>().add(LoadCars());
-                  }
                 },
                 icon: const Icon(Icons.edit, color: Colors.orange),
               ),
@@ -111,6 +101,23 @@ class _SettingState extends State<Setting> with RouteAware {
       },
       separatorBuilder: (context, index) => const Divider(),
       itemCount: car.length,
+    );
+  }
+
+  void _showSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: const TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.blueAccent,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        margin: const EdgeInsets.all(10),
+      ),
     );
   }
 
@@ -125,12 +132,9 @@ class _SettingState extends State<Setting> with RouteAware {
           backgroundColor: const Color(0xFF03174C),
           body: BlocBuilder<SettingBloc, SettingState>(
             builder: (context, state) {
-              
               if (state is SettingLoading) {
-            
                 return const Center(child: CircularProgressIndicator());
               } else if (state is SettingError) {
-              
                 return Center(child: Text(state.message));
               } else if (state is SettingLoaded) {
                 final List<car_data> carSnapshot = state.cars;
@@ -208,15 +212,14 @@ class _SettingState extends State<Setting> with RouteAware {
                         Text("MY CAR", style: TextStyle(color: Colors.white)),
                         const SizedBox(height: 8),
 
-                        // แสดง ListView อย่างถูกต้อง
+                        // แสดง ListView
                         Expanded(
-                          child: listviewshow(
-                              carSnapshot), // ปรับให้ ListView อยู่ภายใน Expanded
+                          child: listviewshow(carSnapshot),
                         ),
 
                         const SizedBox(height: 20),
 
-                        // ปุ่มเพิ่มรถยนต์และปุ่มออกจากระบบ
+                        // ปุ่มเพิ่มรถและปุ่มออกจากระบบ
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -228,22 +231,8 @@ class _SettingState extends State<Setting> with RouteAware {
                                     builder: (context) => const AddCarPage(),
                                   ),
                                 );
-
-                                if (result != null && result is String) {
-                                  // แสดงแจ้งเตือนบน SettingPage
-                                  // ignore: use_build_context_synchronously
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(result),
-                                      behavior: SnackBarBehavior.floating,
-                                      backgroundColor: Colors.green,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                    ),
-                                  );
-                                  // โหลดข้อมูลรถใหม่
-                                  // ignore: use_build_context_synchronously
+                                if (result is String) {
+                                  _showSnackBar(context, result);
                                   context.read<SettingBloc>().add(LoadCars());
                                 }
                               },

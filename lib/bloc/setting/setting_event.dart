@@ -46,16 +46,18 @@ class UpdateCar extends SettingEvent {
   final String plate;
   final String model;
   final String type;
+  final File? imageFile;
 
   const UpdateCar({
     required this.id,
     required this.plate,
     required this.model,
     required this.type,
+    this.imageFile,
   });
 
   @override
-  List<Object> get props => [id, plate, model, type];
+  List<Object> get props => [id, plate, model, type, imageFile ?? ''];
 }
 
 

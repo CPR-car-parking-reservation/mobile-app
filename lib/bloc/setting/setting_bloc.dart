@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:car_parking_reservation/model/car.dart';
 import 'package:http/http.dart' as http;
@@ -18,7 +19,7 @@ class Profile {
 
 class SettingBloc extends Bloc<SettingEvent, SettingState> {
   
-  static const String baseUrl = 'https://titten-recorded-multi-describes.trycloudflare.com';
+  static const String baseUrl = 'https://legend-trees-tee-shed.trycloudflare.com';
 
   SettingBloc() : super(SettingInitial()) {
     on<LoadCars>(_onLoadCars);
@@ -80,7 +81,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
       request.fields['car_number'] = event.plate;
       request.fields['car_model'] = event.model;
       request.fields['car_type'] = event.type;
-      request.fields['user_id'] = 'dcce5710-2bd2-46a7-b546-f619468a0fc5'; 
+      request.fields['user_id'] = '8c87ff0d-d848-4892-af21-2c53950a539e'; 
       request.files.add(await http.MultipartFile.fromPath(
         'image',
         event.imageFile.path,
@@ -115,33 +116,40 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
       emit(SettingError(message: 'Error: ${e.toString()}'));
     }
   }
-
-  Future<void> _onUpdateCar(UpdateCar event, Emitter<SettingState> emit) async {
-    emit(SettingLoading());
-    try {
-      final response = await http.put(
-        Uri.parse('$baseUrl/cars'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(<String, dynamic>{
-          'car_number': event.plate,
-          'car_model': event.model,
-          'car_type': event.type,
-          'car_id': event.id,
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        add(LoadCars());
-        emit(SettingSuccess(message: 'Update successful!'));
-      } else {
-        emit(SettingError(message: 'Failed to update car: ${response.body}'));
-      }
-    } catch (e) {
-      emit(SettingError(message: 'Error: ${e.toString()}'));
+Future<void> _onUpdateCar(UpdateCar event, Emitter<SettingState> emit) async {
+  emit(SettingLoading());
+  try {
+    final url = Uri.parse('$baseUrl/cars/id/${event.id}');
+    var request = http.MultipartRequest('PUT', url);
+    request.fields['car_number'] = event.plate;
+    request.fields['car_model'] = event.model;
+    request.fields['car_type'] = event.type;
+    if (event.imageFile != null) {
+      request.files.add(await http.MultipartFile.fromPath(
+        'image',
+        event.imageFile!.path,
+        contentType: MediaType('image', 'jpeg'),
+      ));
     }
+
+    // Log the request fields and files for debugging
+    log('Request fields: ${request.fields}');
+    log('Request files: ${request.files.map((file) => file.filename).toList()}');
+
+    var response = await request.send();
+    final responseBody = await response.stream.bytesToString();
+
+    if (response.statusCode == 200) {
+      add(LoadCars());
+      emit(SettingSuccess(message: 'Update successful!'));
+    } else {
+      emit(SettingError(message: 'Failed to update car: $responseBody'));
+    }
+  } catch (e) {
+    emit(SettingError(message: 'Error: ${e.toString()}'));
   }
+}
+  
 
   Future<void> _onDeleteCar(DeleteCar event, Emitter<SettingState> emit) async {
     emit(SettingLoading());
