@@ -247,6 +247,8 @@ class _EditCarPageState extends State<EditCarPage> {
   }
 }
 
+
+
 class ImageSection extends StatefulWidget {
   final String baseImgUrl;
   final car_data car;
@@ -254,12 +256,12 @@ class ImageSection extends StatefulWidget {
   final Function(File, String) onImagePicked;
 
   const ImageSection({
-    Key? key,
+    super.key,
     required this.baseImgUrl,
     required this.car,
     required this.imageFile,
     required this.onImagePicked,
-  }) : super(key: key);
+  });
 
   @override
   _ImageSectionState createState() => _ImageSectionState();

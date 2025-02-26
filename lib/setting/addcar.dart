@@ -52,14 +52,29 @@ class _AddCarPageState extends State<AddCarPage> {
     );
   }
 
+  Widget buildTextField(
+      String label, IconData icon, TextEditingController controller) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        prefixIcon: Icon(icon, color: Colors.black),
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        labelText: label,
+        labelStyle: const TextStyle(color: Colors.black, fontSize: 16),
+        floatingLabelBehavior: FloatingLabelBehavior.never,
+      ),
+      style: const TextStyle(color: Colors.black),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<SettingBloc, SettingState>(
       listener: (context, state) {
         if (state is SettingSuccess) {
-          if (Navigator.canPop(context)) {
-            Navigator.pop(context, state.message);
-          }
+          Future.microtask(() => Navigator.of(context).pop('Car added successfully'));
         } else if (state is SettingError) {
           _showSnackBar(context, state.message);
         }
@@ -67,10 +82,6 @@ class _AddCarPageState extends State<AddCarPage> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: const Color(0xFF03174C),
-          // leading: IconButton(
-          //   icon: const Icon(Icons.arrow_back, color: Colors.white),
-          //   onPressed: () => Navigator.pop(context),
-          // ),
           title: const Text(
             "Add Car",
             style: TextStyle(
@@ -94,41 +105,58 @@ class _AddCarPageState extends State<AddCarPage> {
                     const SizedBox(height: 10),
                     Divider(color: Colors.white70, thickness: 1.5),
                     const SizedBox(height: 16),
-                    if (imageFile != null)
-                      Image.file(imageFile!, height: 200, width: 200)
-                    else
-                      IconButton(
-                        onPressed: pickImage,
-                        icon: const Icon(Icons.image,
-                            color: Colors.white, size: 60.0),
-                        tooltip: 'เลือกภาพ',
-                      ),
+                    Stack(
+                      alignment: Alignment.bottomRight,
+                      children: [
+                        Card(
+                          elevation: 5,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Container(
+                            width: 350,
+                            height: 230,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              image: imageFile != null
+                                  ? DecorationImage(
+                                      image: FileImage(imageFile!),
+                                      fit: BoxFit.cover,
+                                    )
+                                  : null,
+                            ),
+                            child: imageFile == null
+                                ? Center(
+                                    child: IconButton(
+                                      onPressed: pickImage,
+                                      icon: const Icon(Icons.image,
+                                          color: Colors.grey, size: 60.0),
+                                      tooltip: 'เลือกภาพ',
+                                    ),
+                                  )
+                                : null,
+                          ),
+                        ),
+                        if (imageFile != null)
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.orange,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white, width: 2),
+                            ),
+                            child: IconButton(
+                              icon: const Icon(Icons.edit, size: 16, color: Colors.white),
+                              onPressed: pickImage,
+                            ),
+                          ),
+                      ],
+                    ),
                     const SizedBox(height: 20),
-                    TextField(
-                      controller: plateController,
-                      decoration: const InputDecoration(
-                        labelText: "ป้ายทะเบียน",
-                        labelStyle: TextStyle(color: Colors.white),
-                      ),
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                    TextField(
-                      controller: modelController,
-                      decoration: const InputDecoration(
-                        labelText: "รุ่นรถ",
-                        labelStyle: TextStyle(color: Colors.white),
-                      ),
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                    TextField(
-                      controller: typeController,
-                      decoration: const InputDecoration(
-                        labelText: "ประเภทรถ",
-                        labelStyle: TextStyle(color: Colors.white),
-                      ),
-                      style: const TextStyle(color: Colors.white),
-                    ),
+                    buildTextField("ป้ายทะเบียน", Icons.directions_car, plateController),
                     const SizedBox(height: 10),
+                    buildTextField("รุ่นรถ", Icons.car_repair, modelController),
+                    const SizedBox(height: 10),
+                    buildTextField("ประเภทรถ", Icons.category, typeController),
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () {
