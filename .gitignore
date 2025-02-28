@@ -47,3 +47,5 @@ app.*.map.json
 .env
 .env.local
 .env.*    # Ignore .env ทุกเวอร์ชัน เช่น .env.production, .env.development
+
+pubspec.lock

@@ -7,7 +7,7 @@ class EditProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0A1D56),
+        backgroundColor: const Color(0xFF03174C),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
@@ -20,7 +20,7 @@ class EditProfilePage extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      backgroundColor: const Color(0xFF0A1D56),
+      backgroundColor: const Color(0xFF03174C),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
