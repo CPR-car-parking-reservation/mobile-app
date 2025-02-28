@@ -1,5 +1,5 @@
 import 'package:car_parking_reservation/Login/signup.dart';
-import 'package:car_parking_reservation/home.dart';
+import 'package:car_parking_reservation/Widget/home.dart';
 import 'package:flutter/material.dart';
 
 class Signin extends StatefulWidget {
@@ -169,10 +169,10 @@ class _SigninState extends State<Signin> {
                         //      backgroundColor: const Color(0xFF29CE79),
                         //    ),
                         //  );
-                         Navigator.push(
-                           context,
-                           MaterialPageRoute(builder: (context) => Home()),
-                         );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Home()),
+                        );
                         //}
                       },
                       child: Padding(

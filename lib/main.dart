@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'Login/signin.dart';
 import 'Login/signup.dart';
 import 'Login/welcome.dart';
-import 'home.dart';
+import 'Widget/home.dart';
 import 'history.dart';
 
 void main() {
@@ -45,11 +45,7 @@ class CprHomePage extends StatelessWidget {
         '/signin': (context) => Signin(),
         '/signup': (context) => Signup(),
         '/home': (context) => Home(),
-        '/reserv': (context) => Reserv(),
-        '/history': (context) => History(),
-        '/setting': (context) => Setting(),
       },
     );
   }
 }
-// test
