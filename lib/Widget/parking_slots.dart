@@ -128,7 +128,7 @@ class _ParkingSlots extends State<ParkingSlots> {
                 // แสดงที่จอดฝั่งซ้าย
                 Positioned(
                   left: 20,
-                  top: MediaQuery.of(context).size.height * 0.29,
+                  top: MediaQuery.of(context).size.height * 0.27,
                   child: Column(
                     children: leftSlots
                         .map((column) => Column(
@@ -141,7 +141,7 @@ class _ParkingSlots extends State<ParkingSlots> {
                 // แสดงที่จอดฝั่งขวา
                 Positioned(
                   right: 20,
-                  top: MediaQuery.of(context).size.height * 0.29,
+                  top: MediaQuery.of(context).size.height * 0.27,
                   child: Column(
                     children: rightSlots
                         .map((column) => Column(
