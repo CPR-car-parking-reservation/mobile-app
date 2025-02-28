@@ -18,6 +18,7 @@ class _AddCarPageState extends State<AddCarPage> {
   TextEditingController modelController = TextEditingController();
   TextEditingController typeController = TextEditingController();
   File? imageFile;
+  String selectedType = 'Fuels';
 
   Future<void> pickImage() async {
     final pickedFile =
@@ -69,40 +70,95 @@ class _AddCarPageState extends State<AddCarPage> {
     );
   }
 
+  Widget buildDropdownField() {
+    return DropdownButtonFormField<String>(
+      value: selectedType,
+      decoration: InputDecoration(
+        prefixIcon: Icon(Icons.category, color: Colors.black),
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.black, width: 1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.blue, width: 2),
+        ),
+        labelText: "ประเภทรถ",
+        labelStyle: const TextStyle(color: Colors.black, fontSize: 16),
+        floatingLabelBehavior: FloatingLabelBehavior.never,
+      ),
+      items: ['Fuels', 'Electric'].map((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(
+            value,
+            style: const TextStyle(color: Colors.black),
+          ),
+        );
+      }).toList(),
+      onChanged: (newValue) {
+        setState(() {
+          selectedType = newValue!;
+        });
+      },
+      style: const TextStyle(color: Colors.black),
+      dropdownColor: Colors.white,
+      icon: const Icon(Icons.arrow_drop_down, color: Colors.black),
+      iconSize: 24,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<SettingBloc, SettingState>(
       listener: (context, state) {
         if (state is SettingSuccess) {
-          Future.microtask(() => Navigator.of(context).pop('Car added successfully'));
+          Navigator.pop(context, state.message); 
         } else if (state is SettingError) {
           _showSnackBar(context, state.message);
         }
       },
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: const Color(0xFF03174C),
-          title: const Text(
-            "Add Car",
-            style: TextStyle(
-                color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
-          ),
-          centerTitle: true,
-        ),
         backgroundColor: const Color(0xFF03174C), // Set background color
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: SingleChildScrollView(
             child: ConstrainedBox(
               constraints: BoxConstraints(
-                minHeight:
-                    MediaQuery.of(context).size.height - kToolbarHeight - 32,
+                minHeight: MediaQuery.of(context).size.height - 32,
               ),
               child: IntrinsicHeight(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.arrow_back, color: Colors.white),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                        const Text(
+                          "Add Car",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(width: 48), // To balance the space taken by the back button
+                      ],
+                    ),
+                    const SizedBox(height: 16),
                     Divider(color: Colors.white70, thickness: 1.5),
                     const SizedBox(height: 16),
                     Stack(
@@ -130,7 +186,7 @@ class _AddCarPageState extends State<AddCarPage> {
                                     child: IconButton(
                                       onPressed: pickImage,
                                       icon: const Icon(Icons.image,
-                                          color: Colors.grey, size: 60.0),
+                                          color: Colors.grey, size: 150),
                                       tooltip: 'เลือกภาพ',
                                     ),
                                   )
@@ -156,15 +212,15 @@ class _AddCarPageState extends State<AddCarPage> {
                     const SizedBox(height: 10),
                     buildTextField("รุ่นรถ", Icons.car_repair, modelController),
                     const SizedBox(height: 10),
-                    buildTextField("ประเภทรถ", Icons.category, typeController),
+                    buildDropdownField(),
                     const SizedBox(height: 20),
                     ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (imageFile != null) {
-                          context.read<SettingBloc>().add(AddCar(
+                          BlocProvider.of<SettingBloc>(context).add(AddCar(
                                 plate: plateController.text,
                                 model: modelController.text,
-                                type: typeController.text,
+                                type: selectedType,
                                 imageFile: imageFile!,
                               ));
                         } else {
@@ -172,7 +228,7 @@ class _AddCarPageState extends State<AddCarPage> {
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
+                        backgroundColor: const Color(0xFF4CAF50),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),

@@ -19,7 +19,7 @@ class Profile {
 
 class SettingBloc extends Bloc<SettingEvent, SettingState> {
   
-  static const String baseUrl = 'https://legend-trees-tee-shed.trycloudflare.com';
+  static const String baseUrl = 'http://172.24.144.1:4000';
 
   SettingBloc() : super(SettingInitial()) {
     on<LoadCars>(_onLoadCars);
@@ -68,6 +68,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     try {
       final car = await fetch_cars(event.carId);
       emit(SettingLoaded(cars: [car]));
+      add(LoadCars()); // reload all cars
     } catch (e) {
       emit(SettingError(message: e.toString()));
     }
@@ -81,7 +82,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
       request.fields['car_number'] = event.plate;
       request.fields['car_model'] = event.model;
       request.fields['car_type'] = event.type;
-      request.fields['user_id'] = '8c87ff0d-d848-4892-af21-2c53950a539e'; 
+      request.fields['user_id'] = 'f57a2818-1588-4e0c-b3e6-c33171104841'; 
       request.files.add(await http.MultipartFile.fromPath(
         'image',
         event.imageFile.path,
@@ -93,7 +94,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
 
       final responseJson = json.decode(responseBody);
 
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200) {
         if (responseJson.containsKey('data') && responseJson['data'] != null) {
           final car = car_data.fromJson(responseJson['data']);
           final currentState = state;

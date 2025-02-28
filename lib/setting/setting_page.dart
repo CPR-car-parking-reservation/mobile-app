@@ -27,6 +27,8 @@ class Setting extends StatefulWidget {
 }
 
 class _SettingState extends State<Setting> with RouteAware {
+  String baseImgUrl = 'http://172.24.144.1:4000';
+  
   Profile profile = Profile(
     name: "Adewale Taiwo",
     phone: "094-468-xxxx",
@@ -35,14 +37,19 @@ class _SettingState extends State<Setting> with RouteAware {
 
   @override
   void didPopNext() {
-    context.read<SettingBloc>().add(LoadCars()); // โหลดข้อมูลใหม่เมื่อกลับมา
+    context.read<SettingBloc>().add(LoadCars()); // Reload data when coming back
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    routeObserver.subscribe(
-        this, ModalRoute.of(context)! as PageRoute<dynamic>);
+    routeObserver.subscribe(this, ModalRoute.of(context)! as PageRoute<dynamic>);
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
   }
 
   void logout(BuildContext context) {
@@ -63,7 +70,7 @@ class _SettingState extends State<Setting> with RouteAware {
           child: Row(
             children: [
               Image.network(
-                'https://legend-trees-tee-shed.trycloudflare.com${car[index].image_url}',
+                'http://172.24.144.1:4000${car[index].image_url}',
                 width: 100,
                 height: 60,
                 fit: BoxFit.cover,
@@ -86,12 +93,16 @@ class _SettingState extends State<Setting> with RouteAware {
               const Spacer(),
               IconButton(
                 onPressed: () async {
-                  await Navigator.push(
+                  final result = await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => EditCarPage(car_id: car[index].id),
                     ),
                   );
+                  if (result == true) {
+                    // ignore: use_build_context_synchronously
+                    context.read<SettingBloc>().add(LoadCars()); // Reload data if result is true
+                  }
                 },
                 icon: const Icon(Icons.edit, color: Colors.orange),
               ),
@@ -232,7 +243,9 @@ class _SettingState extends State<Setting> with RouteAware {
                                   ),
                                 );
                                 if (result is String) {
+                                  // ignore: use_build_context_synchronously
                                   _showSnackBar(context, result);
+                                  // ignore: use_build_context_synchronously
                                   context.read<SettingBloc>().add(LoadCars());
                                 }
                               },

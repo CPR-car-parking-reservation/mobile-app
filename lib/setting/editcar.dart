@@ -15,8 +15,6 @@ class EditCarPage extends StatefulWidget {
 
   @override
   _EditCarPageState createState() => _EditCarPageState();
-
-  Widget build(BuildContext context) => throw UnimplementedError();
 }
 
 class _EditCarPageState extends State<EditCarPage> {
@@ -24,10 +22,11 @@ class _EditCarPageState extends State<EditCarPage> {
   late TextEditingController modelController;
   late TextEditingController typeController;
   final ValueNotifier<File?> imageNotifier = ValueNotifier<File?>(null);
-  File? imageFile;
+  final ValueNotifier<String?> selectedTypeNotifier =
+      ValueNotifier<String?>(null);
   String? imagePath;
 
-  String baseImgUrl = 'https://legend-trees-tee-shed.trycloudflare.com';
+  String baseImgUrl = 'http://172.24.144.1:4000';
 
   @override
   void initState() {
@@ -53,10 +52,8 @@ class _EditCarPageState extends State<EditCarPage> {
     if (pickedFile != null) {
       String fileExtension = pickedFile.path.split('.').last.toLowerCase();
       if (['png', 'jpg', 'jpeg'].contains(fileExtension)) {
-        setState(() {
-          imageFile = File(pickedFile.path);
-          imagePath = pickedFile.path;
-        });
+        imageNotifier.value = File(pickedFile.path);
+        imagePath = pickedFile.path;
       }
     }
   }
@@ -78,6 +75,54 @@ class _EditCarPageState extends State<EditCarPage> {
     );
   }
 
+  Widget buildDropdownField() {
+    return ValueListenableBuilder<String?>(
+      valueListenable: selectedTypeNotifier,
+      builder: (context, selectedType, child) {
+        return DropdownButtonFormField<String>(
+          value: selectedType,
+          decoration: InputDecoration(
+            prefixIcon: Icon(Icons.category, color: Colors.black),
+            filled: true,
+            fillColor: Colors.white,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.black, width: 1),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.blue, width: 2),
+            ),
+            labelText: "ประเภทรถ",
+            labelStyle: const TextStyle(color: Colors.black, fontSize: 16),
+            floatingLabelBehavior: FloatingLabelBehavior.never,
+          ),
+          items: ['Fuels', 'Electric'].map((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(
+                value,
+                style: const TextStyle(color: Colors.black),
+              ),
+            );
+          }).toList(),
+          onChanged: (newValue) {
+            selectedTypeNotifier.value = newValue;
+            typeController.text = newValue!;
+          },
+          style: const TextStyle(color: Colors.black),
+          dropdownColor: Colors.white,
+          icon: const Icon(Icons.arrow_drop_down, color: Colors.black),
+          iconSize: 24,
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<SettingBloc, SettingState>(
@@ -90,117 +135,141 @@ class _EditCarPageState extends State<EditCarPage> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'Edit Car',
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: const Color(0xFF03174C),
-          centerTitle: true,
-        ),
         backgroundColor: const Color(0xFF03174C),
         body: BlocBuilder<SettingBloc, SettingState>(
           builder: (context, state) {
             return FutureBuilder<car_data>(
-                future: BlocProvider.of<SettingBloc>(context)
-                    .fetch_cars(widget.car_id),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  }
-                  final car = snapshot.data!;
-                  plateController.text = car.car_number;
-                  modelController.text = car.car_model;
-                  typeController.text = car.car_type;
+              future: BlocProvider.of<SettingBloc>(context)
+                  .fetch_cars(widget.car_id),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
+                final car = snapshot.data!;
 
-                  return SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 10),
-                          Divider(color: Colors.white70, thickness: 1.5),
-                          const SizedBox(height: 16),
-                          ImageSection(
-                            baseImgUrl: baseImgUrl,
-                            car: car,
-                            imageFile: imageFile,
-                            onImagePicked: (file, path) {
-                              setState(() {
-                                imageFile = file;
+                // ตั้งค่าเริ่มต้นสำหรับ Dropdown
+                if (selectedTypeNotifier.value == null ||
+                    typeController.text.isEmpty) {
+                  selectedTypeNotifier.value = car.car_type;
+                  typeController.text = car.car_type;
+                }
+
+                plateController.text = car.car_number;
+                modelController.text = car.car_model;
+
+                return SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.arrow_back,
+                                  color: Colors.white),
+                              onPressed: () {
+                                Navigator.pop(context,
+                                    true); // Pass a result to indicate a reload is needed
+                              },
+                            ),
+                            const Text(
+                              "Edit Car",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(
+                                width:
+                                    48), // To balance the space taken by the back button
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Divider(color: Colors.white70, thickness: 1.5),
+                        const SizedBox(height: 16),
+                        ValueListenableBuilder<File?>(
+                          valueListenable: imageNotifier,
+                          builder: (context, imageFile, child) {
+                            return ImageSection(
+                              baseImgUrl: baseImgUrl,
+                              car: car,
+                              imageFile: imageFile,
+                              onImagePicked: (file, path) {
+                                imageNotifier.value = file;
                                 imagePath = path;
-                              });
-                            },
-                          ),
-                          const SizedBox(height: 20),
-                          buildTextField("ป้ายทะเบียนรถ", Icons.directions_car,
-                              plateController),
-                          const SizedBox(height: 10),
-                          buildTextField(
-                              "รุ่นรถ", Icons.car_repair, modelController),
-                          const SizedBox(height: 10),
-                          buildTextField(
-                              "ประเภทรถ", Icons.category, typeController),
-                          const SizedBox(height: 30),
-                          SizedBox(
-                            width: double.infinity,
-                            height: 50,
-                            child: ElevatedButton(
+                              },
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        buildTextField("ป้ายทะเบียนรถ", Icons.directions_car,
+                            plateController),
+                        const SizedBox(height: 10),
+                        buildTextField(
+                            "รุ่นรถ", Icons.car_repair, modelController),
+                        const SizedBox(height: 10),
+                        buildDropdownField(),
+                        const SizedBox(height: 30),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: ElevatedButton(
                               onPressed: () async {
-                                // Dispatch UpdateCar event
-                                BlocProvider.of<SettingBloc>(context)
-                                    .add(UpdateCar(
-                                  id: widget.car_id,
-                                  plate: plateController.text,
-                                  model: modelController.text,
-                                  type: typeController.text,
-                                  imageFile: imagePath != null ? File(imagePath!) : null,
-                                ));
+                                BlocProvider.of<SettingBloc>(context).add(
+                                    UpdateCar(
+                                        id: widget.car_id,
+                                        plate: plateController.text,
+                                        model: modelController.text,
+                                        type: selectedTypeNotifier.value!,
+                                        imageFile: imagePath != null
+                                            ? File(imagePath!)
+                                            : null));
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
+                                  backgroundColor: Colors.green,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12))),
+                              child: const Text("Update Car",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold))),
+                        ),
+                        const SizedBox(height: 10),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              confirmDeleteCar(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
                               ),
-                              child: const Text(
-                                "Update Car",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                            ),
+                            child: const Text(
+                              "Delete Car",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
-                          const SizedBox(height: 10),
-                          SizedBox(
-                            width: double.infinity,
-                            height: 50,
-                            child: ElevatedButton(
-                              onPressed: () => confirmDeleteCar(context),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                              child: const Text(
-                                "Delete Car",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  );
-                });
+                  ),
+                );
+              },
+            );
           },
         ),
       ),
@@ -247,9 +316,7 @@ class _EditCarPageState extends State<EditCarPage> {
   }
 }
 
-
-
-class ImageSection extends StatefulWidget {
+class ImageSection extends StatelessWidget {
   final String baseImgUrl;
   final car_data car;
   final File? imageFile;
@@ -263,18 +330,13 @@ class ImageSection extends StatefulWidget {
     required this.onImagePicked,
   });
 
-  @override
-  _ImageSectionState createState() => _ImageSectionState();
-}
-
-class _ImageSectionState extends State<ImageSection> {
   Future<void> pickImage() async {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       String fileExtension = pickedFile.path.split('.').last.toLowerCase();
       if (['png', 'jpg', 'jpeg'].contains(fileExtension)) {
-        widget.onImagePicked(File(pickedFile.path), pickedFile.path);
+        onImagePicked(File(pickedFile.path), pickedFile.path);
       }
     }
   }
@@ -284,14 +346,28 @@ class _ImageSectionState extends State<ImageSection> {
     return Stack(
       alignment: Alignment.bottomRight,
       children: [
-        if (widget.imageFile != null)
-          Image.file(widget.imageFile!, height: 200, width: 200),
-        if (widget.imageFile == null)
-          Image.network(
-            '${widget.baseImgUrl}${widget.car.image_url}',
-            height: 200,
-            width: 200,
+        Card(
+          elevation: 5,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
+          child: Container(
+            width: 350,
+            height: 230,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              image: imageFile != null
+                  ? DecorationImage(
+                      image: FileImage(imageFile!),
+                      fit: BoxFit.cover,
+                    )
+                  : DecorationImage(
+                      image: NetworkImage('$baseImgUrl${car.image_url}'),
+                      fit: BoxFit.cover,
+                    ),
+            ),
+          ),
+        ),
         Container(
           decoration: BoxDecoration(
             color: Colors.orange,
