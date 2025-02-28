@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:car_parking_reservation/history.dart';
 import 'package:car_parking_reservation/model/history.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';

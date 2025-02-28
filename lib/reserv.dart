@@ -32,6 +32,7 @@ class _ReservState extends State<Reserv> {
 
   late List<Map<String, dynamic>> history;
 
+  @override
   void initState() {
     super.initState();
     history = [
@@ -247,9 +248,9 @@ class _ReservState extends State<Reserv> {
                                     _boolfade = true;
                                   });
 
-                                  String select_this_date =
+                                  String selectThisDate =
                                       "${currentDateController.day}/${currentDateController.month}/${currentDateController.year}";
-                                  String select_this_time =
+                                  String selectThisTime =
                                       "${currentDateController.hour.toString().padLeft(2, '0')}:${currentDateController.minute.toString().padLeft(2, '0')}";
 
                                   ScaffoldMessenger.of(context).showSnackBar(
@@ -296,8 +297,8 @@ class _ReservState extends State<Reserv> {
 
                                   final historyData = History_data(
                                     // ส่งค่าไปที่ Bloc
-                                    date: select_this_date,
-                                    start_at: select_this_time,
+                                    date: selectThisDate,
+                                    start_at: selectThisTime,
                                     end_at:
                                         "N/A", // ถ้ายังไม่มีค่า end_at ให้ใช้ "N/A" หรือช่องว่างตามที่ต้องการ
                                     parkingSlot: ParkingSlot(
@@ -315,7 +316,7 @@ class _ReservState extends State<Reserv> {
                                       .add(SendReservation(historyData));
 
                                   debugPrint(
-                                      "dadadada $select_this_time /  $select_this_date / ${widget.parking_slots_id} / ${widget.slot_number}");
+                                      "dadadada $selectThisTime /  $selectThisDate / ${widget.parking_slots_id} / ${widget.slot_number}");
                                 }
                               },
                               child: Padding(

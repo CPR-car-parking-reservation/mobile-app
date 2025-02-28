@@ -31,7 +31,7 @@ class _AddCarPageState extends State<AddCarPage> {
         });
       } else {
         // ignore: use_build_context_synchronously
-        _showSnackBar(context, 'กรุณาเลือกไฟล์รูปภาพ (.png, .jpg, .jpeg)');
+        _showSnackBar(context, 'Please select an image file. (.png, .jpg, .jpeg)');
       }
     }
   }
@@ -41,7 +41,10 @@ class _AddCarPageState extends State<AddCarPage> {
       SnackBar(
         content: Text(
           message,
-          style: const TextStyle(color: Colors.white),
+          style: const TextStyle(
+            color: Colors.white,
+            fontFamily: "amiko",
+          ),
         ),
         backgroundColor: Colors.blueAccent,
         behavior: SnackBarBehavior.floating,
@@ -89,7 +92,6 @@ class _AddCarPageState extends State<AddCarPage> {
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: Colors.blue, width: 2),
         ),
-        labelText: "ประเภทรถ",
         labelStyle: const TextStyle(color: Colors.black, fontSize: 16),
         floatingLabelBehavior: FloatingLabelBehavior.never,
       ),
@@ -98,7 +100,10 @@ class _AddCarPageState extends State<AddCarPage> {
           value: value,
           child: Text(
             value,
-            style: const TextStyle(color: Colors.black),
+            style: const TextStyle(
+              color: Colors.black,
+              fontFamily: "amiko",
+            ),
           ),
         );
       }).toList(),
@@ -153,6 +158,7 @@ class _AddCarPageState extends State<AddCarPage> {
                             color: Colors.white,
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
+                            fontFamily: "amiko",
                           ),
                         ),
                         const SizedBox(width: 48), // To balance the space taken by the back button
@@ -170,8 +176,8 @@ class _AddCarPageState extends State<AddCarPage> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Container(
-                            width: 350,
-                            height: 230,
+                            width: double.infinity,
+                            height: 200,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
                               image: imageFile != null
@@ -241,6 +247,7 @@ class _AddCarPageState extends State<AddCarPage> {
                           color: Colors.white,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
+                          fontFamily: "amiko",
                         ),
                       ),
                     ),

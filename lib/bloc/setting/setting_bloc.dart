@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:car_parking_reservation/model/car.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'setting_event.dart';
 import 'setting_state.dart';
@@ -18,14 +19,13 @@ class Profile {
 }
 
 class SettingBloc extends Bloc<SettingEvent, SettingState> {
-  
-  static const String baseUrl = 'http://172.24.144.1:4000';
+  String baseUrl = dotenv.env['BASE_URL'].toString();
 
   SettingBloc() : super(SettingInitial()) {
     on<LoadCars>(_onLoadCars);
     on<AddCar>(_onAddCar);
     on<UpdateCar>(_onUpdateCar);
-    on<DeleteCar>(_onDeleteCar); 
+    on<DeleteCar>(_onDeleteCar);
     on<FetchCarById>(_onFetchCarById);
   }
 
@@ -43,16 +43,16 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
   }
 
   Future<void> _onLoadCars(LoadCars event, Emitter<SettingState> emit) async {
-    
-    emit(SettingLoading()); 
-    
+    emit(SettingLoading());
+
     try {
       final response = await http.get(Uri.parse('$baseUrl/cars'));
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final Map<String, dynamic> responseJson = json.decode(response.body);
         final List<dynamic> carsList = responseJson['data'];
-        final cars = carsList.map((carJson) => car_data.fromJson(carJson)).toList();
+        final cars =
+            carsList.map((carJson) => car_data.fromJson(carJson)).toList();
         emit(SettingLoaded(cars: cars));
       } else {
         emit(SettingError(message: 'Error fetching data'));
@@ -61,9 +61,9 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
       emit(SettingError(message: e.toString()));
     }
   }
-  
-  Future<void> _onFetchCarById(FetchCarById event, Emitter<SettingState> emit) async {
-    
+
+  Future<void> _onFetchCarById(
+      FetchCarById event, Emitter<SettingState> emit) async {
     emit(SettingLoading());
     try {
       final car = await fetch_cars(event.carId);
@@ -82,7 +82,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
       request.fields['car_number'] = event.plate;
       request.fields['car_model'] = event.model;
       request.fields['car_type'] = event.type;
-      request.fields['user_id'] = 'f57a2818-1588-4e0c-b3e6-c33171104841'; 
+      request.fields['user_id'] = 'f9cc21db-f9c7-424f-ae32-b82ca9186219';
       request.files.add(await http.MultipartFile.fromPath(
         'image',
         event.imageFile.path,
@@ -100,14 +100,16 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
           final currentState = state;
 
           if (currentState is SettingLoaded) {
-            final updatedCars = List<car_data>.from(currentState.cars)..add(car);
+            final updatedCars = List<car_data>.from(currentState.cars)
+              ..add(car);
             emit(SettingLoaded(cars: updatedCars));
           } else {
             add(LoadCars());
           }
-          emit(SettingSuccess(message: responseJson['message'] ));
+          emit(SettingSuccess(message: responseJson['message']));
         } else {
-          emit(SettingError(message: 'An error : The returned data is invalid.'));
+          emit(SettingError(
+              message: 'An error : The returned data is invalid.'));
         }
       } else {
         String errorMessage = responseJson['message'] ?? 'Failed to add ';
@@ -117,40 +119,40 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
       emit(SettingError(message: 'Error: ${e.toString()}'));
     }
   }
-Future<void> _onUpdateCar(UpdateCar event, Emitter<SettingState> emit) async {
-  emit(SettingLoading());
-  try {
-    final url = Uri.parse('$baseUrl/cars/id/${event.id}');
-    var request = http.MultipartRequest('PUT', url);
-    request.fields['car_number'] = event.plate;
-    request.fields['car_model'] = event.model;
-    request.fields['car_type'] = event.type;
-    if (event.imageFile != null) {
-      request.files.add(await http.MultipartFile.fromPath(
-        'image',
-        event.imageFile!.path,
-        contentType: MediaType('image', 'jpeg'),
-      ));
+
+  Future<void> _onUpdateCar(UpdateCar event, Emitter<SettingState> emit) async {
+    emit(SettingLoading());
+    try {
+      final url = Uri.parse('$baseUrl/cars/id/${event.id}');
+      var request = http.MultipartRequest('PUT', url);
+      request.fields['car_number'] = event.plate;
+      request.fields['car_model'] = event.model;
+      request.fields['car_type'] = event.type;
+      if (event.imageFile != null) {
+        request.files.add(await http.MultipartFile.fromPath(
+          'image',
+          event.imageFile!.path,
+          contentType: MediaType('image', 'jpeg'),
+        ));
+      }
+
+      // Log the request fields and files for debugging
+      log('Request fields: ${request.fields}');
+      log('Request files: ${request.files.map((file) => file.filename).toList()}');
+
+      var response = await request.send();
+      final responseBody = await response.stream.bytesToString();
+
+      if (response.statusCode == 200) {
+        add(LoadCars());
+        emit(SettingSuccess(message: 'Update successful!'));
+      } else {
+        emit(SettingError(message: 'Failed to update car: $responseBody'));
+      }
+    } catch (e) {
+      emit(SettingError(message: 'Error: ${e.toString()}'));
     }
-
-    // Log the request fields and files for debugging
-    log('Request fields: ${request.fields}');
-    log('Request files: ${request.files.map((file) => file.filename).toList()}');
-
-    var response = await request.send();
-    final responseBody = await response.stream.bytesToString();
-
-    if (response.statusCode == 200) {
-      add(LoadCars());
-      emit(SettingSuccess(message: 'Update successful!'));
-    } else {
-      emit(SettingError(message: 'Failed to update car: $responseBody'));
-    }
-  } catch (e) {
-    emit(SettingError(message: 'Error: ${e.toString()}'));
   }
-}
-  
 
   Future<void> _onDeleteCar(DeleteCar event, Emitter<SettingState> emit) async {
     emit(SettingLoading());

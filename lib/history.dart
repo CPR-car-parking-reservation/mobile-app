@@ -22,6 +22,7 @@ class History extends StatefulWidget {
 
 class _HistoryState extends State<History> {
   late List<Map<String, String>> mockHistoryData;
+  @override
   void initState() {
     super.initState();
     context.read<ReservedBloc>().add(FetchAllReservation());

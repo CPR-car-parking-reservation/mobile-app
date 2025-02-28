@@ -8,6 +8,7 @@ import 'package:car_parking_reservation/bloc/setting/setting_state.dart';
 import 'package:car_parking_reservation/setting/editcar.dart';
 import 'package:car_parking_reservation/setting/editprofile.dart';
 import 'package:car_parking_reservation/Login/signin.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
@@ -27,8 +28,8 @@ class Setting extends StatefulWidget {
 }
 
 class _SettingState extends State<Setting> with RouteAware {
-  String baseImgUrl = 'http://172.24.144.1:4000';
-  
+  String baseUrl = dotenv.env['BASE_URL'].toString();
+
   Profile profile = Profile(
     name: "Adewale Taiwo",
     phone: "094-468-xxxx",
@@ -43,7 +44,8 @@ class _SettingState extends State<Setting> with RouteAware {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    routeObserver.subscribe(this, ModalRoute.of(context)! as PageRoute<dynamic>);
+    routeObserver.subscribe(
+        this, ModalRoute.of(context)! as PageRoute<dynamic>);
   }
 
   @override
@@ -60,6 +62,7 @@ class _SettingState extends State<Setting> with RouteAware {
   }
 
   ListView listviewshow(List<car_data> car) {
+    String baseUrl = dotenv.env['BASE_URL'].toString();
     return ListView.separated(
       itemBuilder: (context, index) {
         return Container(
@@ -70,7 +73,7 @@ class _SettingState extends State<Setting> with RouteAware {
           child: Row(
             children: [
               Image.network(
-                'http://172.24.144.1:4000${car[index].image_url}',
+                '$baseUrl${car[index].image_url}',
                 width: 100,
                 height: 60,
                 fit: BoxFit.cover,
@@ -79,15 +82,26 @@ class _SettingState extends State<Setting> with RouteAware {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("ป้ายทะเบียนรถ",
-                      style: TextStyle(color: Colors.black)),
+                  const Text("License plate",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: "amiko",
+                          fontWeight: FontWeight.bold)),
                   Text(car[index].car_number,
                       style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold)),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                          fontFamily: "amiko")),
                   Text(car[index].car_model,
-                      style: const TextStyle(color: Colors.grey)),
+                      style: const TextStyle(
+                          color: Colors.grey,
+                          fontFamily: "amiko",
+                          fontWeight: FontWeight.w300)),
                   Text(car[index].car_type,
-                      style: const TextStyle(color: Colors.grey)),
+                      style: const TextStyle(
+                          color: Colors.grey,
+                          fontFamily: "amiko",
+                          fontWeight: FontWeight.w300)),
                 ],
               ),
               const Spacer(),
@@ -101,7 +115,9 @@ class _SettingState extends State<Setting> with RouteAware {
                   );
                   if (result == true) {
                     // ignore: use_build_context_synchronously
-                    context.read<SettingBloc>().add(LoadCars()); // Reload data if result is true
+                    context
+                        .read<SettingBloc>()
+                        .add(LoadCars()); // Reload data if result is true
                   }
                 },
                 icon: const Icon(Icons.edit, color: Colors.orange),
@@ -118,16 +134,41 @@ class _SettingState extends State<Setting> with RouteAware {
   void _showSnackBar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(
-          message,
-          style: const TextStyle(color: Colors.white),
+        backgroundColor: const Color(0xFF29CE79),
+        duration: Duration(milliseconds: 1500),
+        content: Padding(
+          padding: const EdgeInsets.only(left: 20),
+          child: Row(
+            children: [
+              Icon(
+                Icons.check_circle,
+                color: Colors.white,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 20),
+                child: Text(
+                  'Success',
+                  style: TextStyle(
+                      fontFamily: "Amiko",
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white),
+                ),
+              ),
+            ],
+          ),
         ),
-        backgroundColor: Colors.blueAccent,
-        behavior: SnackBarBehavior.floating,
+        action: SnackBarAction(
+          label: '',
+          onPressed: () {
+            // Code to execute.
+          },
+        ),
+        padding: EdgeInsets.all(2),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(30),
         ),
-        margin: const EdgeInsets.all(10),
+        behavior: SnackBarBehavior.floating,
       ),
     );
   }
@@ -162,6 +203,7 @@ class _SettingState extends State<Setting> with RouteAware {
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
+                              fontFamily: "Amiko",
                             ),
                           ),
                         ),
@@ -252,23 +294,18 @@ class _SettingState extends State<Setting> with RouteAware {
                               backgroundColor:
                                   const Color.fromRGBO(41, 206, 121, 1),
                               icon: const Icon(Icons.add, color: Colors.white),
-                              label: const Text("เพิ่มรถ",
+                              label: const Text("Add Car",
                                   style: TextStyle(color: Colors.white)),
                             ),
-                            ElevatedButton(
+                            FloatingActionButton.extended(
                               onPressed: () {
                                 logout(context);
                               },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFF44336),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10)),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 6),
-                              ),
-                              child: const Text("Log-Out",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 14)),
+                              backgroundColor: Colors.red,
+                              icon:
+                                  const Icon(Icons.logout, color: Colors.white),
+                              label: const Text("Logout",
+                                  style: TextStyle(color: Colors.white)),
                             ),
                           ],
                         ),

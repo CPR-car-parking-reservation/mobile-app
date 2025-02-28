@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:car_parking_reservation/model/parking_slot.dart';
 import 'dart:convert';
@@ -46,9 +47,10 @@ class ParkingBloc extends Bloc<ParkingEvent, ParkingState> {
   }
 
   Future<List<ParkingSlot>> onFetchData() async {
-    String strUrl = 'https://names-celebrity-web-round.trycloudflare.com';
+    String baseUrl = dotenv.env['BASE_URL'].toString();
+    
     final response =
-        await http.get(Uri.parse("$strUrl/parking_slots"), headers: {
+        await http.get(Uri.parse("$baseUrl/parking_slots"), headers: {
       "Accept": "application/json",
       "content-type": "application/json",
     });
