@@ -1,4 +1,5 @@
 import 'package:car_parking_reservation/Bloc/reserved/reserved_bloc.dart';
+import 'package:car_parking_reservation/Qr-generator/qr_code.dart';
 import 'package:car_parking_reservation/history.dart';
 import 'package:car_parking_reservation/model/history.dart';
 import 'package:car_parking_reservation/setting/setting_page.dart';
@@ -196,6 +197,12 @@ class _ReservState extends State<Reserv> {
                                       isVisible = false;
                                       _boolfade = false;
                                     });
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => GenQR(),
+                                      ),
+                                    );
                                   },
                                   child: Padding(
                                     padding: const EdgeInsets.all(10),

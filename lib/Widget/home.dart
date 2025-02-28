@@ -1,3 +1,4 @@
+import 'package:car_parking_reservation/Qr-generator/qr_code.dart';
 import 'package:car_parking_reservation/Widget/parking_slots.dart';
 import 'package:car_parking_reservation/bloc/navigator/navigator_bloc.dart';
 import 'package:car_parking_reservation/history.dart';
@@ -14,7 +15,8 @@ class Home extends StatelessWidget {
 
   static const List<Widget> _widgetOptions = <Widget>[
     ParkingSlots(),
-    Reserv(),
+    GenQR(),
+    // Reserv(),
     History(),
     Setting(),
   ];
