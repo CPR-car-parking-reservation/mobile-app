@@ -97,7 +97,7 @@ class _ParkingSlots extends State<ParkingSlots> {
                   children: [
                     Container(
                       color: Color(0xFF03174C), // Set background color to black
-                      padding: const EdgeInsets.only(left: 75, right: 75),
+                      padding: const EdgeInsets.only(left: 41, right: 41),
                       child: Column(
                         children: [
                           Text(

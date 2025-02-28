@@ -75,8 +75,8 @@ class Home extends StatelessWidget {
                       label: 'Home',
                     ),
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.flag),
-                      label: 'Reservation',
+                      icon: Icon(Icons.qr_code),
+                      label: 'QR Code',
                     ),
                     BottomNavigationBarItem(
                       icon: Icon(Icons.history),
