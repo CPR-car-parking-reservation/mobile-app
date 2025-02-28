@@ -1,29 +1,43 @@
 part of 'parking_bloc.dart';
 
-@immutable
-abstract class ParkingState extends Equatable {
+abstract class ParkingState {
   const ParkingState();
 
-  @override
   List<Object> get props => [];
 }
 
 class ParkingInitial extends ParkingState {}
 
-class SlotsLoaded extends ParkingState {
-  final List<ParkingSlot> slots;
+class ParkingLoading extends ParkingState {}
 
-  const SlotsLoaded({required this.slots});
+class ParkingLoaded extends ParkingState {
+  final List<ParkingSlot> parkingSlots;
+
+  ParkingLoaded(this.parkingSlots);
 
   @override
-  List<Object> get props => [slots];
+  List<Object> get props => [parkingSlots];
 }
 
 class ParkingError extends ParkingState {
   final String message;
 
-  const ParkingError(this.message);
+  ParkingError(this.message);
 
   @override
   List<Object> get props => [message];
 }
+
+class ParkingSlotSelected extends ParkingState{
+  final ParkingSlot selectedSlot;
+
+  ParkingSlotSelected(this.selectedSlot);
+
+}
+
+
+// class SelectParkingSlotToReserv extends ParkingState {
+//   final ParkingSlot selectedSlot;
+
+//   SelectParkingSlotToReserv(this.selectedSlot);
+// }
