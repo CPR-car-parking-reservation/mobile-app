@@ -1,10 +1,9 @@
-import 'package:equatable/equatable.dart';
 // ignore: depend_on_referenced_packages
 import 'package:meta/meta.dart';
 import 'package:car_parking_reservation/model/car.dart';
 
 @immutable
-abstract class SettingState extends Equatable {
+abstract class SettingState {
   const SettingState();
 
   @override

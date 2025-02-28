@@ -1,9 +1,8 @@
 import 'dart:io';
-import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
 @immutable
-abstract class SettingEvent extends Equatable {
+abstract class SettingEvent {
   const SettingEvent();
 
   @override
@@ -11,7 +10,6 @@ abstract class SettingEvent extends Equatable {
 }
 
 class LoadCars extends SettingEvent {}
-
 
 class FetchCarById extends SettingEvent {
   final String carId;
@@ -21,7 +19,6 @@ class FetchCarById extends SettingEvent {
   @override
   List<Object> get props => [carId];
 }
-
 
 class AddCar extends SettingEvent {
   final String plate;
@@ -39,7 +36,6 @@ class AddCar extends SettingEvent {
   @override
   List<Object> get props => [plate, model, type, imageFile];
 }
-
 
 class UpdateCar extends SettingEvent {
   final String id;
@@ -59,7 +55,6 @@ class UpdateCar extends SettingEvent {
   @override
   List<Object> get props => [id, plate, model, type, imageFile ?? ''];
 }
-
 
 class DeleteCar extends SettingEvent {
   final String id;
