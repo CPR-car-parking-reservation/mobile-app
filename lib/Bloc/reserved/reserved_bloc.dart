@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:car_parking_reservation/history.dart';
 import 'package:car_parking_reservation/model/history.dart';
@@ -21,37 +23,20 @@ class ReservedBloc extends Bloc<ReservedEvent, ReservedState> {
       }
     });
 
-    // on<SendReservation>((event, emit) {
-    //   if (state is ReservedLoaded) {
-    //     final currentList =
-    //         List<History_data>.from((state as ReservedLoaded).history);
-    //     currentList.add(event.history);
-    //     emit(ReservedLoaded(currentList));
-    //   } else {
-    //     emit(ReservedLoaded([event.history]));
-    //   }
-    // });
-
     on<SendReservation>((event, emit) async {
-      // emit(ReserveLoading());
+      emit(ReserveLoading());
+      debugPrint("Sending Reservation Data:");
+      debugPrint(jsonEncode(event.history.toJson()));
       try {
         final success = await postData(event.history);
         if (success) {
           debugPrint("Data posted successfully");
-
-          // if (state is ReservedLoaded) {
-          //   final currentList =
-          //       List<History_data>.from((state as ReservedLoaded).history);
-          //   currentList.add(event.history);
-          //   emit(ReservedLoaded(currentList));
-          // } else {
-          //   emit(ReservedLoaded([event.history]));
-          // }
         } else {
           emit(ReservedError("Failed to post data to server."));
         }
       } catch (e) {
-        emit(ReservedError(e.toString()));
+        emit(ReservedError("Failed to post data to server."));
+        debugPrint("Error posting data: $e");
       }
     });
 
@@ -60,8 +45,9 @@ class ReservedBloc extends Bloc<ReservedEvent, ReservedState> {
       try {
         final history =
             await fetchData(); // เรียกใช้ API เพื่อดึงข้อมูลจาก Database
-        emit(ReservedLoaded(
-            history)); // อัปเดต State เพื่อให้แสดงข้อมูลในหน้า History
+        emit(
+          ReservedLoaded(history),
+        ); // อัปเดต State เพื่อให้แสดงข้อมูลในหน้า History
         debugPrint("Fetched data from database successfully");
       } catch (e) {
         emit(ReservedError("Failed to load data from server!"));

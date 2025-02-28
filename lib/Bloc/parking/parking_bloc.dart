@@ -37,7 +37,6 @@ class ParkingBloc extends Bloc<ParkingEvent, ParkingState> {
       log("🚗 Selected Parking Slot: ${event.selectedSlot.slot_number}");
       log("🚗 Selected Parking Slot: ${event.selectedSlot.floor.floor_number}");
       log("🚗 Selected Parking Slot: ${event.selectedSlot.status}");
-      
 
       emit(ParkingSlotSelected(event.selectedSlot));
 
@@ -46,7 +45,7 @@ class ParkingBloc extends Bloc<ParkingEvent, ParkingState> {
   }
 
   Future<List<ParkingSlot>> onFetchData() async {
-    String strUrl = 'https://names-celebrity-web-round.trycloudflare.com';
+    String strUrl = 'https://api.woraviboon.com';
     final response =
         await http.get(Uri.parse("$strUrl/parking_slots"), headers: {
       "Accept": "application/json",

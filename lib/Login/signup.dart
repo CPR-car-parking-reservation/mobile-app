@@ -27,7 +27,7 @@ class _SignupState extends State<Signup> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               SizedBox(
-                height: 250,
+                height: 200,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -49,7 +49,7 @@ class _SignupState extends State<Signup> {
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 30),
+                            vertical: 10, horizontal: 20),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -190,7 +190,7 @@ class _SignupState extends State<Signup> {
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                            vertical: 15, horizontal: 110),
+                            vertical: 15, horizontal: 80),
                         child: Text(
                           "GET STARTED",
                           style: TextStyle(

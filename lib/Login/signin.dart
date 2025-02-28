@@ -26,7 +26,7 @@ class _SigninState extends State<Signin> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               SizedBox(
-                height: 250,
+                height: 175,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -50,34 +50,39 @@ class _SigninState extends State<Signin> {
                         ),
                       ],
                     ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white, elevation: 3),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => Home()),
-                        );
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 30),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Image.asset(
-                              "assets/images/logogoogle.png",
-                              height: 35,
-                            ),
-                            Text(
-                              "CONTINUE WITH GOOGLE",
-                              style: TextStyle(
-                                  color: Colors.black54,
-                                  fontFamily: "Amiko",
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 15),
-                            ),
-                          ],
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        bottom: 10,
+                      ),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white, elevation: 3),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => Home()),
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 20),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Image.asset(
+                                "assets/images/logogoogle.png",
+                                height: 35,
+                              ),
+                              Text(
+                                "CONTINUE WITH GOOGLE",
+                                style: TextStyle(
+                                    color: Colors.black54,
+                                    fontFamily: "Amiko",
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 15),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -93,7 +98,7 @@ class _SigninState extends State<Signin> {
                 ),
               ),
               SizedBox(
-                height: 25,
+                height: 40,
               ),
               SizedBox(
                 height: 400,
@@ -177,7 +182,7 @@ class _SigninState extends State<Signin> {
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                            vertical: 15, horizontal: 135),
+                            vertical: 15, horizontal: 100),
                         child: Text(
                           "LOG IN",
                           style: TextStyle(

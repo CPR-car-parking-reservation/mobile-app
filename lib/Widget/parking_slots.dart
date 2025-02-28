@@ -2,7 +2,7 @@ import 'package:car_parking_reservation/model/parking_slot.dart';
 import 'package:car_parking_reservation/reserv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../Bloc/parking/parking_bloc.dart';
+import '../bloc/parking/parking_bloc.dart';
 
 /// Widget หลักที่ใช้แสดงที่จอดรถทั้งหมด
 class ParkingSlots extends StatefulWidget {
@@ -97,14 +97,14 @@ class _ParkingSlots extends State<ParkingSlots> {
                   children: [
                     Container(
                       color: Color(0xFF03174C), // Set background color to black
-                      padding: const EdgeInsets.only(left: 95, right: 95),
+                      padding: const EdgeInsets.only(left: 75, right: 75),
                       child: Column(
                         children: [
                           Text(
                             'Parking Zone: $selectedFloor',
                             style: const TextStyle(
                                 color: Colors.white,
-                                fontSize: 26,
+                                fontSize: 24,
                                 fontWeight: FontWeight.bold,
                                 fontFamily: "Amiko"),
                           ),
@@ -127,8 +127,8 @@ class _ParkingSlots extends State<ParkingSlots> {
                 ),
                 // แสดงที่จอดฝั่งซ้าย
                 Positioned(
-                  left: 20,
-                  top: MediaQuery.of(context).size.height * 0.27,
+                  left: 12,
+                  top: MediaQuery.of(context).size.height * 0.26,
                   child: Column(
                     children: leftSlots
                         .map((column) => Column(
@@ -140,8 +140,8 @@ class _ParkingSlots extends State<ParkingSlots> {
                 ),
                 // แสดงที่จอดฝั่งขวา
                 Positioned(
-                  right: 20,
-                  top: MediaQuery.of(context).size.height * 0.27,
+                  right: 12,
+                  top: MediaQuery.of(context).size.height * 0.26,
                   child: Column(
                     children: rightSlots
                         .map((column) => Column(
@@ -211,8 +211,8 @@ class ParkingSlotButton extends StatelessWidget {
     return Column(
       children: [
         SizedBox(
-          width: 135,
-          height: 72,
+          width: 120,
+          height: 60,
           child: FloatingActionButton(
             heroTag: "btn_${parking.slot_number}", // ป้องกัน error tag ซ้ำกัน
             backgroundColor: Colors.white,
@@ -245,7 +245,7 @@ class ParkingSlotButton extends StatelessWidget {
 
         // แสดงสถานะของที่จอดรถ
         Container(
-          width: 145,
+          width: 130,
           height: 20,
           margin: const EdgeInsets.only(top: 10, bottom: 10),
           decoration: BoxDecoration(
