@@ -1,13 +1,14 @@
+import 'package:car_parking_reservation/Bloc/reserved/reserved_bloc.dart';
 import 'package:car_parking_reservation/history.dart';
+import 'package:car_parking_reservation/model/history.dart';
 import 'package:car_parking_reservation/setting/setting_page.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Reserv extends StatefulWidget {
   // Get the slot number, floor id, and status from the API
   final String? parking_slots_id;
   final String? slot_number;
-
   final String? floor_number;
   final String? status;
 
@@ -26,47 +27,54 @@ class _ReservState extends State<Reserv> {
   bool isVisible = false;
   bool _boolfade = true;
 
-  TimeOfDay? select_time;
-  TimePickerEntryMode entryMode = TimePickerEntryMode.dial;
-  Orientation? orientation;
-  TextDirection textDirection = TextDirection.ltr;
-  MaterialTapTargetSize tapTargetSize = MaterialTapTargetSize.padded;
-  bool use24HourTime = false;
-  DateTime time = DateTime.now();
-
   final currentDateController = DateTime.now();
 
-  void _showDialog(Widget child) {
-    showCupertinoModalPopup<void>(
-      context: context,
-      builder: (BuildContext context) => Container(
-        height: 216,
-        padding: const EdgeInsets.only(top: 6.0),
-        // The Bottom margin is provided to align the popup above the system
-        // navigation bar.
-        margin: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
-        // Provide a background color for the popup.
-        color: CupertinoColors.systemBackground.resolveFrom(context),
-        // Use a SafeArea widget to avoid system overlaps.
-        child: SafeArea(top: false, child: child),
-      ),
-    );
+  late List<Map<String, dynamic>> history;
+
+  void initState() {
+    super.initState();
+    history = [
+      {
+        "date": "2022-01-01",
+        "start_at": "10:00",
+        "end_at": "12:00",
+        "parkingSlot": {
+          "id": "1",
+          "slot_number": "1",
+          "status": "WORKING",
+          "floorId": "F1",
+          "floor": {"id": "F1", "floor_number": "F1"}
+        }
+      },
+    ];
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF03174C),
+        automaticallyImplyLeading: false,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Image.asset(
+              "assets/images/LogoCARPAKING.png",
+              height: 40,
+              width: 90,
+            ),
+          ],
+        ),
+      ),
       backgroundColor: const Color(0xFF03174C),
       body: SingleChildScrollView(
         child: Center(
           child: Padding(
-            padding: EdgeInsets.all(15),
+            padding: EdgeInsets.all(0),
             child: Column(
               children: [
                 Text(
-                  "Reservation Your Parking",
+                  "Reservation",
                   style: TextStyle(
                       fontFamily: "Amiko",
                       fontSize: 26,
@@ -86,74 +94,80 @@ class _ReservState extends State<Reserv> {
                       fontWeight: FontWeight.w700,
                       color: Colors.white),
                 ),
+                Text(
+                  "PARKING ZONE ${widget.floor_number}",
+                  style: TextStyle(
+                      fontFamily: "Amiko",
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white),
+                ),
                 Image.asset(
                   "assets/images/cartopview2.png",
                   height: 300,
                 ),
-                Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "PARKING ZONE ${widget.floor_number}",
-                        style: TextStyle(
-                            fontFamily: "Amiko",
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white),
-                      ),
-                      Text(
-                        "Date : ${currentDateController.day}/${currentDateController.month}/${currentDateController.year}",
-                        style: TextStyle(
-                            fontFamily: "Amiko",
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white),
-                      ),
-                      Text(
-                        // "${select_time.format(context)}",
-                        // "${select_time.hour}:${select_time.minute}",
-                        "${select_time != null ? '${select_time!.hour} : ${select_time!.minute}' : '--> No time selected <--'}",
-                        style: TextStyle(
-                            fontFamily: "Amiko",
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(25),
-                  child: Container(
-                    height: 55,
-                    width: 200,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        color: Colors.white),
-                    child: CupertinoButton(
-                      onPressed: () => _showDialog(
-                        CupertinoDatePicker(
-                            initialDateTime: time,
-                            mode: CupertinoDatePickerMode.time,
-                            use24hFormat: true,
-                            onDateTimeChanged: (DateTime newTime) {
-                              setState(() {
-                                select_time = TimeOfDay(
-                                    hour: newTime.hour, minute: newTime.minute);
-                              });
-                            }),
-                      ),
-                      child: Text(
-                        '${select_time != null ? 'Change Time' : 'Select Time'}',
-                        style: TextStyle(
-                            fontFamily: "Amiko",
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.black),
+                Column(
+                  children: [
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.date_range_outlined,
+                                      color: Colors.white,
+                                      size: 30,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 10, top: 7.5),
+                                      child: Text(
+                                        "${currentDateController.day}-${currentDateController.month}-${currentDateController.year}  ",
+                                        style: TextStyle(
+                                            fontFamily: "Amiko",
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.w700,
+                                            color: Colors.white),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.access_time,
+                                      color: Colors.white,
+                                      size: 30,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 10, top: 7.5),
+                                      child: Text(
+                                        "${currentDateController.hour.toString().padLeft(2, '0')}:${currentDateController.minute.toString().padLeft(2, '0')}",
+                                        style: TextStyle(
+                                            fontFamily: "Amiko",
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.w700,
+                                            color: Colors.white),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -163,12 +177,12 @@ class _ReservState extends State<Reserv> {
                       children: [
                         SizedBox(
                           width: 350,
-                          height: 50,
+                          height: 150,
                         ),
                         Positioned(
-                          right: 20,
+                          top: 100,
                           child: SizedBox(
-                            width: 200,
+                            width: 150,
                             child: AnimatedOpacity(
                               opacity: _boolfade ? 1.0 : 0.0,
                               duration: const Duration(milliseconds: 500),
@@ -176,7 +190,7 @@ class _ReservState extends State<Reserv> {
                                 visible: isVisible,
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.white),
+                                      backgroundColor: Colors.yellow[600]),
                                   onPressed: () {
                                     setState(() {
                                       isVisible = false;
@@ -184,13 +198,12 @@ class _ReservState extends State<Reserv> {
                                     });
                                   },
                                   child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 5, vertical: 11),
+                                    padding: const EdgeInsets.all(10),
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: [
                                         Text(
-                                          "QR",
+                                          "Get QR",
                                           style: TextStyle(
                                               color: Colors.black,
                                               fontWeight: FontWeight.w700,
@@ -214,37 +227,88 @@ class _ReservState extends State<Reserv> {
                           ),
                         ),
                         Positioned(
+                          bottom: 75,
                           child: Container(
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF29CE79)),
+                                  backgroundColor: Colors.white),
                               onPressed: () {
-                                if (select_time != null) {
+                                if (currentDateController.hour != 0 &&
+                                    currentDateController.minute != 0) {
                                   setState(() {
                                     isVisible = true;
                                     _boolfade = true;
                                   });
-                                } else {
-                                  setState(() {
-                                    isVisible = false;
-                                    _boolfade = false;
-                                  });
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => AlertDialog(
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: Text("Close"),
-                                        )
-                                      ],
-                                      title: Text("WARNING"),
-                                      content: Text(
-                                          "You need to select a time to reservation"),
+
+                                  String select_this_date =
+                                      "${currentDateController.day}/${currentDateController.month}/${currentDateController.year}";
+                                  String select_this_time =
+                                      "${currentDateController.hour.toString().padLeft(2, '0')}:${currentDateController.minute.toString().padLeft(2, '0')}";
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      backgroundColor: const Color(0xFF29CE79),
+                                      duration: Duration(milliseconds: 1500),
+                                      content: Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 20),
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.check_circle,
+                                              color: Colors.white,
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 20),
+                                              child: Text(
+                                                'Success',
+                                                style: TextStyle(
+                                                    fontFamily: "Amiko",
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: Colors.white),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      action: SnackBarAction(
+                                        label: '',
+                                        onPressed: () {
+                                          // Code to execute.
+                                        },
+                                      ),
+                                      padding: EdgeInsets.all(2),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                      behavior: SnackBarBehavior.floating,
                                     ),
                                   );
+
+                                  final historyData = History_data(
+                                    // ส่งค่าไปที่ Bloc
+                                    date: select_this_date,
+                                    start_at: select_this_time,
+                                    end_at:
+                                        "N/A", // ถ้ายังไม่มีค่า end_at ให้ใช้ "N/A" หรือช่องว่างตามที่ต้องการ
+                                    parkingSlot: ParkingSlot(
+                                      id: widget.parking_slots_id ?? '',
+                                      slot_number: widget.slot_number ?? '',
+                                      status: widget.status ?? '',
+                                      floorId: widget.floor_number ?? '',
+                                      floor: Floor(
+                                        id: widget.floor_number ?? '',
+                                        floor_number: widget.floor_number ?? '',
+                                      ),
+                                    ),
+                                  );
+                                  BlocProvider.of<ReservedBloc>(context)
+                                      .add(SendReservation(historyData));
+
+                                  debugPrint(
+                                      "dadadada $select_this_time /  $select_this_date / ${widget.parking_slots_id} / ${widget.slot_number}");
                                 }
                               },
                               child: Padding(
@@ -256,7 +320,7 @@ class _ReservState extends State<Reserv> {
                                       fontFamily: "Amiko",
                                       fontSize: 18,
                                       fontWeight: FontWeight.w700,
-                                      color: Colors.white),
+                                      color: Colors.black),
                                 ),
                               ),
                             ),
