@@ -1,0 +1,2 @@
+C:/Users/thano/OneDrive/Desktop/CPR_PJ/car-park/android/app/.cxx/Debug/75z105l2/x86_64/CMakeFiles/edit_cache.dir
+C:/Users/thano/OneDrive/Desktop/CPR_PJ/car-park/android/app/.cxx/Debug/75z105l2/x86_64/CMakeFiles/rebuild_cache.dir
