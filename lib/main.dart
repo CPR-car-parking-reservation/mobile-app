@@ -1,6 +1,9 @@
+import 'package:car_parking_reservation/Bloc/reserved/reserved_bloc.dart';
+import 'package:car_parking_reservation/bloc/navigator/navigator_bloc.dart';
 import 'package:car_parking_reservation/reserv.dart';
 import 'package:car_parking_reservation/setting/setting_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'Login/signin.dart';
 import 'Login/signup.dart';
 import 'Login/welcome.dart';
@@ -16,14 +19,24 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'CPR Application',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<NavigatorBloc>(
+          create: (context) => NavigatorBloc(),
+        ),
+        BlocProvider<ReservedBloc>(
+          create: (context) => ReservedBloc(),
+        ),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'CPR Application',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        home: const CprHomePage(),
       ),
-      home: const CprHomePage(),
     );
   }
 }
@@ -45,6 +58,9 @@ class CprHomePage extends StatelessWidget {
         '/signin': (context) => Signin(),
         '/signup': (context) => Signup(),
         '/home': (context) => Home(),
+        '/reserv': (context) => Reserv(),
+        '/history': (context) => History(),
+        '/setting': (context) => Setting(),
       },
     );
   }
