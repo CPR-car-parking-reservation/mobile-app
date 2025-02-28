@@ -1,7 +1,7 @@
 part of 'reserved_bloc.dart';
 
 @immutable
-abstract class ReservedState extends Equatable {
+abstract class ReservedState {
   const ReservedState();
 
   @override
