@@ -1,4 +1,4 @@
-import 'package:car_parking_reservation/Bloc/reserved/reserved_bloc.dart';
+import 'package:car_parking_reservation/bloc/reserved/reserved_bloc.dart';
 import 'package:car_parking_reservation/bloc/navigator/navigator_bloc.dart';
 import 'package:car_parking_reservation/reserv.dart';
 import 'package:car_parking_reservation/setting/setting_page.dart';

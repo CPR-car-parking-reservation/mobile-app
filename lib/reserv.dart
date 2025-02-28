@@ -30,7 +30,7 @@ class _ReservState extends State<Reserv> {
   bool isVisible = false;
   bool _boolfade = true;
 
-  late DateFormat dateFormat;
+  final dateFormat = DateTime.now();
   late DateFormat timeFormat;
 
   late List<Map<String, dynamic>> history;
@@ -38,7 +38,6 @@ class _ReservState extends State<Reserv> {
   void initState() {
     super.initState();
     initializeDateFormatting();
-    dateFormat = DateFormat.yMMMMd('th');
     timeFormat = DateFormat.Hms('th');
     history = [];
   }
@@ -123,7 +122,7 @@ class _ReservState extends State<Reserv> {
                                       padding: const EdgeInsets.only(
                                           left: 10, top: 7.5),
                                       child: Text(
-                                        "${dateFormat.format(DateTime.now())}",
+                                        "${dateFormat.day}-${dateFormat.month}-${dateFormat.year}",
                                         style: TextStyle(
                                             fontFamily: "Amiko",
                                             fontSize: 22,
@@ -226,133 +225,128 @@ class _ReservState extends State<Reserv> {
                             ),
                           ),
                         ),
-                        // Positioned(
-                        //   bottom: 75,
-                        //   child: Container(
-                        //     child: ElevatedButton(
-                        //       style: ElevatedButton.styleFrom(
-                        //           backgroundColor: Colors.white),
-                        //       onPressed: () {
-                        //         if (currentDateController.hour != 0 &&
-                        //             currentDateController.minute != 0) {
-                        //           setState(() {
-                        //             isVisible = true;
-                        //             _boolfade = true;
-                        //           });
+                        Positioned(
+                          bottom: 75,
+                          child: Container(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white),
+                              onPressed: () {
+                                setState(() {
+                                  isVisible = true;
+                                  _boolfade = true;
+                                });
 
-                        //           String select_this_date =
-                        //               "${currentDateController.day}/${currentDateController.month}/${currentDateController.year}";
-                        //           String select_this_time =
-                        //               "${currentDate + 7}:${currentDateController.minute.toString().padLeft(2, '0')}";
+                                String select_this_date =
+                                    "${dateFormat.day}-${dateFormat.month}-${dateFormat.year}";
+                                String select_this_time =
+                                    "${timeFormat.format(DateTime.now().toLocal())}";
 
-                        //           ScaffoldMessenger.of(context).showSnackBar(
-                        //             SnackBar(
-                        //               backgroundColor: const Color(0xFF29CE79),
-                        //               duration: Duration(milliseconds: 1500),
-                        //               content: Padding(
-                        //                 padding:
-                        //                     const EdgeInsets.only(left: 20),
-                        //                 child: Row(
-                        //                   children: [
-                        //                     Icon(
-                        //                       Icons.check_circle,
-                        //                       color: Colors.white,
-                        //                     ),
-                        //                     Padding(
-                        //                       padding: const EdgeInsets.only(
-                        //                           left: 20),
-                        //                       child: Text(
-                        //                         'Success',
-                        //                         style: TextStyle(
-                        //                             fontFamily: "Amiko",
-                        //                             fontSize: 18,
-                        //                             fontWeight: FontWeight.w700,
-                        //                             color: Colors.white),
-                        //                       ),
-                        //                     ),
-                        //                   ],
-                        //                 ),
-                        //               ),
-                        //               action: SnackBarAction(
-                        //                 label: '',
-                        //                 onPressed: () {
-                        //                   // Code to execute.
-                        //                 },
-                        //               ),
-                        //               padding: EdgeInsets.all(2),
-                        //               shape: RoundedRectangleBorder(
-                        //                 borderRadius: BorderRadius.circular(30),
-                        //               ),
-                        //               behavior: SnackBarBehavior.floating,
-                        //             ),
-                        //           );
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    backgroundColor: const Color(0xFF29CE79),
+                                    duration: Duration(milliseconds: 700),
+                                    content: Padding(
+                                      padding: const EdgeInsets.only(left: 20),
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.check_circle,
+                                            color: Colors.white,
+                                          ),
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(left: 20),
+                                            child: Text(
+                                              'Success',
+                                              style: TextStyle(
+                                                  fontFamily: "Amiko",
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    action: SnackBarAction(
+                                      label: '',
+                                      onPressed: () {
+                                        // Code to execute.
+                                      },
+                                    ),
+                                    padding: EdgeInsets.all(2),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                    behavior: SnackBarBehavior.floating,
+                                  ),
+                                );
 
-                        //           final historyData = History_data(
-                        //             date: select_this_date,
-                        //             start_at: select_this_time,
-                        //             end_at: "N/A",
-                        //             parkingSlot: ParkingSlot(
-                        //               id: widget.parking_slots_id ?? '',
-                        //               slot_number: widget.slot_number ?? '',
-                        //               status: widget.status ?? '',
-                        //               floorId: widget.floor_number ?? '',
-                        //               floor: Floor(
-                        //                 id: widget.floor_number ?? '',
-                        //                 floor_number: widget.floor_number ?? '',
-                        //               ),
-                        //             ),
-                        //           );
-                        //           BlocProvider.of<ReservedBloc>(context)
-                        //               .add(SendReservation(historyData));
+                                final historyData = History_data(
+                                  date: select_this_date,
+                                  start_at: select_this_time,
+                                  end_at: "N/A",
+                                  parkingSlot: ParkingSlot(
+                                    id: widget.parking_slots_id ?? '',
+                                    slot_number: widget.slot_number ?? '',
+                                    status: widget.status ?? '',
+                                    floorId: widget.floor_number ?? '',
+                                    floor: Floor(
+                                      id: widget.floor_number ?? '',
+                                      floor_number: widget.floor_number ?? '',
+                                    ),
+                                  ),
+                                );
+                                BlocProvider.of<ReservedBloc>(context)
+                                    .add(SendReservation(historyData));
 
-                        //           showDialog(
-                        //             context: context,
-                        //             builder: (context) => AlertDialog(
-                        //               title: Text("Reservation Sent"),
-                        //               content: Column(
-                        //                 mainAxisSize: MainAxisSize.min,
-                        //                 crossAxisAlignment:
-                        //                     CrossAxisAlignment.start,
-                        //                 children: [
-                        //                   Text("Date: ${historyData.date}"),
-                        //                   Text(
-                        //                       "Start Time: ${historyData.start_at}"),
-                        //                   Text(
-                        //                       "End Time: ${historyData.end_at}"),
-                        //                   Text(
-                        //                       "Slot Number: ${historyData.parkingSlot.slot_number}"),
-                        //                   Text(
-                        //                       "Status: ${historyData.parkingSlot.status}"),
-                        //                   Text(
-                        //                       "Floor Number: ${historyData.parkingSlot.floor.floor_number}"),
-                        //                 ],
-                        //               ),
-                        //               actions: [
-                        //                 TextButton(
-                        //                   onPressed: () =>
-                        //                       Navigator.of(context).pop(),
-                        //                   child: Text("OK"),
-                        //                 ),
-                        //               ],
-                        //             ),
-                        //           );
-                        //         }
-                        //       },
-                        //       child: Padding(
-                        //         padding: const EdgeInsets.symmetric(
-                        //             horizontal: 10, vertical: 10),
-                        //         child: Text(
-                        //           "Reserved",
-                        //           style: TextStyle(
-                        //               fontFamily: "Amiko",
-                        //               fontSize: 18,
-                        //               fontWeight: FontWeight.w700,
-                        //               color: Colors.black),
-                        //         ),
-                        //       ),
-                        //     ),
-                        //   ),
-                        // ),
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: Text("Reservation Sent"),
+                                    content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text("Date: ${historyData.date}"),
+                                        Text(
+                                            "Start Time: ${historyData.start_at}"),
+                                        Text("End Time: ${historyData.end_at}"),
+                                        Text(
+                                            "Slot Number: ${historyData.parkingSlot.slot_number}"),
+                                        Text(
+                                            "Status: ${historyData.parkingSlot.status}"),
+                                        Text(
+                                            "Floor Number: ${historyData.parkingSlot.floor.floor_number}"),
+                                      ],
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(),
+                                        child: Text("OK"),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 10),
+                                child: Text(
+                                  "Reserved",
+                                  style: TextStyle(
+                                      fontFamily: "Amiko",
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.black),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ],
