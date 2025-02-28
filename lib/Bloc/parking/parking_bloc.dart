@@ -1,37 +1,68 @@
-import 'dart:async';
+import 'dart:developer';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:car_parking_reservation/model/parking_slot.dart';
-import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:car_parking_reservation/model/parking_slot.dart';
 import 'dart:convert';
 
-part 'parking_event.dart';
 part 'parking_state.dart';
+part 'parking_event.dart';
 
 class ParkingBloc extends Bloc<ParkingEvent, ParkingState> {
-  static const String baseUrl =
-      "https://shaft-sheet-scotia-sweden.trycloudflare.com";
-
   ParkingBloc() : super(ParkingInitial()) {
-    on<FetchSlots>(_onFetchSlots);
+    on<OnFirstParkingSlot>((event, emit) async {
+      emit(ParkingLoading());
+      try {
+        final parkingSlots = await onFetchData();
+        emit(ParkingLoaded(parkingSlots));
+      } catch (e) {
+        emit(ParkingError("Failed to load data!"));
+      }
+    });
+
+    on<SenderParkingSlot>((event, emit) {
+      if (state is ParkingLoaded) {
+        final currentList =
+            List<ParkingSlot>.from((state as ParkingLoaded).parkingSlots);
+        currentList.add(event.parkingSlot);
+        emit(ParkingLoaded(currentList));
+      } else {
+        emit(ParkingLoaded([event.parkingSlot]));
+      }
+    });
+
+    on<SelectParkingSlotToReserv>((event, emit) {
+      emit(ParkingLoading());
+      log("🚗 Selected Parking Slot: ${event.selectedSlot.id}");
+      log("🚗 Selected Parking Slot: ${event.selectedSlot.slot_number}");
+      log("🚗 Selected Parking Slot: ${event.selectedSlot.floor.floor_number}");
+      log("🚗 Selected Parking Slot: ${event.selectedSlot.status}");
+      
+
+      emit(ParkingSlotSelected(event.selectedSlot));
+
+      log("🔹 State Changed to ParkingSlotSelected");
+    });
   }
 
-  Future<void> _onFetchSlots(
-      FetchSlots event, Emitter<ParkingState> emit) async {
-    try {
-      final response = await http.get(Uri.parse('$baseUrl/parking_slots'));
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> responseJson = json.decode(response.body);
-        final List<dynamic> parkingSlotList = responseJson['data'];
-        final List<ParkingSlot> slots =
-            parkingSlotList.map((slot) => ParkingSlot.fromJson(slot)).toList();
-        emit(SlotsLoaded(slots: slots));
+  Future<List<ParkingSlot>> onFetchData() async {
+    String strUrl = 'https://names-celebrity-web-round.trycloudflare.com';
+    final response =
+        await http.get(Uri.parse("$strUrl/parking_slots"), headers: {
+      "Accept": "application/json",
+      "content-type": "application/json",
+    });
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> decodedJson = json.decode(response.body);
+      if (decodedJson.containsKey('data')) {
+        List data = decodedJson['data'];
+        return data.map((e) => ParkingSlot.fromJson(e)).toList();
       } else {
-        emit(ParkingError('Failed to load data!'));
+        throw Exception('Invalid response format!');
       }
-    } catch (error) {
-      emit(ParkingError("Error fetching slots: $error"));
+    } else {
+      throw Exception('Failed to load data!');
     }
   }
 }
