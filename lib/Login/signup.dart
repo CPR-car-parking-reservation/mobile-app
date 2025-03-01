@@ -1,5 +1,10 @@
+import 'dart:developer';
+
+import 'package:car_parking_reservation/Bloc/user/register/register_bloc.dart';
 import 'package:car_parking_reservation/Widget/home.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart';
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -9,9 +14,10 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
-  // final newuserController = TextEditingController();
-  // final newemailController = TextEditingController();
-  // final newpassController = TextEditingController();
+  final newuserController = TextEditingController();
+  final newemailController = TextEditingController();
+  final newpassController = TextEditingController();
+  final newconfirmpassController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -41,13 +47,15 @@ class _SignupState extends State<Signup> {
                   ],
                 ),
               ),
+              SizedBox( height: 30),
               SizedBox(
-                height: 200,
+                height: 270,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
+                    //newuser
                     TextField(
-                      // controller: newuserController,
+                      controller: newuserController,
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.grey[100],
@@ -66,7 +74,7 @@ class _SignupState extends State<Signup> {
                       height: 15,
                     ),
                     TextField(
-                      // controller: newemailController,
+                      controller: newemailController,
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.grey[100],
@@ -85,7 +93,7 @@ class _SignupState extends State<Signup> {
                       height: 15,
                     ),
                     TextField(
-                      // controller: newpassController,
+                      controller: newpassController,
                       obscureText: true,
                       decoration: InputDecoration(
                         filled: true,
@@ -96,6 +104,26 @@ class _SignupState extends State<Signup> {
                               fontFamily: "Amiko", color: Colors.black45),
                         ),
                         prefixIcon: Icon(Icons.lock_rounded),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide.none),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    TextField(
+                      controller: newconfirmpassController,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.grey[100],
+                        label: Text(
+                          "Confirm Password",
+                          style: TextStyle(
+                              fontFamily: "Amiko", color: Colors.black45),
+                        ),
+                        prefixIcon: Icon(Icons.check_box_rounded),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15),
                             borderSide: BorderSide.none),
@@ -113,38 +141,24 @@ class _SignupState extends State<Signup> {
                       style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFEF4637),
                           elevation: 3),
-                      onPressed: () {
-                        //if (newuserController.text.isEmpty ||
-                        //    newpassController.text.isEmpty || newemailController.text.isEmpty) {
-                        //  ScaffoldMessenger.of(context).showSnackBar(
-                        //    SnackBar(
-                        //      content: Text(
-                        //        "Fail",
-                        //        style: TextStyle(
-                        //            color: Colors.white,
-                        //            fontWeight: FontWeight.bold),
-                        //      ),
-                        //      backgroundColor:
-                        //          const Color(0xFFEF4637),
-                        //    ),
-                        //  );
-                        //} else {
-                        //  ScaffoldMessenger.of(context).showSnackBar(
-                        //    SnackBar(
-                        //      content: Text(
-                        //        "Success",
-                        //        style: TextStyle(
-                        //            color: Colors.black,
-                        //            fontWeight: FontWeight.bold),
-                        //      ),
-                        //      backgroundColor: const Color(0xFF29CE79),
-                        //    ),
-                        //  );
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => Home()),
-                        );
-                        //}
+                      onPressed: () async {
+                        context.read<RegisterBloc>().add(
+                            OnCreateRegister(
+                                newuserController.text,
+                                newemailController.text,
+                                newpassController.text,
+                                newconfirmpassController.text));
+                            log('newuserController.text: ${newuserController.text}');
+                            log('newemailController.text: ${newemailController.text}');
+                            log('newpassController.text: ${newpassController.text}');
+                            log('newconfirmpassController.text: ${newconfirmpassController.text}');
+
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) => Home(),
+                        //   ),
+                        // );
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(

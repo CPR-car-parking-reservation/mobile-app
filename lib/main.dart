@@ -1,7 +1,6 @@
 import 'package:car_parking_reservation/Bloc/reserved/reserved_bloc.dart';
+import 'package:car_parking_reservation/Bloc/user/register/register_bloc.dart';
 import 'package:car_parking_reservation/admin/admin_home.dart';
-import 'package:car_parking_reservation/bloc/admin_bloc/admin_navigator/admin_navigator_bloc.dart';
-import 'package:car_parking_reservation/bloc/admin_bloc/admin_parking/admin_parking_bloc.dart';
 import 'package:car_parking_reservation/bloc/navigator/navigator_bloc.dart';
 import 'package:car_parking_reservation/reserv.dart';
 import 'package:car_parking_reservation/setting/setting_page.dart';
@@ -16,19 +15,41 @@ import 'history.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: ".env");
-  runApp(MultiBlocProvider(
-    providers: [
-      BlocProvider(create: (context) => NavigatorBloc()),
-      BlocProvider(create: (context) => ReservedBloc()),
-      BlocProvider(create: (context) => AdminNavigatorBloc()),
-      BlocProvider(create: (context) => AdminParkingBloc()),
-    ],
-    child: MyApp(),
-  ));
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<NavigatorBloc>(
+          create: (context) => NavigatorBloc(),
+        ),
+        BlocProvider<ReservedBloc>(
+          create: (context) => ReservedBloc(),
+        ),
+        BlocProvider<RegisterBloc>(
+          create: (context) => RegisterBloc(),
+        )
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'CPR Application',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        home: const CprHomePage(),
+      ),
+    );
+  }
+}
+
+class CprHomePage extends StatelessWidget {
+  const CprHomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -38,25 +59,16 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
         useMaterial3: true,
       ),
-      onGenerateRoute: (settings) {
-        switch (settings.name) {
-          case '/':
-            return MaterialPageRoute(builder: (_) => AdminHomePage());
-          case '/signin':
-            return MaterialPageRoute(builder: (_) => Signin());
-          case '/signup':
-            return MaterialPageRoute(builder: (_) => Signup());
-          case '/home':
-            return MaterialPageRoute(builder: (_) => Home());
-          case '/reserv':
-            return MaterialPageRoute(builder: (_) => Reserv());
-          case '/history':
-            return MaterialPageRoute(builder: (_) => History());
-          case '/setting':
-            return MaterialPageRoute(builder: (_) => Setting());
-          default:
-            return MaterialPageRoute(builder: (_) => AdminHomePage());
-        }
+      initialRoute: '/',
+      routes: {
+        //'/': (context) => AdminHomePage(),
+        '/': (context) => Welcome(),
+        '/signin': (context) => Signin(),
+        '/signup': (context) => Signup(),
+        '/home': (context) => Home(),
+        '/reserv': (context) => Reserv(),
+        '/history': (context) => History(),
+        '/setting': (context) => Setting(),
       },
     );
   }
