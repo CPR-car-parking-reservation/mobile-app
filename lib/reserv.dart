@@ -120,7 +120,7 @@ class _ReservState extends State<Reserv> {
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.only(
-                                          left: 10, top: 7.5),
+                                          left: 5, top: 7.5),
                                       child: Text(
                                         "${dateFormat.day}-${dateFormat.month}-${dateFormat.year}",
                                         style: TextStyle(
@@ -135,14 +135,17 @@ class _ReservState extends State<Reserv> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(
-                                      Icons.access_time,
-                                      color: Colors.white,
-                                      size: 30,
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 15),
+                                      child: Icon(
+                                        Icons.access_time,
+                                        color: Colors.white,
+                                        size: 30,
+                                      ),
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.only(
-                                          left: 10, top: 7.5),
+                                          left: 5, top: 7.5),
                                       child: Text(
                                         "${timeFormat.format(DateTime.now().toLocal())}",
                                         style: TextStyle(
@@ -242,47 +245,6 @@ class _ReservState extends State<Reserv> {
                                 String select_this_time =
                                     "${timeFormat.format(DateTime.now().toLocal())}";
 
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    backgroundColor: const Color(0xFF29CE79),
-                                    duration: Duration(milliseconds: 700),
-                                    content: Padding(
-                                      padding: const EdgeInsets.only(left: 20),
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            Icons.check_circle,
-                                            color: Colors.white,
-                                          ),
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(left: 20),
-                                            child: Text(
-                                              'Success',
-                                              style: TextStyle(
-                                                  fontFamily: "Amiko",
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.w700,
-                                                  color: Colors.white),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    action: SnackBarAction(
-                                      label: '',
-                                      onPressed: () {
-                                        // Code to execute.
-                                      },
-                                    ),
-                                    padding: EdgeInsets.all(2),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(30),
-                                    ),
-                                    behavior: SnackBarBehavior.floating,
-                                  ),
-                                );
-
                                 final historyData = History_data(
                                   date: select_this_date,
                                   start_at: select_this_time,
@@ -300,33 +262,60 @@ class _ReservState extends State<Reserv> {
                                 );
                                 BlocProvider.of<ReservedBloc>(context)
                                     .add(SendReservation(historyData));
-
+                                debugPrint(
+                                    "Date: ${historyData.date} Start Time: ${historyData.start_at} End Time: ${historyData.end_at} Slot Number: ${historyData.parkingSlot.slot_number} Status: ${historyData.parkingSlot.status} Floor Number: ${historyData.parkingSlot.floor.floor_number}");
                                 showDialog(
                                   context: context,
                                   builder: (context) => AlertDialog(
-                                    title: Text("Reservation Sent"),
-                                    content: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                    title: Column(
                                       children: [
-                                        Text("Date: ${historyData.date}"),
-                                        Text(
-                                            "Start Time: ${historyData.start_at}"),
-                                        Text("End Time: ${historyData.end_at}"),
-                                        Text(
-                                            "Slot Number: ${historyData.parkingSlot.slot_number}"),
-                                        Text(
-                                            "Status: ${historyData.parkingSlot.status}"),
-                                        Text(
-                                            "Floor Number: ${historyData.parkingSlot.floor.floor_number}"),
+                                        Icon(Icons.check_circle,
+                                            color: Colors.green, size: 50),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 10),
+                                          child: Text(
+                                            "Reservation Success",
+                                            style: TextStyle(
+                                                fontFamily: "Amiko",
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w700,
+                                                color: Colors.black),
+                                          ),
+                                        ),
                                       ],
                                     ),
+                                    // content: Row(
+                                    //   mainAxisAlignment:
+                                    //       MainAxisAlignment.center,
+                                    //   children: [
+                                    //     Flexible(
+                                    //       child: Text(
+                                    //         "",
+                                    //       ),
+                                    //     ),
+                                    //   ],
+                                    // ),
                                     actions: [
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(),
-                                        child: Text("OK"),
+                                      Center(
+                                        child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.green),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 75),
+                                              child: Text("OK",
+                                                  style: TextStyle(
+                                                      fontFamily: "Amiko",
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      fontSize: 16,
+                                                      color: Colors.white)),
+                                            )),
                                       ),
                                     ],
                                   ),

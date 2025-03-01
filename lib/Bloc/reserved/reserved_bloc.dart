@@ -57,7 +57,7 @@ class ReservedBloc extends Bloc<ReservedEvent, ReservedState> {
   }
 
   Future<List<History_data>> fetchData() async {
-    String strUrl = 'https://names-celebrity-web-round.trycloudflare.com';
+    String strUrl = ' http://localhost:4000';
     debugPrint('url: $strUrl');
     final response = await http.get(Uri.parse("$strUrl/reservation"), headers: {
       "Accept": "application/json",
@@ -78,7 +78,7 @@ class ReservedBloc extends Bloc<ReservedEvent, ReservedState> {
   }
 
   Future<bool> postData(History_data reservation) async {
-    String strUrl = 'https://names-celebrity-web-round.trycloudflare.com';
+    String strUrl = ' http://localhost:4000';
     debugPrint('url: $strUrl');
     final response = await http.post(
       Uri.parse("$strUrl/reservation"),

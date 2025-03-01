@@ -26,7 +26,7 @@ class _SigninState extends State<Signin> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               SizedBox(
-                height: 175,
+                height: 50,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -50,151 +50,102 @@ class _SigninState extends State<Signin> {
                         ),
                       ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        bottom: 10,
-                      ),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white, elevation: 3),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => Home()),
-                          );
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 20),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Image.asset(
-                                "assets/images/logogoogle.png",
-                                height: 35,
-                              ),
-                              Text(
-                                "CONTINUE WITH GOOGLE",
-                                style: TextStyle(
-                                    color: Colors.black54,
-                                    fontFamily: "Amiko",
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 15),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    Text(
-                      "OR LOG IN WITH EMAIL",
-                      style: TextStyle(
-                          fontSize: 14,
-                          fontFamily: "Amiko",
-                          fontWeight: FontWeight.w700,
-                          color: Colors.grey),
-                    ),
                   ],
                 ),
               ),
-              SizedBox(
-                height: 40,
-              ),
-              SizedBox(
-                height: 400,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    TextField(
-                      // controller: userController,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.grey[100],
-                        label: Text(
-                          "Email or Username",
-                          style: TextStyle(
-                              fontFamily: "Amiko", color: Colors.black45),
-                        ),
-                        prefixIcon: Icon(Icons.account_circle_rounded),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15),
-                            borderSide: BorderSide.none),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  TextFormField(
+                    // controller: userController,
+
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.grey[100],
+                      label: Text(
+                        "Email or Username",
+                        style: TextStyle(
+                            fontFamily: "Amiko", color: Colors.black45),
+                      ),
+                      prefixIcon: Icon(Icons.account_circle_rounded),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          borderSide: BorderSide.none),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 25,
+                  ),
+                  TextFormField(
+                    // controller: passController,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.grey[100],
+                      label: Text(
+                        "Password",
+                        style: TextStyle(
+                            fontFamily: "Amiko", color: Colors.black45),
+                      ),
+                      prefixIcon: Icon(Icons.lock_rounded),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          borderSide: BorderSide.none),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 40,
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFEF4637), elevation: 3),
+                    onPressed: () {
+                      //if (userController.text.isEmpty ||
+                      //    passController.text.isEmpty) {
+                      //  ScaffoldMessenger.of(context).showSnackBar(
+                      //    SnackBar(
+                      //      content: Text(
+                      //        "Fail",
+                      //        style: TextStyle(
+                      //            color: Colors.white,
+                      //            fontWeight: FontWeight.bold),
+                      //      ),
+                      //      backgroundColor:
+                      //          const Color(0xFFEF4637),
+                      //    ),
+                      //  );
+                      //} else {
+                      //  ScaffoldMessenger.of(context).showSnackBar(
+                      //    SnackBar(
+                      //      content: Text(
+                      //        "Success",
+                      //        style: TextStyle(
+                      //            color: Colors.black,
+                      //            fontWeight: FontWeight.bold),
+                      //      ),
+                      //      backgroundColor: const Color(0xFF29CE79),
+                      //    ),
+                      //  );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Home()),
+                      );
+                      //}
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 15, horizontal: 100),
+                      child: Text(
+                        "LOG IN",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: "Amiko",
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16),
                       ),
                     ),
-                    SizedBox(
-                      height: 25,
-                    ),
-                    TextField(
-                      // controller: passController,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.grey[100],
-                        label: Text(
-                          "Password",
-                          style: TextStyle(
-                              fontFamily: "Amiko", color: Colors.black45),
-                        ),
-                        prefixIcon: Icon(Icons.lock_rounded),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15),
-                            borderSide: BorderSide.none),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 40,
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFEF4637),
-                          elevation: 3),
-                      onPressed: () {
-                        //if (userController.text.isEmpty ||
-                        //    passController.text.isEmpty) {
-                        //  ScaffoldMessenger.of(context).showSnackBar(
-                        //    SnackBar(
-                        //      content: Text(
-                        //        "Fail",
-                        //        style: TextStyle(
-                        //            color: Colors.white,
-                        //            fontWeight: FontWeight.bold),
-                        //      ),
-                        //      backgroundColor:
-                        //          const Color(0xFFEF4637),
-                        //    ),
-                        //  );
-                        //} else {
-                        //  ScaffoldMessenger.of(context).showSnackBar(
-                        //    SnackBar(
-                        //      content: Text(
-                        //        "Success",
-                        //        style: TextStyle(
-                        //            color: Colors.black,
-                        //            fontWeight: FontWeight.bold),
-                        //      ),
-                        //      backgroundColor: const Color(0xFF29CE79),
-                        //    ),
-                        //  );
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => Home()),
-                        );
-                        //}
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 15, horizontal: 100),
-                        child: Text(
-                          "LOG IN",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontFamily: "Amiko",
-                              fontWeight: FontWeight.w700,
-                              fontSize: 16),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,

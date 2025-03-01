@@ -27,7 +27,7 @@ class _SignupState extends State<Signup> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               SizedBox(
-                height: 200,
+                height: 75,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -38,50 +38,8 @@ class _SignupState extends State<Signup> {
                           fontFamily: "Amiko",
                           fontWeight: FontWeight.w700),
                     ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white, elevation: 3),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => Home()),
-                        );
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Image.asset(
-                              "assets/images/logogoogle.png",
-                              height: 35,
-                            ),
-                            Text(
-                              "CONTINUE WITH GOOGLE",
-                              style: TextStyle(
-                                  color: Colors.black54,
-                                  fontFamily: "Amiko",
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 15),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Text(
-                      "OR LOG IN WITH EMAIL",
-                      style: TextStyle(
-                          fontSize: 14,
-                          fontFamily: "Amiko",
-                          fontWeight: FontWeight.w700,
-                          color: Colors.grey),
-                    ),
                   ],
                 ),
-              ),
-              SizedBox(
-                height: 15,
               ),
               SizedBox(
                 height: 200,

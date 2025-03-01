@@ -16,7 +16,7 @@ class ParkingBloc extends Bloc<ParkingEvent, ParkingState> {
         final parkingSlots = await onFetchData();
         emit(ParkingLoaded(parkingSlots));
       } catch (e) {
-        emit(ParkingError("Failed to load data!"));
+        emit(ParkingError("Now : Failed to load data!"));
       }
     });
 
@@ -45,7 +45,7 @@ class ParkingBloc extends Bloc<ParkingEvent, ParkingState> {
   }
 
   Future<List<ParkingSlot>> onFetchData() async {
-    String strUrl = 'https://api.woraviboon.com';
+    String strUrl = ' http://localhost:4000';
     final response =
         await http.get(Uri.parse("$strUrl/parking_slots"), headers: {
       "Accept": "application/json",
