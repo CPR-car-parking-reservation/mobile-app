@@ -1,4 +1,4 @@
-import 'package:car_parking_reservation/Bloc/reserved/reserved_bloc.dart';
+import 'package:car_parking_reservation/bloc/reserved/reserved_bloc.dart';
 import 'package:car_parking_reservation/model/history.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,7 +28,10 @@ class _HistoryState extends State<History> {
 
     mockHistoryData = [];
 
-    if (widget.date != null && widget.start_at != null) {
+    if (widget.date != null &&
+        widget.start_at != null &&
+        widget.end_at != null &&
+        widget.parking_slots_id != null) {
       mockHistoryData.add({
         "date": widget.date!,
         "inTime": widget.start_at!,

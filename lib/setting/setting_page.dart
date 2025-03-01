@@ -28,7 +28,7 @@ class Setting extends StatefulWidget {
 
 class _SettingState extends State<Setting> with RouteAware {
   String baseImgUrl = 'http://172.24.144.1:4000';
-  
+
   Profile profile = Profile(
     name: "Adewale Taiwo",
     phone: "094-468-xxxx",
@@ -43,7 +43,8 @@ class _SettingState extends State<Setting> with RouteAware {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    routeObserver.subscribe(this, ModalRoute.of(context)! as PageRoute<dynamic>);
+    routeObserver.subscribe(
+        this, ModalRoute.of(context)! as PageRoute<dynamic>);
   }
 
   @override
@@ -101,7 +102,9 @@ class _SettingState extends State<Setting> with RouteAware {
                   );
                   if (result == true) {
                     // ignore: use_build_context_synchronously
-                    context.read<SettingBloc>().add(LoadCars()); // Reload data if result is true
+                    context
+                        .read<SettingBloc>()
+                        .add(LoadCars()); // Reload data if result is true
                   }
                 },
                 icon: const Icon(Icons.edit, color: Colors.orange),
