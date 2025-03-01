@@ -1,4 +1,5 @@
 import 'package:car_parking_reservation/Bloc/reserved/reserved_bloc.dart';
+import 'package:car_parking_reservation/Bloc/user/register/register_bloc.dart';
 import 'package:car_parking_reservation/admin/admin_home.dart';
 import 'package:car_parking_reservation/bloc/navigator/navigator_bloc.dart';
 import 'package:car_parking_reservation/reserv.dart';
@@ -30,6 +31,9 @@ class MyApp extends StatelessWidget {
         BlocProvider<ReservedBloc>(
           create: (context) => ReservedBloc(),
         ),
+        BlocProvider<RegisterBloc>(
+          create: (context) => RegisterBloc(),
+        )
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -57,7 +61,8 @@ class CprHomePage extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => AdminHomePage(),
+        //'/': (context) => AdminHomePage(),
+        '/': (context) => Welcome(),
         '/signin': (context) => Signin(),
         '/signup': (context) => Signup(),
         '/home': (context) => Home(),
