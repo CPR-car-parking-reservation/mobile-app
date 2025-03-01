@@ -480,7 +480,9 @@ class _AdminParkingPageState extends State<AdminParkingPage> {
                             ),
                           ),
                           Text(
-                            slot.slotNumber,
+                            slot.slotNumber.length > 4
+                                ? slot.slotNumber.substring(0, 4)
+                                : slot.slotNumber,
                             style: const TextStyle(
                               fontFamily: "Amiko",
                               fontSize: 40,
@@ -627,60 +629,78 @@ class _AdminParkingPageState extends State<AdminParkingPage> {
 
             // 🔹 Search & Filter UI (คงอยู่ตลอดเวลา)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-              child: Row(
-                children: [
-                  Flexible(
-                    flex: 4, // 80% ของพื้นที่ทั้งหมด
-                    child: TextField(
-                      controller: _searchController,
-                      decoration: InputDecoration(
-                        hintText: "Search by name",
-                        prefixIcon: Icon(Icons.search),
-                        border: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(width: 2, color: Colors.blueGrey),
-                          borderRadius: BorderRadius.all(Radius.circular(100)),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(width: 2, color: Colors.blueGrey),
-                          borderRadius: BorderRadius.all(Radius.circular(100)),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(width: 1.2, color: Colors.blueGrey),
-                          borderRadius: BorderRadius.all(Radius.circular(100)),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+              child: SizedBox(
+                height: 47,
+                child: Row(
+                  children: [
+                    Flexible(
+                      flex: 4, // 80% ของพื้นที่ทั้งหมด
+                      child: SizedBox(
+                        height: 40,
+                        child: TextField(
+                          controller: _searchController,
+                          decoration: InputDecoration(
+                            hintStyle: TextStyle(
+                                color: Colors.blueGrey,
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: "Amiko"),
+                            hintText: "Search by name",
+                            prefixIcon: Icon(Icons.search),
+                            border: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(width: 2, color: Colors.blueGrey),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(100)),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(width: 2, color: Colors.blueGrey),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(100)),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  width: 1.2, color: Colors.blueGrey),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(100)),
+                            ),
+                          ),
+                          onChanged: (value) {
+                            context
+                                .read<AdminParkingBloc>()
+                                .add(OnSearch(search: value));
+                          },
                         ),
                       ),
-                      onChanged: (value) {
-                        context
-                            .read<AdminParkingBloc>()
-                            .add(OnSearch(search: value));
-                      },
                     ),
-                  ),
-                  SizedBox(
-                      width: 10), // ระยะห่างระหว่าง TextField กับ Filter Button
-                  ElevatedButton(
-                    onPressed: () => _showFilterDialog(context),
-                    style: ElevatedButton.styleFrom(
-                      shape: const CircleBorder(),
-                      padding: const EdgeInsets.all(4),
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      foregroundColor: Colors.black,
+                    // ระยะห่างระหว่าง TextField กับ Filter Button
+                    ElevatedButton(
+                      onPressed: () => _showFilterDialog(context),
+                      style: ElevatedButton.styleFrom(
+                        shape: const CircleBorder(),
+                        padding: const EdgeInsets.all(4),
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                        foregroundColor: Colors.black,
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.filter_list_alt,
+                              size: 25, color: Colors.blueGrey),
+                          Text("Filter",
+                              style: TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.blueGrey,
+                                  fontFamily: "Amiko",
+                                  fontWeight: FontWeight.bold)),
+                        ],
+                      ),
                     ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.filter_list_alt,
-                            size: 40, color: Colors.blueGrey),
-                        Text("Filter"),
-                      ],
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
 
