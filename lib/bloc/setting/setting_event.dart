@@ -1,17 +1,19 @@
 import 'dart:io';
-import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
 @immutable
-abstract class SettingEvent extends Equatable {
+abstract class SettingEvent   {
   const SettingEvent();
 
-  @override
+
   List<Object> get props => [];
 }
 
 class LoadCars extends SettingEvent {}
 
+class LoadUser extends SettingEvent {}
+
+class LoadUserAndCars extends SettingEvent {}
 
 class FetchCarById extends SettingEvent {
   final String carId;
@@ -69,3 +71,22 @@ class DeleteCar extends SettingEvent {
   @override
   List<Object> get props => [id];
 }
+
+class UpdateProfile extends SettingEvent {
+  final String name;
+  final File? imageFile;
+
+  const UpdateProfile({
+    required this.name,
+    this.imageFile,
+  });
+
+  @override
+  List<Object> get props => [name, imageFile ?? ''];
+}
+
+
+
+
+
+

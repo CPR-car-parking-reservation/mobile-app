@@ -144,7 +144,7 @@ class _EditCarPageState extends State<EditCarPage> {
       listener: (context, state) {
         if (state is SettingSuccess) {
           _showSnackBar(context, state.message);
-          Navigator.pop(context);
+          Navigator.pop(context, true); 
         } else if (state is SettingError) {
           _showSnackBar(context, state.message);
         }
@@ -194,8 +194,7 @@ class _EditCarPageState extends State<EditCarPage> {
                               icon: const Icon(Icons.arrow_back,
                                   color: Colors.white),
                               onPressed: () {
-                                Navigator.pop(context,
-                                    true); // Pass a result to indicate a reload is needed
+                                Navigator.pop(context, true); 
                               },
                             ),
                             const Text(

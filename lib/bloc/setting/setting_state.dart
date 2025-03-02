@@ -1,13 +1,12 @@
-import 'package:equatable/equatable.dart';
 // ignore: depend_on_referenced_packages
 import 'package:meta/meta.dart';
 import 'package:car_parking_reservation/model/car.dart';
+import 'package:car_parking_reservation/model/profile.dart';
 
 @immutable
-abstract class SettingState extends Equatable {
+abstract class SettingState  {
   const SettingState();
 
-  @override
   List<Object> get props => [];
 }
 
@@ -15,13 +14,15 @@ class SettingInitial extends SettingState {}
 
 class SettingLoading extends SettingState {}
 
+//hasdata
 class SettingLoaded extends SettingState {
   final List<car_data> cars;
 
-  const SettingLoaded({required this.cars});
+  const SettingLoaded({required this.cars });
 
   @override
   List<Object> get props => [cars];
+  
 }
 
 class SettingError extends SettingState {
@@ -40,4 +41,23 @@ class SettingSuccess extends SettingState {
 
   @override
   List<Object> get props => [message];
+}
+
+class ProfileLoaded extends SettingState {
+    final Profile_data profile;
+
+    const ProfileLoaded({ required this.profile });
+
+    @override
+    List<Object> get props => [profile];
+}
+
+class UserAndCarsLoaded extends SettingState {
+  final Profile_data profile;
+  final List<car_data> cars;
+
+  const UserAndCarsLoaded({required this.profile, required this.cars});
+
+  @override
+  List<Object> get props => [profile, cars];
 }
