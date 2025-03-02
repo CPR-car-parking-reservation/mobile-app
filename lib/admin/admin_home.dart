@@ -1,10 +1,12 @@
 //AdminHomePage
+import 'package:car_parking_reservation/Bloc/admin_bloc/admin_user/admin_user_bloc.dart';
+import 'package:car_parking_reservation/Bloc/admin_bloc/admin_parking/admin_parking_bloc.dart';
+import 'package:car_parking_reservation/Bloc/admin_bloc/admin_navigator/admin_navigator_bloc.dart';
 import 'package:car_parking_reservation/admin/admin_parking.dart';
 import 'package:car_parking_reservation/admin/admin_setting.dart';
 import 'package:car_parking_reservation/admin/admin_users.dart';
 import 'package:car_parking_reservation/admin/dashboard.dart';
-import 'package:car_parking_reservation/bloc/admin_bloc/admin_navigator/admin_navigator_bloc.dart';
-import 'package:car_parking_reservation/bloc/admin_bloc/admin_parking/admin_parking_bloc.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -29,18 +31,23 @@ class AdminHomePage extends StatelessWidget {
                 ),
               ),
               body: Center(
-                child: IndexedStack(
-                  index: state.index,
-                  children: [
-                    AdminDashBoard(),
-                    AdminUserPage(),
-                    BlocProvider(
-                      create: (context) => AdminParkingBloc(),
-                      child: AdminParkingPage(),
-                    ),
-                    AdminSettingPage(),
-                  ],
-                ),
+                child: () {
+                  switch (state.index) {
+                    case 0:
+                      return AdminDashBoard();
+                    case 1:
+                      return AdminUserPage();
+                    case 2:
+                      return BlocProvider(
+                        create: (context) => AdminParkingBloc(),
+                        child: AdminParkingPage(),
+                      );
+                    case 3:
+                      return AdminSettingPage();
+                    default:
+                      return SizedBox.shrink();
+                  }
+                }(),
               ),
               bottomNavigationBar: BottomNavigationBar(
                 type: BottomNavigationBarType.fixed,

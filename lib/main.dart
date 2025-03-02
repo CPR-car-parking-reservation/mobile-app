@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
         useMaterial3: true,
       ),
-      initialRoute: '/',
+      initialRoute: '/admin',
       routes: {
         //'/': (context) => AdminHomePage(),
         '/': (context) => Welcome(),

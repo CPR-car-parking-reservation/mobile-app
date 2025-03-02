@@ -3,7 +3,7 @@ part of 'admin_parking_bloc.dart';
 @immutable
 sealed class AdminParkingEvent {}
 
-final class OnPageLoad extends AdminParkingEvent {}
+final class OnParkingPageLoad extends AdminParkingEvent {}
 
 class OnSearch extends AdminParkingEvent {
   final String? search;
@@ -28,8 +28,8 @@ class OnUpdate extends AdminParkingEvent {
 }
 
 class OnCreate extends AdminParkingEvent {
-  final slot_number;
-  final floor_number;
+  final String? slot_number;
+  final String? floor_number;
 
   OnCreate(this.slot_number, this.floor_number);
 }
