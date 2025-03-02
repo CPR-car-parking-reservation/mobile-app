@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'dart:convert';
 import 'package:car_parking_reservation/model/profile.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:image_picker/image_picker.dart';
@@ -8,7 +7,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:car_parking_reservation/bloc/setting/setting_bloc.dart';
 import 'package:car_parking_reservation/bloc/setting/setting_event.dart';
 import 'package:car_parking_reservation/bloc/setting/setting_state.dart';
-import 'package:http/http.dart' as http;
 
 class EditProfilePage extends StatefulWidget {
   final Profile_data profile;
@@ -21,6 +19,7 @@ class EditProfilePage extends StatefulWidget {
 
 class _EditProfilePageState extends State<EditProfilePage> {
   late TextEditingController usernameController;
+  late TextEditingController surnameController;
   late TextEditingController emailController;
   late TextEditingController oldPasswordController;
   late TextEditingController newPasswordController;
@@ -28,12 +27,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
   File? imageFile;
 
   String baseUrl = dotenv.env['BASE_URL'].toString();
-  final String fontFamily = "amiko"; // ตัวแปรเก็บค่า fontFamily
+  final String fontFamily = "amiko"; 
 
   @override
   void initState() {
     super.initState();
     usernameController = TextEditingController(text: widget.profile.name);
+    surnameController = TextEditingController(text: widget.profile.surname);
     emailController = TextEditingController(text: widget.profile.email);
     oldPasswordController = TextEditingController();
     newPasswordController = TextEditingController();
@@ -43,6 +43,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   void dispose() {
     usernameController.dispose();
+    surnameController.dispose();
     emailController.dispose();
     oldPasswordController.dispose();
     newPasswordController.dispose();
@@ -62,7 +63,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
       } else {
         // ignore: use_build_context_synchronously
         _showSnackBar(
-            // ignore: use_build_context_synchronously
             context, 'Please select an image file. (.png, .jpg, .jpeg)');
       }
     }
@@ -71,105 +71,86 @@ class _EditProfilePageState extends State<EditProfilePage> {
   void _updateProfile() {
     context.read<SettingBloc>().add(UpdateProfile(
           name: usernameController.text,
+          surname: surnameController.text,
           imageFile: imageFile,
         ));
   }
 
   void _showSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          style: TextStyle(
-            color: Colors.white,
-            fontFamily: fontFamily, // เรียกใช้ตัวแปร fontFamily
+    Future.delayed(Duration.zero, () {
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            message,
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: fontFamily, // เรียกใช้ตัวแปร fontFamily
+            ),
           ),
+          backgroundColor: Colors.blueAccent,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          margin: const EdgeInsets.all(10),
         ),
-        backgroundColor: Colors.blueAccent,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        margin: const EdgeInsets.all(10),
-      ),
-    );
-  }
-
-  Future<bool> _verifyOldPassword(String oldPassword) async {
-    final url = Uri.parse('$baseUrl/profile/verify_password');
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${context.read<SettingBloc>().token}',
-      },
-      body: jsonEncode({'old_password': oldPassword}),
-    );
-
-    if (response.statusCode == 200) {
-      return true;
-    } else {
-      return false;
-    }
+      );
+    });
   }
 
   void _showChangePasswordModal(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title:
-              Text('Change Password', style: TextStyle(fontFamily: fontFamily)),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              buildPasswordField('Old Password', oldPasswordController),
-              const SizedBox(height: 10),
-              buildPasswordField('New Password', newPasswordController),
-              const SizedBox(height: 10),
-              buildPasswordField('Confirm Password', confirmPasswordController),
+        return BlocListener<SettingBloc, SettingState>(
+          listener: (context, state) {
+            if (state is SettingSuccess) {
+              Navigator.of(context).pop(); 
+              _showSnackBar(context, state.message);  
+            } else if (state is SettingError) {
+              _showSnackBar(context, state.message); 
+            }
+          },
+          child: AlertDialog(
+            title: Text('Change Password', style: TextStyle(fontFamily: fontFamily)),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                buildPasswordField('Old Password', oldPasswordController),
+                const SizedBox(height: 10),
+                buildPasswordField('New Password', newPasswordController),
+                const SizedBox(height: 10),
+                buildPasswordField('Confirm Password', confirmPasswordController),
+              ],
+            ),
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  context.read<SettingBloc>().add(UpdatePassword(
+                        oldPassword: oldPasswordController.text,
+                        newPassword: newPasswordController.text,
+                        confirm_password: confirmPasswordController.text,
+                      ));
+                },
+                child: Text('Update Password', style: TextStyle(fontFamily: fontFamily)),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('Cancel', style: TextStyle(fontFamily: fontFamily)),
+              ),
             ],
           ),
-          actions: [
-            ElevatedButton(
-              onPressed: () async {
-                bool isOldPasswordCorrect =
-                    await _verifyOldPassword(oldPasswordController.text);
-                if (isOldPasswordCorrect) {
-                  if (newPasswordController.text ==
-                      confirmPasswordController.text) {
-                    // ignore: use_build_context_synchronously
-                    context.read<SettingBloc>().add(UpdatePassword(
-                          oldPassword: oldPasswordController.text,
-                          newPassword: newPasswordController.text,
-                        ));
-                    // ignore: use_build_context_synchronously
-                    Navigator.of(context).pop();
-                  } else {
-                    // ignore: use_build_context_synchronously
-                    _showSnackBar(context, 'New passwords do not match');
-                  }
-                } else {
-                  // ignore: use_build_context_synchronously
-                  _showSnackBar(context, 'Old password is incorrect');
-                }
-              },
-              child: Text('Update Password',
-                  style: TextStyle(fontFamily: fontFamily)),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Cancel', style: TextStyle(fontFamily: fontFamily)),
-            ),
-          ],
         );
       },
     );
   }
 
-  Widget buildTextField(String labelText, IconData icon, TextEditingController controller, {bool readOnly = false}) {
+  Widget buildTextField(
+      String labelText, IconData icon, TextEditingController controller,
+      {bool readOnly = false}) {
     return TextField(
       controller: controller,
       readOnly: readOnly,
@@ -247,7 +228,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       ),
                       padding: const EdgeInsets.all(7.0),
                       child: CircleAvatar(
-                        radius: 70,
+                        radius: 60,
                         backgroundColor: Colors.white,
                         child: ClipOval(
                           child: imageFile != null
@@ -280,6 +261,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 const SizedBox(height: 40),
                 buildTextField("Username", Icons.person, usernameController),
                 const SizedBox(height: 15),
+                buildTextField("Surname", Icons.person, surnameController),
+                const SizedBox(height: 15),
                 buildTextField("Email", Icons.email, emailController,
                     readOnly: true),
                 const SizedBox(height: 20),
@@ -300,7 +283,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           color: Colors.white,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          fontFamily: fontFamily), // เรียกใช้ตัวแปร fontFamily
+                          fontFamily: fontFamily),
                     ),
                   ),
                 ),

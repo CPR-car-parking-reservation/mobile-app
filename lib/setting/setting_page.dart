@@ -66,7 +66,7 @@ class _SettingState extends State<Setting> with RouteAware {
                 '$baseUrl${car[index].image_url}',
                 width: 100,
                 height: 60,
-                fit: BoxFit.cover,
+                fit: BoxFit.contain,
               ),
               const SizedBox(width: 12),
               Column(
@@ -95,19 +95,14 @@ class _SettingState extends State<Setting> with RouteAware {
                 ],
               ),
               const Spacer(),
-              
               IconButton(
                 onPressed: () async {
-                  final result = await Navigator.push(
+                  await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => EditCarPage(car_id: car[index].id),
                     ),
                   );
-                  if (result == true) {
-                    // ignore: use_build_context_synchronously
-                    context.read<SettingBloc>().add(LoadUserAndCars());
-                  }
                 },
                 icon: const Icon(Icons.edit, color: Colors.orange),
               ),
@@ -201,7 +196,11 @@ class _SettingState extends State<Setting> with RouteAware {
 
                         // MY PROFILE
                         Text("MY PROFILE",
-                            style: TextStyle(color: Colors.white , fontFamily: fontFamily, fontSize: 15)), 
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                                fontFamily: fontFamily,
+                                fontSize: 16)),
                         const SizedBox(height: 8),
                         Container(
                           decoration: BoxDecoration(
@@ -220,17 +219,44 @@ class _SettingState extends State<Setting> with RouteAware {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(profile.name,
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          fontFamily: fontFamily,
-                                        )),
-                                    Text(profile.email,
-                                        style: TextStyle(
-                                          color: Colors.red.shade400,
-                                          fontFamily: fontFamily,
-                                        )),
+                                    Row(
+                                      children: [
+                                        Text('Name : ',
+                                            style: TextStyle(
+                                              color: Colors.red,
+                                              fontFamily: fontFamily,
+                                            )),
+                                        Expanded(
+                                          child: Text(
+                                            '${profile.name} ${profile.surname}',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w400,
+                                              fontFamily: fontFamily,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text('Email : ',
+                                            style: TextStyle(
+                                              color: Colors.red,
+                                              fontFamily: fontFamily,
+                                              overflow: TextOverflow.ellipsis,
+                                            )),
+                                        Text(profile.email,
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w400,
+                                              fontFamily: fontFamily,
+                                              overflow: TextOverflow.ellipsis,
+                                            )),
+                                      ],
+                                    ),
                                   ],
                                 ),
                               ),
@@ -239,8 +265,8 @@ class _SettingState extends State<Setting> with RouteAware {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) =>
-                                              EditProfilePage(profile: profile)));
+                                          builder: (context) => EditProfilePage(
+                                              profile: profile)));
                                 },
                                 icon: const Icon(Icons.edit,
                                     color: Colors.orange),
@@ -252,8 +278,13 @@ class _SettingState extends State<Setting> with RouteAware {
                         const SizedBox(height: 20),
 
                         // MY CAR
-                        Text("MY CAR", style: TextStyle(color: Colors.white , fontFamily: fontFamily, fontSize: 15)),
-                        const SizedBox(height: 8),
+                        Text("MY CAR",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                                fontFamily: fontFamily,
+                                fontSize: 16)),
+                        const SizedBox(height: 5),
 
                         // แสดง ListView
                         Expanded(
@@ -278,14 +309,18 @@ class _SettingState extends State<Setting> with RouteAware {
                                   // ignore: use_build_context_synchronously
                                   _showSnackBar(context, result);
                                   // ignore: use_build_context_synchronously
-                                  context.read<SettingBloc>().add(LoadUserAndCars());
+                                  context
+                                      .read<SettingBloc>()
+                                      .add(LoadUserAndCars());
                                 }
                               },
                               backgroundColor:
                                   const Color.fromRGBO(41, 206, 121, 1),
                               icon: const Icon(Icons.add, color: Colors.white),
                               label: const Text("Add Car",
-                                  style: TextStyle(color: Colors.white, fontFamily: fontFamily)),
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontFamily: fontFamily)),
                             ),
                             FloatingActionButton.extended(
                               onPressed: () {
@@ -295,7 +330,9 @@ class _SettingState extends State<Setting> with RouteAware {
                               icon:
                                   const Icon(Icons.logout, color: Colors.white),
                               label: const Text("Logout",
-                                  style: TextStyle(color: Colors.white, fontFamily: fontFamily)),
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontFamily: fontFamily)),
                             ),
                           ],
                         ),

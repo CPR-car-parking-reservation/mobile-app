@@ -144,7 +144,7 @@ class _EditCarPageState extends State<EditCarPage> {
       listener: (context, state) {
         if (state is SettingSuccess) {
           _showSnackBar(context, state.message);
-          Navigator.pop(context, true); 
+          Navigator.pop(context, true);
         } else if (state is SettingError) {
           _showSnackBar(context, state.message);
         }
@@ -170,14 +170,12 @@ class _EditCarPageState extends State<EditCarPage> {
                   );
                 }
                 final car = snapshot.data!;
-
                 // ตั้งค่าเริ่มต้นสำหรับ Dropdown
                 if (selectedTypeNotifier.value == null ||
                     typeController.text.isEmpty) {
                   selectedTypeNotifier.value = car.car_type;
                   typeController.text = car.car_type;
                 }
-
                 plateController.text = car.car_number;
                 modelController.text = car.car_model;
 
@@ -194,7 +192,7 @@ class _EditCarPageState extends State<EditCarPage> {
                               icon: const Icon(Icons.arrow_back,
                                   color: Colors.white),
                               onPressed: () {
-                                Navigator.pop(context, true); 
+                                Navigator.pop(context, true);
                               },
                             ),
                             const Text(
@@ -206,9 +204,7 @@ class _EditCarPageState extends State<EditCarPage> {
                                 fontFamily: "amiko",
                               ),
                             ),
-                            const SizedBox(
-                                width:
-                                    48), // To balance the space taken by the back button
+                            const SizedBox(width: 48),
                           ],
                         ),
                         const SizedBox(height: 10),

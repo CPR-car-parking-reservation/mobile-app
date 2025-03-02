@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:car_parking_reservation/model/car.dart';
 import 'package:car_parking_reservation/model/profile.dart';
@@ -12,9 +13,9 @@ import 'package:http_parser/http_parser.dart';
 
 class SettingBloc extends Bloc<SettingEvent, SettingState> {
   final String? baseUrl = dotenv.env['BASE_URL'];
-  final String userId = '93eb832a-d699-441b-bde7-f279bbbb9d50';
+  final String userId = '65dec3c6-37b4-4e1a-b55d-b0583420fc02';
   final String token =
-      'eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjkzZWI4MzJhLWQ2OTktNDQxYi1iZGU3LWYyNzliYmJiOWQ1MCIsImV4cCI6MTc0MDk5MTE0OX0.0pKwjndqpbW7QnyBYMGqTwvZUap9z_C_wvCKVpthL_U';
+      'eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY1ZGVjM2M2LTM3YjQtNGUxYS1iNTVkLWIwNTgzNDIwZmMwMiIsImV4cCI6MTc0MTAyODczNH0.IauhFqmkRp68JzGi3I6uQQRM-0zvDqL7RkEdgqDhqa4';
 
   SettingBloc() : super(SettingInitial()) {
     on<LoadCars>(_onLoadCars);
@@ -40,6 +41,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
           'Authorization': 'Bearer $token',
         },
       );
+      final responseJson = json.decode(userResponse.body);
 
       if (userResponse.statusCode == 200) {
         final Map<String, dynamic> userJson = json.decode(userResponse.body);
@@ -50,7 +52,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
             .toList();
         emit(UserAndCarsLoaded(profile: profile, cars: cars));
       } else {
-        emit(SettingError(message: 'Error fetching user or car data'));
+        emit(SettingError(message: responseJson['message']));
       }
     } catch (e) {
       emit(SettingError(message: e.toString()));
@@ -69,13 +71,15 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
         },
       );
 
+      final responseJson = json.decode(userResponse.body);
+
       if (userResponse.statusCode == 200) {
         final Map<String, dynamic> userJson = json.decode(userResponse.body);
         final profile = Profile_data.fromJson(userJson);
 
         emit(ProfileLoaded(profile: profile));
       } else {
-        emit(SettingError(message: 'Error fetching user data'));
+        emit(SettingError(message: responseJson['message']));
       }
     } catch (e) {
       emit(SettingError(message: e.toString()));
@@ -110,12 +114,13 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
   Future<car_data> fetch_cars(String carId) async {
     final response = await http.get(Uri.parse('$baseUrl/cars/id/$carId'));
 
+    final responseJson = json.decode(response.body);
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseJson = json.decode(response.body);
       final List<dynamic> carsList = responseJson['data'];
       return car_data.fromJson(carsList[0]);
     } else {
-      throw Exception('error fetching data');
+      throw Exception(responseJson['message']);
     }
   }
 
@@ -165,11 +170,10 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
           }
           emit(SettingSuccess(message: responseJson['message']));
         } else {
-          emit(SettingError(
-              message: 'An error : The returned data is invalid.'));
+          emit(SettingError(message: 'Error: ${responseJson['message']}'));
         }
       } else {
-        String errorMessage = responseJson['message'] ?? 'Failed to add ';
+        String errorMessage = responseJson['message'];
         emit(SettingError(message: errorMessage));
       }
     } catch (e) {
@@ -195,12 +199,13 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
 
       var response = await request.send();
       final responseBody = await response.stream.bytesToString();
+      final responseJson = json.decode(responseBody);
 
       if (response.statusCode == 200) {
         add(LoadUserAndCars());
-        emit(SettingSuccess(message: 'Update successful!'));
+        emit(SettingSuccess(message: responseJson['message']));
       } else {
-        emit(SettingError(message: 'Failed to update car: $responseBody'));
+        emit(SettingError(message: responseJson['message']));
       }
     } catch (e) {
       emit(SettingError(message: 'Error: ${e.toString()}'));
@@ -214,11 +219,12 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
         Uri.parse('$baseUrl/cars/id/${event.id}'),
       );
 
+      final responseJson = json.decode(response.body);
       if (response.statusCode == 200) {
-        add(LoadUserAndCars()); // Reload user and cars data
-        emit(SettingSuccess(message: 'Deleted successfully!'));
+        add(LoadUserAndCars());
+        emit(SettingSuccess(message: responseJson['message']));
       } else {
-        emit(SettingError(message: 'Failed to delete car: ${response.body}'));
+        emit(SettingError(message: responseJson['message']));
       }
     } catch (e) {
       emit(SettingError(message: 'Error: ${e.toString()}'));
@@ -236,6 +242,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
           'Authorization': 'Bearer $token',
         });
       request.fields['name'] = event.name;
+      request.fields['surname'] = event.surname;
       if (event.imageFile != null) {
         request.files.add(await http.MultipartFile.fromPath(
           'image',
@@ -246,43 +253,48 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
 
       final response = await request.send();
       final responseBody = await response.stream.bytesToString();
+      final responseJson = json.decode(responseBody);
 
       if (response.statusCode == 200) {
         add(LoadUserAndCars());
-        emit(SettingSuccess(message: 'Profile updated successfully!'));
+        emit(SettingSuccess(message: responseJson['message']));
       } else {
-        emit(SettingError(message: 'Failed to update profile: $responseBody'));
+        emit(SettingError(message: responseJson['message']));
       }
     } catch (e) {
       emit(SettingError(message: 'Error: ${e.toString()}'));
     }
   }
 
-  Future<void> _onUpdatePassword(UpdatePassword event, Emitter<SettingState> emit) async {
+  Future<void> _onUpdatePassword(
+      UpdatePassword event, Emitter<SettingState> emit) async {
     emit(SettingLoading());
     try {
-      final url = Uri.parse('$baseUrl/profile/password');
+      final url = Uri.parse('$baseUrl/profile/reset_password');
       final request = http.MultipartRequest('PUT', url)
         ..headers.addAll({
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
         });
+
       request.fields['old_password'] = event.oldPassword;
       request.fields['new_password'] = event.newPassword;
+      request.fields['confirm_password'] = event.confirm_password;
 
       final response = await request.send();
       final responseBody = await response.stream.bytesToString();
+      final responseJson = json.decode(responseBody);
 
       if (response.statusCode == 200) {
-        emit(SettingSuccess(message: 'Password updated successfully!'));
+        log(responseJson.toString());
+        emit(SettingSuccess(message: responseJson['message']));
       } else {
-        emit(SettingError(message: 'Failed to update password: $responseBody'));
+        log(responseJson.toString());
+        emit(SettingError(message: responseJson['message']));
       }
     } catch (e) {
+      log(e.toString());
       emit(SettingError(message: 'Error: ${e.toString()}'));
     }
   }
-
-  
-
 }

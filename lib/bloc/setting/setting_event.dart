@@ -74,22 +74,30 @@ class DeleteCar extends SettingEvent {
 
 class UpdateProfile extends SettingEvent {
   final String name;
+  final String surname ; 
   final File? imageFile;
 
   const UpdateProfile({
     required this.name,
+    required this.surname,
     this.imageFile,
   });
 
   @override
-  List<Object> get props => [name, imageFile ?? ''];
+  List<Object> get props => [name,surname,imageFile ?? ''];
 }
 
 class UpdatePassword extends SettingEvent {
   final String oldPassword;
   final String newPassword;
+  // ignore: non_constant_identifier_names
+  final String confirm_password;
 
-  const UpdatePassword({required this.oldPassword, required this.newPassword});
+  // ignore: non_constant_identifier_names
+  const UpdatePassword({required this.oldPassword, required this.newPassword , required this.confirm_password});
+
+  @override
+  List<Object> get props => [oldPassword, newPassword , confirm_password];
 }
 
 

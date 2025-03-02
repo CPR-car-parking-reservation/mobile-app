@@ -14,7 +14,6 @@ class SettingInitial extends SettingState {}
 
 class SettingLoading extends SettingState {}
 
-//hasdata
 class SettingLoaded extends SettingState {
   final List<car_data> cars;
 
@@ -62,11 +61,3 @@ class UserAndCarsLoaded extends SettingState {
   List<Object> get props => [profile, cars];
 }
 
-class UpdatePasswordSuccess extends SettingState {
-  final String message;
-
-  const UpdatePasswordSuccess({required this.message});
-
-  @override
-  List<Object> get props => [message];
-}
