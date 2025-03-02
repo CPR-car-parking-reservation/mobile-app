@@ -30,13 +30,9 @@ class Home extends StatelessWidget {
         BlocProvider<NavigatorBloc>(
           create: (context) => NavigatorBloc(),
         ),
-        BlocProvider<ReservedBloc>(
-          create: (context) => ReservedBloc(),
-        ),
         BlocProvider<ParkingBloc>(
-          create: (context) => ParkingBloc( )..add(OnFirstParkingSlot()),
+          create: (context) => ParkingBloc()..add(OnFirstParkingSlot()),
         ),
-        
       ],
       child: Scaffold(
         appBar: AppBar(
