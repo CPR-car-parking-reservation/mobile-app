@@ -1,6 +1,8 @@
+import 'package:car_parking_reservation/Bloc/reserved/reserved_bloc.dart';
 import 'package:car_parking_reservation/Qr-generator/qr_code.dart';
 import 'package:car_parking_reservation/Widget/parking_slots.dart';
 import 'package:car_parking_reservation/bloc/navigator/navigator_bloc.dart';
+import 'package:car_parking_reservation/bloc/parking/parking_bloc.dart';
 import 'package:car_parking_reservation/history.dart';
 import 'package:car_parking_reservation/reserv.dart';
 import 'package:car_parking_reservation/setting/setting_page.dart';
@@ -13,94 +15,80 @@ class Home extends StatelessWidget {
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
 
-  static const List<Widget> _widgetOptions = <Widget>[
-    ParkingSlots(),
-    GenQR(),
-    // Reserv(),
-    History(),
-    Setting(),
-  ];
+  // static const List<Widget> _widgetOptions = <Widget>[
+  //   ParkingSlots(),
+  //   GenQR(),
+  //   // Reserv(),
+  //   History(),
+  //   Setting(),
+  // ];
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => NavigatorBloc(),
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: const Color(0xFF03174C),
-          automaticallyImplyLeading: false,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Image.asset(
-                "assets/images/LogoCARPAKING.png",
-                height: 40,
-                width: 90,
-              ),
-            ],
-          ),
-        ),
-        body: BlocBuilder<NavigatorBloc, NavigatorBlocState>(
-          builder: (context, state) {
-            if (state is NavigatorBlocStateUpdate) {
-              return Center(
-                child: _widgetOptions.elementAt(state.index),
-              );
-            }
-            // กรณี state เริ่มต้น แสดงหน้าแรก
-            return Center(
-              child: _widgetOptions.elementAt(0),
-            );
-          },
-        ),
-        bottomNavigationBar: Container(
-          height: 75,
-          decoration: const BoxDecoration(
-            boxShadow: [
-              BoxShadow(color: Colors.black45, spreadRadius: 3, blurRadius: 10),
-            ],
-          ),
-          child: BlocBuilder<NavigatorBloc, NavigatorBlocState>(
-            builder: (context, state) {
-              if (state is NavigatorBlocStateUpdate ||
-                  state is NavigatorBlocStateInitial) {
-                return BottomNavigationBar(
-                  type: BottomNavigationBarType.fixed,
+      child: BlocBuilder<NavigatorBloc, NavigatorBlocState>(
+        builder: (context, state) {
+          if (state is NavigatorBlocStateInitial) {
+            return Scaffold(
+                appBar: AppBar(
                   backgroundColor: const Color(0xFF03174C),
-                  selectedItemColor: Colors.white,
-                  unselectedItemColor: Colors.grey[400],
+                  automaticallyImplyLeading: false,
+                  title: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Image.asset(
+                        "assets/images/LogoCARPAKING.png",
+                        height: 40,
+                        width: 90,
+                      ),
+                    ],
+                  ),
+                ),
+                body: Center(
+                  child: IndexedStack(
+                    index: state.index,
+                    children: [
+                      BlocProvider(
+                        create: (context) => ParkingBloc(),
+                        child: ParkingSlots(),
+                      ),
+                      BlocProvider(
+                        create: (context) => ReservedBloc(),
+                        child: Reserv(),
+                      ),
+                      GenQR(),
+                      History(),
+                      Setting(),
+                    ],
+                  ),
+                ),
+                bottomNavigationBar: BottomNavigationBar(
+                  type: BottomNavigationBarType.fixed,
+                  selectedItemColor: const Color.fromRGBO(3, 23, 76, 1),
+                  unselectedItemColor: const Color.fromARGB(128, 2, 21, 73),
                   items: const <BottomNavigationBarItem>[
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.home),
-                      label: 'Home',
-                    ),
+                        icon: Icon(Icons.local_parking), label: 'Parking'),
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.qr_code),
-                      label: 'QR Code',
-                    ),
+                        icon: Icon(Icons.qr_code), label: 'QR Code'),
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.history),
-                      label: 'History',
-                    ),
+                        icon: Icon(Icons.history), label: 'History'),
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.manage_accounts_rounded),
-                      label: 'Setting',
-                    ),
+                        icon: Icon(Icons.history), label: 'Reserved'),
+                    BottomNavigationBarItem(
+                        icon: Icon(Icons.settings), label: 'Setting'),
                   ],
-                  // ใช้ค่า index จาก state
-                  currentIndex:
-                      state is NavigatorBlocStateUpdate ? state.index : 0,
-                  onTap: (value) {
+                  currentIndex: state.index,
+                  onTap: (index) {
                     context
                         .read<NavigatorBloc>()
-                        .add(ChangeIndex(index: value));
+                        .add(ChangeIndex(index: index));
                   },
-                );
-              }
-              return const CircularProgressIndicator();
-            },
-          ),
-        ),
+                ));
+          }
+          return const SizedBox();
+        },
       ),
     );
   }

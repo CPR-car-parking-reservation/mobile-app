@@ -28,7 +28,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         await prefs.setString('token', token);
         await prefs.setString('role', role);
         log(token);
+        Future.delayed(Duration(seconds: 1));
         emit(LoginSuccess(token, role));
+        // Navigator.pushNamed(event.context, '/home');
       } catch (e) {
         emit(LoginError(e.toString()));
       }
