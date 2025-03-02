@@ -37,9 +37,7 @@ class MyApp extends StatelessWidget {
         '/signin': (context) => Signin(),
         '/signup': (context) => Signup(),
         '/home': (context) => Home(),
-        '/reserv': (context) => Reserv(),
-        '/history': (context) => History(),
-        '/setting': (context) => Setting(),
+        '/admin': (context) => AdminHomePage(),
       },
     );
   }
