@@ -16,13 +16,8 @@ import 'history.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: ".env");
-  runApp(MultiBlocProvider(
-    providers: [
-      BlocProvider(create: (context) => NavigatorBloc()),
-      BlocProvider(create: (context) => ReservedBloc()),
-      BlocProvider(create: (context) => AdminNavigatorBloc()),
-      BlocProvider(create: (context) => AdminParkingBloc()),
-    ],
+  runApp(BlocProvider(
+    create: (context) => AdminNavigatorBloc(),
     child: MyApp(),
   ));
 }
@@ -38,6 +33,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
         useMaterial3: true,
       ),
+      initialRoute: '/',
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case '/':
@@ -54,8 +50,6 @@ class MyApp extends StatelessWidget {
             return MaterialPageRoute(builder: (_) => History());
           case '/setting':
             return MaterialPageRoute(builder: (_) => Setting());
-          default:
-            return MaterialPageRoute(builder: (_) => AdminHomePage());
         }
       },
     );

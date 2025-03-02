@@ -32,8 +32,8 @@ class AdminHomePage extends StatelessWidget {
                 children: [
                   AdminDashBoard(),
                   AdminUserPage(),
-                  BlocProvider.value(
-                    value: context.read<AdminParkingBloc>(),
+                  BlocProvider(
+                    create: (context) => AdminParkingBloc(),
                     child: AdminParkingPage(),
                   ),
                   AdminSettingPage(),
