@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'dart:convert';
 import 'package:car_parking_reservation/model/profile.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:image_picker/image_picker.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:car_parking_reservation/bloc/setting/setting_bloc.dart';
 import 'package:car_parking_reservation/bloc/setting/setting_event.dart';
 import 'package:car_parking_reservation/bloc/setting/setting_state.dart';
+import 'package:http/http.dart' as http;
 
 class EditProfilePage extends StatefulWidget {
   final Profile_data profile;
@@ -60,6 +62,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       } else {
         // ignore: use_build_context_synchronously
         _showSnackBar(
+            // ignore: use_build_context_synchronously
             context, 'Please select an image file. (.png, .jpg, .jpeg)');
       }
     }
@@ -92,28 +95,22 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-  Widget buildTextField(
-      String label, IconData icon, TextEditingController controller,
-      {bool readOnly = false}) {
-    return TextField(
-      controller: controller,
-      readOnly: readOnly,
-      decoration: InputDecoration(
-        prefixIcon: Icon(icon, color: Colors.black),
-        filled: true,
-        fillColor: Colors.white,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        labelText: label,
-        labelStyle: TextStyle(
-            color: Colors.black,
-            fontSize: 16,
-            fontFamily: fontFamily), // เรียกใช้ตัวแปร fontFamily
-        floatingLabelBehavior: FloatingLabelBehavior.never,
-      ),
-      style: TextStyle(
-          color: Colors.black,
-          fontFamily: fontFamily), // เรียกใช้ตัวแปร fontFamily
+  Future<bool> _verifyOldPassword(String oldPassword) async {
+    final url = Uri.parse('$baseUrl/profile/verify_password');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${context.read<SettingBloc>().token}',
+      },
+      body: jsonEncode({'old_password': oldPassword}),
     );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   void _showChangePasswordModal(BuildContext context) {
@@ -134,23 +131,56 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ],
           ),
           actions: [
+            ElevatedButton(
+              onPressed: () async {
+                bool isOldPasswordCorrect =
+                    await _verifyOldPassword(oldPasswordController.text);
+                if (isOldPasswordCorrect) {
+                  if (newPasswordController.text ==
+                      confirmPasswordController.text) {
+                    // ignore: use_build_context_synchronously
+                    context.read<SettingBloc>().add(UpdatePassword(
+                          oldPassword: oldPasswordController.text,
+                          newPassword: newPasswordController.text,
+                        ));
+                    // ignore: use_build_context_synchronously
+                    Navigator.of(context).pop();
+                  } else {
+                    // ignore: use_build_context_synchronously
+                    _showSnackBar(context, 'New passwords do not match');
+                  }
+                } else {
+                  // ignore: use_build_context_synchronously
+                  _showSnackBar(context, 'Old password is incorrect');
+                }
+              },
+              child: Text('Update Password',
+                  style: TextStyle(fontFamily: fontFamily)),
+            ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
               child: Text('Cancel', style: TextStyle(fontFamily: fontFamily)),
             ),
-            ElevatedButton(
-              onPressed: () {
-                // Add your update password logic here
-                Navigator.of(context).pop();
-              },
-              child: Text('Update Password',
-                  style: TextStyle(fontFamily: fontFamily)),
-            ),
           ],
         );
       },
+    );
+  }
+
+  Widget buildTextField(String labelText, IconData icon, TextEditingController controller, {bool readOnly = false}) {
+    return TextField(
+      controller: controller,
+      readOnly: readOnly,
+      decoration: InputDecoration(
+        labelStyle: TextStyle(fontFamily: fontFamily),
+        prefixIcon: Icon(icon),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        filled: true,
+        fillColor: Colors.white,
+      ),
+      style: TextStyle(fontFamily: fontFamily, color: Colors.black),
     );
   }
 

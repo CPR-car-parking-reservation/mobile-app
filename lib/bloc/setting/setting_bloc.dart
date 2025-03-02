@@ -25,6 +25,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     on<LoadUserAndCars>(_onLoadUserAndCars);
     on<LoadUser>(_onLoadUser);
     on<UpdateProfile>(_onUpdateProfile);
+    on<UpdatePassword>(_onUpdatePassword);
   }
 
   Future<void> _onLoadUserAndCars(
@@ -124,7 +125,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     try {
       final car = await fetch_cars(event.carId);
       emit(SettingLoaded(cars: [car]));
-      add(LoadCars()); // reload all cars
+      add(LoadUserAndCars());
     } catch (e) {
       emit(SettingError(message: e.toString()));
     }
@@ -256,4 +257,32 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
       emit(SettingError(message: 'Error: ${e.toString()}'));
     }
   }
+
+  Future<void> _onUpdatePassword(UpdatePassword event, Emitter<SettingState> emit) async {
+    emit(SettingLoading());
+    try {
+      final url = Uri.parse('$baseUrl/profile/password');
+      final request = http.MultipartRequest('PUT', url)
+        ..headers.addAll({
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        });
+      request.fields['old_password'] = event.oldPassword;
+      request.fields['new_password'] = event.newPassword;
+
+      final response = await request.send();
+      final responseBody = await response.stream.bytesToString();
+
+      if (response.statusCode == 200) {
+        emit(SettingSuccess(message: 'Password updated successfully!'));
+      } else {
+        emit(SettingError(message: 'Failed to update password: $responseBody'));
+      }
+    } catch (e) {
+      emit(SettingError(message: 'Error: ${e.toString()}'));
+    }
+  }
+
+  
+
 }

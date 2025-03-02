@@ -85,6 +85,13 @@ class UpdateProfile extends SettingEvent {
   List<Object> get props => [name, imageFile ?? ''];
 }
 
+class UpdatePassword extends SettingEvent {
+  final String oldPassword;
+  final String newPassword;
+
+  const UpdatePassword({required this.oldPassword, required this.newPassword});
+}
+
 
 
 

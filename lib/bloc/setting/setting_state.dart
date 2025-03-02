@@ -61,3 +61,12 @@ class UserAndCarsLoaded extends SettingState {
   @override
   List<Object> get props => [profile, cars];
 }
+
+class UpdatePasswordSuccess extends SettingState {
+  final String message;
+
+  const UpdatePasswordSuccess({required this.message});
+
+  @override
+  List<Object> get props => [message];
+}
