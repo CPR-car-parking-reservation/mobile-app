@@ -16,10 +16,7 @@ import 'history.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: ".env");
-  runApp(BlocProvider(
-    create: (context) => AdminNavigatorBloc(),
-    child: MyApp(),
-  ));
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
