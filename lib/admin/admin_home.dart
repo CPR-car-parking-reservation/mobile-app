@@ -13,58 +13,61 @@ class AdminHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AdminNavigatorBloc, AdminNavigatorState>(
-      builder: (context, state) {
-        if (state is AdminNavigatorInitial) {
-          return Scaffold(
-            appBar: AppBar(
-              automaticallyImplyLeading: false,
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Image.asset("assets/images/LogoCARPAKING.png", height: 50),
-                ],
+    return BlocProvider(
+      create: (context) => AdminNavigatorBloc(),
+      child: BlocBuilder<AdminNavigatorBloc, AdminNavigatorState>(
+        builder: (context, state) {
+          if (state is AdminNavigatorInitial) {
+            return Scaffold(
+              appBar: AppBar(
+                automaticallyImplyLeading: false,
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Image.asset("assets/images/LogoCARPAKING.png", height: 50),
+                  ],
+                ),
               ),
-            ),
-            body: Center(
-              child: IndexedStack(
-                index: state.index,
-                children: [
-                  AdminDashBoard(),
-                  AdminUserPage(),
-                  BlocProvider(
-                    create: (context) => AdminParkingBloc(),
-                    child: AdminParkingPage(),
-                  ),
-                  AdminSettingPage(),
-                ],
+              body: Center(
+                child: IndexedStack(
+                  index: state.index,
+                  children: [
+                    AdminDashBoard(),
+                    AdminUserPage(),
+                    BlocProvider(
+                      create: (context) => AdminParkingBloc(),
+                      child: AdminParkingPage(),
+                    ),
+                    AdminSettingPage(),
+                  ],
+                ),
               ),
-            ),
-            bottomNavigationBar: BottomNavigationBar(
-              type: BottomNavigationBarType.fixed,
-              selectedItemColor: const Color.fromRGBO(3, 23, 76, 1),
-              unselectedItemColor: const Color.fromARGB(128, 2, 21, 73),
-              items: const <BottomNavigationBarItem>[
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.bar_chart_sharp), label: 'Dashboard'),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.supervised_user_circle), label: 'Users'),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.local_parking), label: 'Parking'),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.settings), label: 'Setting'),
-              ],
-              currentIndex: state.index,
-              onTap: (index) {
-                context
-                    .read<AdminNavigatorBloc>()
-                    .add(OnChangeIndex(index: index));
-              },
-            ),
-          );
-        }
-        return const SizedBox();
-      },
+              bottomNavigationBar: BottomNavigationBar(
+                type: BottomNavigationBarType.fixed,
+                selectedItemColor: const Color.fromRGBO(3, 23, 76, 1),
+                unselectedItemColor: const Color.fromARGB(128, 2, 21, 73),
+                items: const <BottomNavigationBarItem>[
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.bar_chart_sharp), label: 'Dashboard'),
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.supervised_user_circle), label: 'Users'),
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.local_parking), label: 'Parking'),
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.settings), label: 'Setting'),
+                ],
+                currentIndex: state.index,
+                onTap: (index) {
+                  context
+                      .read<AdminNavigatorBloc>()
+                      .add(OnChangeIndex(index: index));
+                },
+              ),
+            );
+          }
+          return const SizedBox();
+        },
+      ),
     );
   }
 }
