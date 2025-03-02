@@ -1,6 +1,8 @@
 import 'dart:developer';
 
 import 'package:car_parking_reservation/Bloc/user/register/register_bloc.dart';
+import 'package:car_parking_reservation/Login/signin.dart';
+import 'package:car_parking_reservation/Widget/custom_dialog.dart';
 import 'package:car_parking_reservation/Widget/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -147,18 +149,17 @@ class _SignupState extends State<Signup> {
                                 newuserController.text,
                                 newemailController.text,
                                 newpassController.text,
-                                newconfirmpassController.text));
-                            log('newuserController.text: ${newuserController.text}');
-                            log('newemailController.text: ${newemailController.text}');
-                            log('newpassController.text: ${newpassController.text}');
-                            log('newconfirmpassController.text: ${newconfirmpassController.text}');
-
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => Home(),
-                        //   ),
-                        // );
+                                newconfirmpassController.text
+                              )
+                            );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Signin(),
+                          ),
+                        );
+                        final String message = "User Created";
+                        showCustomDialog(context, message);
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(

@@ -1,3 +1,4 @@
+import 'package:car_parking_reservation/Widget/custom_dialog.dart';
 import 'package:car_parking_reservation/model/parking_slot.dart';
 import 'package:car_parking_reservation/reserv.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +16,7 @@ class ParkingSlots extends StatefulWidget {
   // กำหนดสีของที่จอดรถตามสถานะ
   static getStatusColor(String status) {
     switch (status) {
-      case "WORKING":
+      case "FULL":
         return Colors.red;
       case "RESERVED":
         return Colors.amber;
@@ -128,7 +129,7 @@ class _ParkingSlots extends State<ParkingSlots> {
                 // แสดงที่จอดฝั่งซ้าย
                 Positioned(
                   left: 12,
-                  top: MediaQuery.of(context).size.height * 0.26,
+                  top: MediaQuery.of(context).size.height * 0.27,
                   child: Column(
                     children: leftSlots
                         .map((column) => Column(
@@ -141,7 +142,7 @@ class _ParkingSlots extends State<ParkingSlots> {
                 // แสดงที่จอดฝั่งขวา
                 Positioned(
                   right: 12,
-                  top: MediaQuery.of(context).size.height * 0.26,
+                  top: MediaQuery.of(context).size.height * 0.27,
                   child: Column(
                     children: rightSlots
                         .map((column) => Column(
@@ -238,6 +239,13 @@ class ParkingSlotButton extends StatelessWidget {
                     floor_number: parking.floor.floor_number,
                   );
                 }));
+              }
+              if(parking.status == "RESERVED"){
+                showCustomDialogWarning(context, "Reserved");
+              }
+
+              if(parking.status == "FULL"){
+                showCustomDialogError(context, "FULL");
               }
             },
           ),
