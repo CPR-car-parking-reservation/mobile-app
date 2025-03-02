@@ -61,7 +61,7 @@ class _ParkingSlots extends State<ParkingSlots> {
       create: (_) => ParkingBloc()..add(OnFirstParkingSlot()),
       child: BlocBuilder<ParkingBloc, ParkingState>(
         builder: (context, state) {
-          if (state is ParkingInitial) {
+          if (state is ParkingInitial || state is ParkingLoading) {
             return const Center(
                 child: CircularProgressIndicator()); // แสดงโหลดเมื่อไม่มีข้อมูล
           } else if (state is ParkingLoaded) {
