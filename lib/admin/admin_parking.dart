@@ -220,9 +220,7 @@ class _AdminParkingPageState extends State<AdminParkingPage> {
               child: BlocBuilder<AdminParkingBloc, AdminParkingState>(
                 builder: (context, state) {
                   if (state is AdminParkingLoading) {
-                    return const Center(
-                        child:
-                            CircularProgressIndicator()); // 🌀 โหลดเฉพาะรายการจอดรถ
+                    return const Center(child: CircularProgressIndicator());
                   } else if (state is AdminParkingError) {
                     return Center(child: Text(state.message));
                   } else if (state is AdminParkingLoaded) {
