@@ -17,6 +17,7 @@ class Signup extends StatefulWidget {
 
 class _SignupState extends State<Signup> {
   final newuserController = TextEditingController();
+  final newsurnameController = TextEditingController();
   final newemailController = TextEditingController();
   final newpassController = TextEditingController();
   final newconfirmpassController = TextEditingController();
@@ -53,7 +54,7 @@ class _SignupState extends State<Signup> {
                 ),
                 SizedBox(height: 30),
                 SizedBox(
-                  height: 270,
+                  height: 315,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -64,7 +65,7 @@ class _SignupState extends State<Signup> {
                           filled: true,
                           fillColor: Colors.grey[100],
                           label: Text(
-                            "Username",
+                            "Name",
                             style: TextStyle(
                                 fontFamily: "Amiko", color: Colors.black45),
                           ),
@@ -77,6 +78,27 @@ class _SignupState extends State<Signup> {
                       SizedBox(
                         height: 15,
                       ),
+                      //newsurname
+                      TextField(
+                        controller: newsurnameController,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.grey[100],
+                          label: Text(
+                            "Surname",
+                            style: TextStyle(
+                                fontFamily: "Amiko", color: Colors.black45),
+                          ),
+                          prefixIcon: Icon(Icons.account_circle_rounded),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15),
+                              borderSide: BorderSide.none),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      //newemail
                       TextField(
                         controller: newemailController,
                         decoration: InputDecoration(
@@ -148,6 +170,7 @@ class _SignupState extends State<Signup> {
                         onPressed: () async {
                           context.read<RegisterBloc>().add(OnCreateRegister(
                               newuserController.text,
+                              newsurnameController.text,
                               newemailController.text,
                               newpassController.text,
                               newconfirmpassController.text));

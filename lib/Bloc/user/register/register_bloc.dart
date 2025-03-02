@@ -15,7 +15,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       log("Create Register Called");
       try {
         final res = await createUser(
-            event.email, event.password, event.confirm_password, event.name);
+            event.email, event.password, event.confirm_password, event.name, event.surname);
 
         if (res.statusCode != 200) {
           final responseBody = await res.stream.bytesToString();
@@ -28,6 +28,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
           password: event.password,
           confirm_password: event.confirm_password,
           name: event.name,
+          surname: event.surname,
         ));
 
         emit(RegisterSuccess("User Created"));
@@ -41,7 +42,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   String baseUrl = dotenv.env['BASE_URL'].toString();
 
   Future<http.StreamedResponse> createUser(String email,
-      String password, String confirm_password, String name) async {
+      String password, String confirm_password, String name, String surname) async {
     final url = Uri.parse('$baseUrl/register');
 
     log("Sending request to: $url");
@@ -51,7 +52,8 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       ..fields['email'] = email
       ..fields['password'] = password
       ..fields['confirm_password'] = confirm_password
-      ..fields['name'] = name;
+      ..fields['name'] = name
+      ..fields['surname'] = surname;
 
     request.headers.addAll({
       "Accept": "application/json",

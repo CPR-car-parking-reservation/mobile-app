@@ -9,12 +9,14 @@ final class RegisterLoading extends RegisterState {}
 
 class RegisterCreated extends RegisterState {
   final String name;
+  final String surname;
   final String email;
   final String password;
   final String confirm_password;
 
   RegisterCreated({
     required this.name,
+    required this.surname,
     required this.email,
     required this.password,
     required this.confirm_password,
