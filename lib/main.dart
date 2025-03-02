@@ -1,7 +1,6 @@
 import 'package:car_parking_reservation/Bloc/reserved/reserved_bloc.dart';
+import 'package:car_parking_reservation/Bloc/user/register/register_bloc.dart';
 import 'package:car_parking_reservation/admin/admin_home.dart';
-import 'package:car_parking_reservation/bloc/admin_bloc/admin_navigator/admin_navigator_bloc.dart';
-import 'package:car_parking_reservation/bloc/admin_bloc/admin_parking/admin_parking_bloc.dart';
 import 'package:car_parking_reservation/bloc/navigator/navigator_bloc.dart';
 import 'package:car_parking_reservation/reserv.dart';
 import 'package:car_parking_reservation/setting/setting_page.dart';
@@ -16,7 +15,7 @@ import 'history.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: ".env");
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -25,29 +24,22 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: "Car Parking Reservation",
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
         useMaterial3: true,
       ),
       initialRoute: '/',
-      onGenerateRoute: (settings) {
-        switch (settings.name) {
-          case '/':
-            return MaterialPageRoute(builder: (_) => AdminHomePage());
-          case '/signin':
-            return MaterialPageRoute(builder: (_) => Signin());
-          case '/signup':
-            return MaterialPageRoute(builder: (_) => Signup());
-          case '/home':
-            return MaterialPageRoute(builder: (_) => Home());
-          case '/reserv':
-            return MaterialPageRoute(builder: (_) => Reserv());
-          case '/history':
-            return MaterialPageRoute(builder: (_) => History());
-          case '/setting':
-            return MaterialPageRoute(builder: (_) => Setting());
-        }
+      routes: {
+        //'/': (context) => AdminHomePage(),
+        '/': (context) => Welcome(),
+        '/signin': (context) => Signin(),
+        '/signup': (context) => Signup(),
+        '/home': (context) => Home(),
+        '/reserv': (context) => Reserv(),
+        '/history': (context) => History(),
+        '/setting': (context) => Setting(),
       },
     );
   }

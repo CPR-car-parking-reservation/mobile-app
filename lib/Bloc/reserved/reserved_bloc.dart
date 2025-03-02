@@ -5,6 +5,7 @@ import 'package:car_parking_reservation/history.dart';
 import 'package:car_parking_reservation/model/history.dart';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -30,13 +31,14 @@ class ReservedBloc extends Bloc<ReservedEvent, ReservedState> {
       try {
         final success = await postData(event.history);
         if (success) {
-          debugPrint("Data posted successfully");
+          //debugPrint("Data posted successfully");
+          emit(ReservedSuccess("Data posted successfully"));
         } else {
           emit(ReservedError("Failed to post data to server."));
         }
       } catch (e) {
         emit(ReservedError("Failed to post data to server."));
-        debugPrint("Error posting data: $e");
+        //debugPrint("Error posting data: $e");
       }
     });
 
@@ -55,11 +57,12 @@ class ReservedBloc extends Bloc<ReservedEvent, ReservedState> {
       }
     });
   }
+    String baseUrl = dotenv.env['BASE_URL'].toString();
 
   Future<List<History_data>> fetchData() async {
-    String strUrl = ' http://localhost:4000';
-    debugPrint('url: $strUrl');
-    final response = await http.get(Uri.parse("$strUrl/reservation"), headers: {
+    
+    debugPrint('url: $baseUrl');
+    final response = await http.get(Uri.parse("$baseUrl/reservation"), headers: {
       "Accept": "application/json",
       "content-type": "application/json",
     });
@@ -78,10 +81,10 @@ class ReservedBloc extends Bloc<ReservedEvent, ReservedState> {
   }
 
   Future<bool> postData(History_data reservation) async {
-    String strUrl = ' http://localhost:4000';
-    debugPrint('url: $strUrl');
+    String baseUrl = ' http://localhost:4000';
+    debugPrint('url: $baseUrl');
     final response = await http.post(
-      Uri.parse("$strUrl/reservation"),
+      Uri.parse("$baseUrl/reservation"),
       headers: {
         "Accept": "application/json",
         "content-type": "application/json",

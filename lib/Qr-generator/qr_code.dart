@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class GenQR extends StatefulWidget {
   const GenQR({super.key});
@@ -9,7 +10,21 @@ class GenQR extends StatefulWidget {
 }
 
 class _GenQRState extends State<GenQR> {
-  String dataQr = "https://www.youtube.com/@purmpoon";
+  String userToken = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _loadToken();
+  }
+
+  // ดึง token จาก SharedPreferences
+  void _loadToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userToken = prefs.getString('token') ?? ''; // ถ้าไม่มี token จะใช้ค่าว่าง
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,12 +42,15 @@ class _GenQRState extends State<GenQR> {
                   fontFamily: "Amiko",
                   fontWeight: FontWeight.w700),
             ),
-            QrImageView(
-              data: dataQr,
-              version: QrVersions.auto,
-              size: 200.0,
-              backgroundColor: Colors.white,
-            ),
+            userToken.isNotEmpty
+                ? QrImageView(
+                    data: userToken,
+                    version: QrVersions.auto,
+                    size: 200.0,
+                    backgroundColor: Colors.white,
+                  )
+                : CircularProgressIndicator(),
+            Text("$userToken", style: TextStyle(color: Colors.white)),
           ],
         ),
       ),
