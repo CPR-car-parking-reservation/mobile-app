@@ -1,6 +1,8 @@
+import 'package:car_parking_reservation/Bloc/reserved/reserved_bloc.dart';
 import 'package:car_parking_reservation/Qr-generator/qr_code.dart';
 import 'package:car_parking_reservation/Widget/parking_slots.dart';
 import 'package:car_parking_reservation/bloc/navigator/navigator_bloc.dart';
+import 'package:car_parking_reservation/bloc/parking/parking_bloc.dart';
 import 'package:car_parking_reservation/history.dart';
 import 'package:car_parking_reservation/reserv.dart';
 import 'package:car_parking_reservation/setting/setting_page.dart';
@@ -23,8 +25,19 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => NavigatorBloc(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<NavigatorBloc>(
+          create: (context) => NavigatorBloc(),
+        ),
+        BlocProvider<ReservedBloc>(
+          create: (context) => ReservedBloc(),
+        ),
+        BlocProvider<ParkingBloc>(
+          create: (context) => ParkingBloc( )..add(OnFirstParkingSlot()),
+        ),
+        
+      ],
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: const Color(0xFF03174C),
