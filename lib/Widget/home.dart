@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Home extends StatelessWidget {
-  const Home({super.key});
+  Home({super.key});
 
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
@@ -25,71 +25,67 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => NavigatorBloc(),
-      child: BlocBuilder<NavigatorBloc, NavigatorBlocState>(
-        builder: (context, state) {
-          if (state is NavigatorBlocStateInitial) {
-            return Scaffold(
-                appBar: AppBar(
-                  backgroundColor: const Color(0xFF03174C),
-                  automaticallyImplyLeading: false,
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Image.asset(
-                        "assets/images/LogoCARPAKING.png",
-                        height: 40,
-                        width: 90,
-                      ),
-                    ],
-                  ),
-                ),
-                body: Center(
-                  child: IndexedStack(
-                    index: state.index,
-                    children: [
-                      BlocProvider(
-                        create: (context) => ParkingBloc(),
-                        child: ParkingSlots(),
-                      ),
-                      BlocProvider(
-                        create: (context) => ReservedBloc(),
-                        child: Reserv(),
-                      ),
-                      GenQR(),
-                      History(),
-                      Setting(),
-                    ],
-                  ),
-                ),
-                bottomNavigationBar: BottomNavigationBar(
-                  type: BottomNavigationBarType.fixed,
-                  selectedItemColor: const Color.fromRGBO(3, 23, 76, 1),
-                  unselectedItemColor: const Color.fromARGB(128, 2, 21, 73),
-                  items: const <BottomNavigationBarItem>[
-                    BottomNavigationBarItem(
-                        icon: Icon(Icons.local_parking), label: 'Parking'),
-                    BottomNavigationBarItem(
-                        icon: Icon(Icons.qr_code), label: 'QR Code'),
-                    BottomNavigationBarItem(
-                        icon: Icon(Icons.history), label: 'History'),
-                    BottomNavigationBarItem(
-                        icon: Icon(Icons.history), label: 'Reserved'),
-                    BottomNavigationBarItem(
-                        icon: Icon(Icons.settings), label: 'Setting'),
+    return BlocBuilder<NavigatorBloc, NavigatorBlocState>(
+      builder: (context, state) {
+        if (state is NavigatorBlocStateInitial) {
+          return Scaffold(
+              appBar: AppBar(
+                backgroundColor: const Color(0xFF03174C),
+                automaticallyImplyLeading: false,
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Image.asset(
+                      "assets/images/LogoCARPAKING.png",
+                      height: 40,
+                      width: 90,
+                    ),
                   ],
-                  currentIndex: state.index,
-                  onTap: (index) {
-                    context
-                        .read<NavigatorBloc>()
-                        .add(ChangeIndex(index: index));
-                  },
-                ));
-          }
-          return const SizedBox();
-        },
-      ),
+                ),
+              ),
+              body: Center(
+                child: IndexedStack(
+                  index: state.index,
+                  children: [
+                    BlocProvider(
+                      create: (context) => ParkingBloc(),
+                      child: ParkingSlots(),
+                    ),
+                    GenQR(),
+                    History(),
+                    Setting(),
+                    // BlocProvider(
+                    //   create: (context) => ReservedBloc(),
+                    //   child: Reserv(),
+                    // ),
+                  ],
+                ),
+              ),
+              bottomNavigationBar: BottomNavigationBar(
+                type: BottomNavigationBarType.fixed,
+                backgroundColor: const Color(0xFF03174C),
+                selectedItemColor: const Color.fromARGB(255, 231, 232, 236),
+                unselectedItemColor: const Color.fromARGB(128, 255, 148, 60),
+                items: const <BottomNavigationBarItem>[
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.local_parking), label: 'Parking'),
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.qr_code), label: 'QR Code'),
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.history), label: 'History'),
+                  // BottomNavigationBarItem(
+                  //     icon: Icon(Icons.history), label: 'Reserved'),
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.settings), label: 'Setting'),
+                ],
+                currentIndex: state.index,
+                onTap: (index) {
+                  context.read<NavigatorBloc>().add(ChangeIndex(index: index));
+                },
+              ));
+        }
+        return const SizedBox();
+      },
     );
   }
 }
