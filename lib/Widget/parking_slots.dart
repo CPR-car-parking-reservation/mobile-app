@@ -1,8 +1,9 @@
 import 'package:car_parking_reservation/Widget/custom_dialog.dart';
 import 'package:car_parking_reservation/model/parking_slot.dart';
-import 'package:car_parking_reservation/reserv.dart';
+// import 'package:car_parking_reservation/reserv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../bloc/navigator/navigator_bloc.dart';
 import '../bloc/parking/parking_bloc.dart';
 
 /// Widget หลักที่ใช้แสดงที่จอดรถทั้งหมด
@@ -54,6 +55,12 @@ class _ParkingSlots extends State<ParkingSlots> {
         selectedFloor = floors[currentIndex - 1];
       });
     }
+  }
+
+  @override
+  void initState() {
+    context.read<ParkingBloc>().add(OnFirstParkingSlot());
+    super.initState();
   }
 
   @override
@@ -228,17 +235,9 @@ class ParkingSlotButton extends StatelessWidget {
             ),
             onPressed: () {
               if (parking.status == "IDLE") {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Reserv(
-                      slot_number: parking.slot_number,
-                      floor_number: parking.floor.floor_number,
-                      parking_slots_id: parking.id,
-                      status: parking.status,
-                    ),
-                  ),
-                );
+                context.read<ParkingBloc>().add(SenderParkingSlot(parking));
+
+                context.read<NavigatorBloc>().add(ChangeIndex(index: 1));
                 // Navigator.pushNamed(context, '/reserv',
                 //     arguments: parking); // ส่งข้อมูลที่จอดรถไปยังหน้า Reserv
               }

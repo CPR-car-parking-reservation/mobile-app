@@ -43,22 +43,9 @@ class _ReservState extends State<Reserv> {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF03174C),
-        automaticallyImplyLeading: false,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Image.asset(
-              "assets/images/LogoCARPAKING.png",
-              height: 40,
-              width: 90,
-            ),
-          ],
-        ),
-      ),
       backgroundColor: const Color(0xFF03174C),
       body: SingleChildScrollView(
         child: Center(
