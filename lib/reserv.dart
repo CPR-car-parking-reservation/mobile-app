@@ -1,10 +1,7 @@
-import 'dart:developer';
 
 import 'package:car_parking_reservation/Widget/home.dart';
-import 'package:car_parking_reservation/bloc/parking/parking_bloc.dart';
 import 'package:car_parking_reservation/bloc/reserved/reserved_bloc.dart';
 import 'package:car_parking_reservation/Qr-generator/qr_code.dart';
-import 'package:car_parking_reservation/history.dart';
 import 'package:car_parking_reservation/model/car.dart';
 import 'package:car_parking_reservation/model/history.dart';
 
@@ -172,7 +169,7 @@ class _ReservState extends State<Reserv> {
                                   child: Row(
                                     children: [
                                       Image.network(
-                                          "${baseUrl}${car.image_url}",
+                                          "$baseUrl${car.image_url}",
                                           height: 50,
                                           width: 50),
                                       Text(" ${car.license_plate} "),

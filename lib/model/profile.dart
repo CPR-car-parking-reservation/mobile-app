@@ -48,7 +48,7 @@ class Profile_data {
 
 class Car {
   String id;
-  String car_number;
+  String license_plate;
   String car_model;
   String car_type;
   String image_url;
@@ -58,7 +58,7 @@ class Car {
 
   Car({
     required this.id,
-    required this.car_number,
+    required this.license_plate,
     required this.car_model,
     required this.car_type,
     required this.image_url,
@@ -69,7 +69,7 @@ class Car {
 
   factory Car.fromJson(Map<String, dynamic> json) => Car(
         id: json["id"] ,
-        car_number: json["car_number"] ,
+        license_plate: json["license_plate"] ,
         car_model: json["car_model"] ,
         car_type: json["car_type"] ,
         image_url: json["image_url"] ,
@@ -80,7 +80,7 @@ class Car {
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "car_number": car_number,
+        "license_plate": license_plate,
         "car_model": car_model,
         "car_type": car_type,
         "image_url": image_url,

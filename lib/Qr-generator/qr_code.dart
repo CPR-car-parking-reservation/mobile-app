@@ -50,7 +50,7 @@ class _GenQRState extends State<GenQR> {
                     backgroundColor: Colors.white,
                   )
                 : CircularProgressIndicator(),
-            Text("$userToken", style: TextStyle(color: Colors.white)),
+            Text(userToken, style: TextStyle(color: Colors.white)),
           ],
         ),
       ),
