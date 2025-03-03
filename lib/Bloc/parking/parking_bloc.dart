@@ -47,11 +47,8 @@ class ParkingBloc extends Bloc<ParkingEvent, ParkingState> {
     String baseUrl = dotenv.env['BASE_URL'].toString();
 
   Future<List<ParkingSlot>> onFetchData() async {
-<<<<<<< HEAD
     String baseUrl = dotenv.env['BASE_URL'].toString();
     
-=======
->>>>>>> d1904432a8f9d2f3d8271c742cd6f81c7ee00271
     final response =
         await http.get(Uri.parse("$baseUrl/parking_slots"), headers: {
       "Accept": "application/json",
