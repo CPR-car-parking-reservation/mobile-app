@@ -34,13 +34,11 @@ class Reserv extends StatefulWidget {
 }
 
 class _ReservState extends State<Reserv> {
-  bool isVisible = false;
-  bool _boolfade = true;
-
   String? _selectedValue;
   late List<car_data> carData;
 
   final dateFormat = DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+  final currentDate = DateTime.now().toUtc().add(Duration(hours: 7));
 
   late List<Map<String, dynamic>> history;
 
@@ -210,7 +208,7 @@ class _ReservState extends State<Reserv> {
                                             padding: const EdgeInsets.only(
                                                 left: 5, top: 7.5),
                                             child: Text(
-                                              "${dateFormat.format(DateTime.now().toUtc())}",
+                                              "${currentDate.day.toString().padLeft(2, '0')}-${currentDate.month.toString().padLeft(2, '0')}-${currentDate.year}",
                                               style: TextStyle(
                                                   fontFamily: "Amiko",
                                                   fontSize: 22,
@@ -237,7 +235,7 @@ class _ReservState extends State<Reserv> {
                                             padding: const EdgeInsets.only(
                                                 left: 5, top: 7.5),
                                             child: Text(
-                                              "${dateFormat.format(DateTime.now().toUtc())}",
+                                              "${currentDate.hour.toString().padLeft(2, '0')}:${currentDate.minute.toString().padLeft(2, '0')}:${currentDate.second.toString().padLeft(2, '0')}",
                                               style: TextStyle(
                                                   fontFamily: "Amiko",
                                                   fontSize: 22,
@@ -255,192 +253,106 @@ class _ReservState extends State<Reserv> {
                           ),
                         ],
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              SizedBox(
-                                width: 350,
-                                height: 150,
-                              ),
-                              Positioned(
-                                top: 100,
-                                child: SizedBox(
-                                  width: 150,
-                                  child: AnimatedOpacity(
-                                    opacity: _boolfade ? 1.0 : 0.0,
-                                    duration: const Duration(milliseconds: 500),
-                                    child: Visibility(
-                                      visible: isVisible,
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                Colors.yellow[600]),
-                                        onPressed: () {
-                                          setState(() {
-                                            isVisible = false;
-                                            _boolfade = false;
-                                          });
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => GenQR(),
-                                            ),
-                                          );
-                                        },
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(10),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: [
-                                              Text(
-                                                "Get QR",
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontWeight: FontWeight.w700,
-                                                    fontSize: 16),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 5),
-                                                child: Icon(
-                                                  Icons.qr_code,
-                                                  color: Colors.black,
-                                                  size: 24,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Container(
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white),
+                            onPressed: () async {
+                              if (_selectedValue != null) {
+                                final String select_this_date =
+                                    "${dateFormat.format(DateTime.now().toUtc().toLocal().add(Duration(hours: 7)))}";
+                                String select_this_time =
+                                    "${dateFormat.format(DateTime.now().toUtc().toLocal().add(Duration(hours: 7)))}";
+
+                                log("${dateFormat.format(DateTime.now().toUtc().toLocal().add(Duration(hours: 7)))}");
+
+                                final historyData = History_data(
+                                  date: select_this_date,
+                                  start_at: select_this_time,
+                                  end_at: "N/A",
+                                  parkingSlot: ParkingSlot(
+                                    id: widget.parking_slots_id ?? '',
+                                    slot_number: widget.slot_number ?? '',
+                                    status: widget.status ?? '',
+                                    floorId: widget.floor_number ?? '',
+                                    floor: Floor(
+                                      id: widget.floor_number ?? '',
+                                      floor_number: widget.floor_number ?? '',
                                     ),
                                   ),
-                                ),
-                              ),
-                              Positioned(
-                                bottom: 75,
-                                child: Container(
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.white),
-                                    onPressed: () async {
-                                      setState(() {
-                                        isVisible = true;
-                                        _boolfade = true;
-                                      });
-
-                                      String select_this_date =
-                                          "${dateFormat.format(DateTime.now().toUtc())}";
-                                      String select_this_time =
-                                          "${dateFormat.format(DateTime.now().toUtc())}";
-
-                                      final historyData = History_data(
-                                        date: select_this_date,
-                                        start_at: select_this_time,
-                                        end_at: "N/A",
-                                        parkingSlot: ParkingSlot(
-                                          id: widget.parking_slots_id ?? '',
-                                          slot_number: widget.slot_number ?? '',
-                                          status: widget.status ?? '',
-                                          floorId: widget.floor_number ?? '',
-                                          floor: Floor(
-                                            id: widget.floor_number ?? '',
-                                            floor_number:
-                                                widget.floor_number ?? '',
+                                );
+                                context.read<ReservedBloc>().add(
+                                    SendReservation(
+                                        _selectedValue ?? '',
+                                        widget.parking_slots_id ?? '',
+                                        select_this_time));
+                                //log("car_id: ${_selectedValue}, parking_slot_id: ${historyData.parkingSlot.id}, start_time: ${historyData.start_at}");
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: Column(
+                                      children: [
+                                        Icon(Icons.check_circle,
+                                            color: Colors.green, size: 50),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 10),
+                                          child: Text(
+                                            "Reservation Success",
+                                            style: TextStyle(
+                                                fontFamily: "Amiko",
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w700,
+                                                color: Colors.black),
                                           ),
                                         ),
-                                      );
-                                      context.read<ReservedBloc>().add(
-                                          SendReservation(
-                                              _selectedValue ?? '',
-                                              widget.parking_slots_id ?? '',
-                                              select_this_time));
-                                      //log("car_id: ${_selectedValue}, parking_slot_id: ${historyData.parkingSlot.id}, start_time: ${historyData.start_at}");
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) => AlertDialog(
-                                          title: Column(
-                                            children: [
-                                              Icon(Icons.check_circle,
-                                                  color: Colors.green,
-                                                  size: 50),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 10),
-                                                child: Text(
-                                                  "Reservation Success",
-                                                  style: TextStyle(
-                                                      fontFamily: "Amiko",
-                                                      fontSize: 18,
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                      color: Colors.black),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          // content: Row(
-                                          //   mainAxisAlignment:
-                                          //       MainAxisAlignment.center,
-                                          //   children: [
-                                          //     Flexible(
-                                          //       child: Text(
-                                          //         "",
-                                          //       ),
-                                          //     ),
-                                          //   ],
-                                          // ),
-                                          actions: [
-                                            Center(
-                                              child: ElevatedButton(
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                          backgroundColor:
-                                                              Colors.green),
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 75),
-                                                    child: Text("OK",
-                                                        style: TextStyle(
-                                                            fontFamily: "Amiko",
-                                                            fontWeight:
-                                                                FontWeight.w700,
-                                                            fontSize: 16,
-                                                            color:
-                                                                Colors.white)),
-                                                  )),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 10),
-                                      child: Text(
-                                        "Reserved",
-                                        style: TextStyle(
-                                            fontFamily: "Amiko",
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w700,
-                                            color: Colors.black),
-                                      ),
+                                      ],
                                     ),
                                   ),
-                                ),
+                                );
+                              } else {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: Column(
+                                      children: [
+                                        Icon(Icons.error_rounded,
+                                            color: Colors.red, size: 50),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 10),
+                                          child: Text(
+                                            "Reservation Fail",
+                                            style: TextStyle(
+                                                fontFamily: "Amiko",
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w700,
+                                                color: Colors.black),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 10),
+                              child: Text(
+                                "Reserved",
+                                style: TextStyle(
+                                    fontFamily: "Amiko",
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.black),
                               ),
-                            ],
+                            ),
                           ),
-                        ],
-                      ),
+                        ),
+                      )
                     ],
                   ),
                 ),
