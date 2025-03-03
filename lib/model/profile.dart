@@ -3,7 +3,7 @@ class Profile_data {
   String id;
   String name;
   String surname;
-  String phone ; 
+  String phone;
   String email;
   String image_url;
   String role;
@@ -21,14 +21,17 @@ class Profile_data {
   });
 
   factory Profile_data.fromJson(Map<String, dynamic> json) => Profile_data(
-        id: json["data"]?["id"] ,
-        name: json["data"]?["name"] ,
-        surname: json["data"]?["surname"] ,
-        phone: json["data"]?["phone"] ,
-        email: json["data"]?["email"] ,
-        image_url: json["data"]?["image_url"] ,
+        id: json["data"]?["id"],
+        name: json["data"]?["name"],
+        surname: json["data"]?["surname"],
+        phone: json["data"]?["phone"],
+        email: json["data"]?["email"],
+        image_url: json["data"]?["image_url"],
         role: json["data"]?["role"] ?? 'USER',
-        cars: (json["data"]?["car"] as List?)?.map((x) => Car.fromJson(x)).toList() ?? [],
+        cars: (json["data"]?["car"] as List?)
+                ?.map((x) => Car.fromJson(x))
+                .toList() ??
+            [],
       );
 
   Map<String, dynamic> toJson() => {

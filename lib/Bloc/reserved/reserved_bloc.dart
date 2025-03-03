@@ -1,6 +1,12 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:car_parking_reservation/model/history.dart';
+import 'package:car_parking_reservation/model/reservation.dart';
+//import 'package:car_parking_reservation/model/reservation.dart';
+import 'package:equatable/equatable.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:car_parking_reservation/bloc/parking/parking_bloc.dart';
 import 'package:car_parking_reservation/model/car.dart';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -29,22 +35,37 @@ class ReservedBloc extends Bloc<ReservedEvent, ReservedState> {
     on<SendReservation>((event, emit) async {
       emit(ReserveLoading());
       try {
-        final respones =
+        final response =
             await postData(event.car_id, event.parking_slot_id, event.start_at);
-        if (respones.statusCode != 200) {
-          final responseBody = await respones.stream.bytesToString();
-          final responseJson = jsonDecode(responseBody);
-          emit(ReservedError(responseJson['message']));
-          throw Exception(responseJson['message']);
+        final responseBody = await response.stream.bytesToString();
+        log("Response Body: $responseBody");
+
+        final decodeResponse = json.decode(responseBody);
+        log("Decoded Response: $decodeResponse");
+
+        if (response.statusCode == 200) {
+          // ดึง reservation_id จาก response
+          final reservationId = decodeResponse['data'] != null
+              ? decodeResponse['data']['id'] ?? ''
+              : '';
+
+          log("Reservation ID: $reservationId");
+
+          emit(ReservCreated(event.car_id, event.parking_slot_id,
+              event.start_at, reservationId));
+          emit(ReservedSuccess(
+              reservationId: reservationId,
+              message: decodeResponse['message']));
+          
+        } else {
+          throw Exception(
+              decodeResponse['message'] ?? 'Failed to create reservation.');
         }
 
-        emit(ReservedSuccess("Reservation Success"));
-        emit(ReservCreated(event.car_id, event.parking_slot_id, event.start_at));
-
-        log("$car_data ${event.parking_slot_id} ${event.start_at}");
+        log("Sent Data: car_id=${event.car_id}, parking_slot_id=${event.parking_slot_id}, start_at=${event.start_at}");
       } catch (e) {
+        log("Error: $e");
         emit(ReservedError(e.toString()));
-        emit(ReservCreated(event.car_id, event.parking_slot_id, event.start_at));
       }
     });
   }
@@ -82,6 +103,7 @@ class ReservedBloc extends Bloc<ReservedEvent, ReservedState> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('token') ?? '';
     await prefs.setString('token', token);
+    
 
     request.headers.addAll({
       "Accept": "application/json",
@@ -90,19 +112,10 @@ class ReservedBloc extends Bloc<ReservedEvent, ReservedState> {
     });
 
     var response = await request.send();
-
-    final responseBody = await response.stream.bytesToString();
-    log("Response Status: ${response.statusCode}");
-    log("Response Body: $responseBody");
-
-    if (response.statusCode != 200) {
-      throw Exception("Failed to send data! Error: $responseBody");
-    }
-
     return response;
   }
 
-  //get all car_data well using car_id, car_number
+  //get all car_data well using car_id, license_plate
   Future<List<car_data>> _onFetchUser() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
