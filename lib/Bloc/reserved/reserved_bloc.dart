@@ -1,13 +1,17 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:car_parking_reservation/history.dart';
 import 'package:car_parking_reservation/model/history.dart';
-
+import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:car_parking_reservation/bloc/parking/parking_bloc.dart';
+import 'package:car_parking_reservation/model/car.dart';
+
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'reserved_event.dart';
 part 'reserved_state.dart';
@@ -17,91 +21,120 @@ class ReservedBloc extends Bloc<ReservedEvent, ReservedState> {
     on<FectchFirstReserved>((event, emit) async {
       emit(ReserveLoading());
       try {
-        final history = await fetchData();
-        emit(ReservedLoaded(history));
+        final currentData = await _onFetchUser();
+        log("Data: $currentData");
+        emit(ReservedLoaded(carData: currentData));
       } catch (e) {
-        emit(ReservedError("Failed  to load data!"));
+        emit(ReservedError(e.toString()));
+        log("Error fetching data: $e");
       }
     });
 
     on<SendReservation>((event, emit) async {
       emit(ReserveLoading());
-      debugPrint("Sending Reservation Data:");
-      debugPrint(jsonEncode(event.history.toJson()));
       try {
-        final success = await postData(event.history);
-        if (success) {
-          //debugPrint("Data posted successfully");
-          emit(ReservedSuccess("Data posted successfully"));
-        } else {
-          emit(ReservedError("Failed to post data to server."));
+        final respones =
+            await postData(event.car_id, event.parking_slot_id, event.start_at);
+        if (respones.statusCode != 200) {
+          final responseBody = await respones.stream.bytesToString();
+          final responseJson = jsonDecode(responseBody);
+          emit(ReservedError(responseJson['message']));
+          throw Exception(responseJson['message']);
         }
-      } catch (e) {
-        emit(ReservedError("Failed to post data to server."));
-        //debugPrint("Error posting data: $e");
-      }
-    });
 
-    on<FetchAllReservation>((event, emit) async {
-      emit(ReserveLoading()); // แสดง Loading Indicator ขณะดึงข้อมูล
-      try {
-        final history =
-            await fetchData(); // เรียกใช้ API เพื่อดึงข้อมูลจาก Database
-        emit(
-          ReservedLoaded(history),
-        ); // อัปเดต State เพื่อให้แสดงข้อมูลในหน้า History
-        debugPrint("Fetched data from database successfully");
+        emit(ReservedSuccess("Reservation Success"));
+        emit(ReservCreated(event.car_id, event.parking_slot_id, event.start_at));
+
+        log("${car_data} ${event.parking_slot_id} ${event.start_at}");
       } catch (e) {
-        emit(ReservedError("Failed to load data from server!"));
-        debugPrint("Error fetching data: $e");
+        emit(ReservedError(e.toString()));
+        emit(ReservCreated(event.car_id, event.parking_slot_id, event.start_at));
       }
     });
   }
-    String baseUrl = dotenv.env['BASE_URL'].toString();
+  String baseUrl = dotenv.env['BASE_URL'].toString();
+  // Future<List<History_data>> fetchData() async {
+  //   debugPrint('url: $baseUrl');
+  //   final response =
+  //       await http.get(Uri.parse("$baseUrl/reservation"), headers: {
+  //     "Accept": "application/json",
+  //     "content-type": "application/json",
+  //   });
 
-  Future<List<History_data>> fetchData() async {
-    
-    debugPrint('url: $baseUrl');
-    final response = await http.get(Uri.parse("$baseUrl/reservation"), headers: {
+  //   if (response.statusCode == 200) {
+  //     // List<dynamic> data = jsonDecode(response.body);  // ok
+  //     List data = json.decode(response.body); // ok
+
+  //     return data
+  //         .map((e) => History_data.fromJson(e))
+  //         .toList(); // use method in class
+  //   } else {
+  //     debugPrint('failed loading');
+  //     throw Exception('Failed to load data!');
+  //   }
+  // }
+
+  Future<http.StreamedResponse> postData(
+      car_id, parking_slot_id, start_at) async {
+    final url = Uri.parse("$baseUrl/reservation");
+
+    var request = http.MultipartRequest('POST', url)
+      ..fields['car_id'] = car_id
+      ..fields['parking_slot_id'] = parking_slot_id
+      ..fields['start_at'] = start_at;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString('token') ?? '';
+    await prefs.setString('token', token);
+
+    request.headers.addAll({
       "Accept": "application/json",
       "content-type": "application/json",
+      "Authorization": "Bearer $token",
     });
 
-    if (response.statusCode == 200) {
-      // List<dynamic> data = jsonDecode(response.body);  // ok
-      List data = json.decode(response.body); // ok
+    var response = await request.send();
 
-      return data
-          .map((e) => History_data.fromJson(e))
-          .toList(); // use method in class
-    } else {
-      debugPrint('failed loading');
-      throw Exception('Failed to load data!');
+    final responseBody = await response.stream.bytesToString();
+    log("Response Status: ${response.statusCode}");
+    log("Response Body: $responseBody");
+
+    if (response.statusCode != 200) {
+      throw Exception("Failed to send data! Error: $responseBody");
     }
+
+    return response;
   }
 
-  Future<bool> postData(History_data reservation) async {
-    String baseUrl = ' http://localhost:4000';
-    debugPrint('url: $baseUrl');
-    final response = await http.post(
-      Uri.parse("$baseUrl/reservation"),
-      headers: {
-        "Accept": "application/json",
-        "content-type": "application/json",
-      },
-      body: jsonEncode(
-        reservation.toJson(),
-      ),
-    );
-    // Debug: แสดงผลลัพธ์ที่ได้จาก server
-    debugPrint("POST response status: ${response.statusCode}");
-    debugPrint("POST response body: ${response.body}");
+  //get all car_data well using car_id, car_number
+  Future<List<car_data>> _onFetchUser() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String token = prefs.getString('token') ?? '';
 
-    if (response.statusCode == 201) {
-      return true;
-    } else {
-      debugPrint('failed posting');
-      throw Exception('Failed to post data!');
+      final response = await http.get(
+        Uri.parse("$baseUrl/profile/cars"),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      log("Response Status: ${response.statusCode}");
+      log("Response Body: ${response.body}");
+
+      final jsonData = json.decode(response.body);
+
+      // ตรวจสอบว่า response มี "data" และ "car" หรือไม่
+      if (jsonData["data"] != null && jsonData["data"]["car"] is List) {
+        return (jsonData["data"]["car"] as List)
+            .map((e) => car_data.fromJson(e))
+            .toList();
+      } else {
+        throw Exception("Unexpected data format: Missing 'data' or 'car' list");
+      }
+    } catch (e) {
+      throw Exception('Error: ${e.toString()}');
     }
   }
 }

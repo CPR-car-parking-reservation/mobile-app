@@ -5,11 +5,14 @@ import 'package:flutter/material.dart';
 abstract class SettingEvent {
   const SettingEvent();
 
-  @override
   List<Object> get props => [];
 }
 
 class LoadCars extends SettingEvent {}
+
+class LoadUser extends SettingEvent {}
+
+class LoadUserAndCars extends SettingEvent {}
 
 class FetchCarById extends SettingEvent {
   final String carId;
@@ -63,4 +66,37 @@ class DeleteCar extends SettingEvent {
 
   @override
   List<Object> get props => [id];
+}
+
+class UpdateProfile extends SettingEvent {
+  final String name;
+  final String surname;
+  final String phone;
+  final File? imageFile;
+
+  const UpdateProfile({
+    required this.name,
+    required this.surname,
+    required this.phone,
+    this.imageFile,
+  });
+
+  @override
+  List<Object> get props => [name, surname,phone, imageFile ?? ''];
+}
+
+class UpdatePassword extends SettingEvent {
+  final String oldPassword;
+  final String newPassword;
+  // ignore: non_constant_identifier_names
+  final String confirm_password;
+
+  // ignore: non_constant_identifier_names
+  const UpdatePassword(
+      {required this.oldPassword,
+      required this.newPassword,
+      required this.confirm_password});
+
+  @override
+  List<Object> get props => [oldPassword, newPassword, confirm_password];
 }

@@ -9,15 +9,19 @@ final class RegisterLoading extends RegisterState {}
 
 class RegisterCreated extends RegisterState {
   final String name;
+  final String surname;
   final String email;
   final String password;
   final String confirm_password;
+  final String phone;
 
-  RegisterCreated({
+  RegisterCreated( {
     required this.name,
+    required this.surname,
     required this.email,
     required this.password,
     required this.confirm_password,
+    required this.phone
   });
 }
 
@@ -30,5 +34,7 @@ final class RegisterError extends RegisterState {
 final class RegisterSuccess extends RegisterState {
   final String message;
 
-  RegisterSuccess(this.message);
+  RegisterSuccess({required this.message});
+
+  List<Object> get props => [message];
 }

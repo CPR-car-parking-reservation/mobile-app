@@ -16,3 +16,8 @@ final class onSubmit extends LoginEvent {
   @override
   List<Object> get props => [email, password];
 }
+
+final class onHome extends LoginEvent {
+  @override
+  List<Object> get props => [];
+}
