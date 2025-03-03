@@ -24,12 +24,13 @@ class car_data {
         image_url: json["image_url"] ?? '',
     );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "id": id,
+        "license_plate": license_plate,
         "license_plate": license_plate,
         "car_model": car_model,
         "car_type": car_type,
         "user_id": user_id,
         "image_url": image_url,
-    };
+      };
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-void showCustomDialog(BuildContext context, String message) {
+void showCustomDialogSucess(BuildContext context, String message) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -16,13 +16,16 @@ void showCustomDialog(BuildContext context, String message) {
               padding: const EdgeInsets.symmetric(
                 vertical: 10,
               ),
-              child: Text(
-                message,
-                style: TextStyle(
-                    fontFamily: "Amiko",
-                    fontSize: 17,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.black),
+              child: Center(
+                child: Text(
+                  message,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontFamily: "Amiko",
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                      color: const Color.fromARGB(255, 0, 0, 0)),
+                ),
               ),
             ),
           ],
@@ -68,13 +71,16 @@ void showCustomDialogWarning(BuildContext context, String message) {
               padding: const EdgeInsets.symmetric(
                 vertical: 10,
               ),
-              child: Text(
-                message,
-                style: TextStyle(
-                    fontFamily: "Amiko",
-                    fontSize: 17,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.black),
+              child: Center(
+                child: Text(
+                  message,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontFamily: "Amiko",
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                      color: const Color.fromARGB(255, 0, 0, 0)),
+                ),
               ),
             ),
           ],
@@ -120,13 +126,16 @@ void showCustomDialogError(BuildContext context, String message) {
               padding: const EdgeInsets.symmetric(
                 vertical: 10,
               ),
-              child: Text(
-                message,
-                style: TextStyle(
-                    fontFamily: "Amiko",
-                    fontSize: 17,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.black),
+              child: Center(
+                child: Text(
+                  message,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontFamily: "Amiko",
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                      color: const Color.fromARGB(255, 0, 0, 0)),
+                ),
               ),
             ),
           ],
@@ -145,14 +154,15 @@ void showCustomDialogError(BuildContext context, String message) {
               child: Text("OK",
                   style: TextStyle(
                       fontFamily: "Amiko",
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white)),
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                      color: const Color.fromARGB(255, 0, 0, 0)),
+                ),
+              ),
             ),
-          ))
-        ],
+          ],
+        ),
       );
     },
   );
 }
-

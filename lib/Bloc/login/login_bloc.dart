@@ -25,11 +25,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', token);
-        await prefs.setString('role', role);
-        log(token);
+
         Future.delayed(Duration(seconds: 1));
-        emit(LoginSuccess(token, role));
-        // Navigator.pushNamed(event.context, '/home');
+        emit(LoginSuccess(role: role));
+        log("role: $role");
       } catch (e) {
         emit(LoginError(e.toString()));
       }
