@@ -117,7 +117,7 @@ class _SettingState extends State<Setting> with RouteAware {
                   );
                   if (result is String) {
                     // ignore: use_build_context_synchronously
-                    showCustomDialog(context, result);
+                    showCustomDialogSucess(context, result);
                     // ignore: use_build_context_synchronously
                     context.read<SettingBloc>().add(LoadUserAndCars());
                   }
@@ -157,7 +157,7 @@ class _SettingState extends State<Setting> with RouteAware {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                     logout(context);
+                    logout(context);
                   },
                   style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
@@ -392,7 +392,7 @@ class _SettingState extends State<Setting> with RouteAware {
                                 );
                                 if (result is String) {
                                   // ignore: use_build_context_synchronously
-                                  showCustomDialog(context, result);
+                                  showCustomDialogSucess(context, result);
                                   // ignore: use_build_context_synchronously
                                   context
                                       .read<SettingBloc>()
@@ -409,7 +409,7 @@ class _SettingState extends State<Setting> with RouteAware {
                             ),
                             FloatingActionButton.extended(
                               onPressed: () {
-                               confirmLogout(context);
+                                confirmLogout(context);
                               },
                               backgroundColor: Colors.red,
                               icon:

@@ -28,7 +28,7 @@ class _SignupState extends State<Signup> {
               context,
               MaterialPageRoute(builder: (context) => Signin()),
               (route) => false);
-          showCustomDialog(context, state.message);
+          showCustomDialogSucess(context, state.message);
         } else if (state is RegisterError) {
           showCustomDialogError(context, state.message);
         }
@@ -77,7 +77,6 @@ class _SignupState extends State<Signup> {
                 controller: newemailController,
                 keyboardType: TextInputType.emailAddress,
                 decoration: _inputDecoration("Email Address", Icons.email),
-                
               ),
               SizedBox(height: 15),
               TextField(
@@ -96,19 +95,20 @@ class _SignupState extends State<Signup> {
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.redAccent,
-                    padding: EdgeInsets.symmetric(vertical: 15, horizontal: 100),
+                    padding:
+                        EdgeInsets.symmetric(vertical: 15, horizontal: 100),
                   ),
                   onPressed: () {
                     context.read<RegisterBloc>().add(
-                      OnCreateRegister(
-                        newuserController.text,
-                        newsurnameController.text,
-                        newemailController.text,
-                        newpassController.text,
-                        newconfirmpassController.text,
-                        newphoneController.text,
-                      ),
-                    );
+                          OnCreateRegister(
+                            newuserController.text,
+                            newsurnameController.text,
+                            newemailController.text,
+                            newpassController.text,
+                            newconfirmpassController.text,
+                            newphoneController.text,
+                          ),
+                        );
                   },
                   child: Text(
                     "GET STARTED",

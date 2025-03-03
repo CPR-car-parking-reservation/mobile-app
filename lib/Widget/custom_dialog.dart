@@ -142,16 +142,17 @@ void showCustomDialogError(BuildContext context, String message) {
         ),
         actions: [
           Center(
-              child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Text("OK",
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Text(
+                  "OK",
                   style: TextStyle(
                       fontFamily: "Amiko",
                       fontSize: 17,
@@ -160,8 +161,8 @@ void showCustomDialogError(BuildContext context, String message) {
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       );
     },
   );

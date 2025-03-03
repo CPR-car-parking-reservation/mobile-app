@@ -125,7 +125,7 @@ class _EditCarPageState extends State<EditCarPage> {
     return BlocListener<SettingBloc, SettingState>(
       listener: (context, state) {
         if (state is SettingSuccess) {
-          showCustomDialog(context, state.message);
+          showCustomDialogSucess(context, state.message);
           Navigator.pop(context, state.message);
         } else if (state is SettingError) {
           showCustomDialogWarning(context, state.message);
@@ -344,7 +344,7 @@ class _EditCarPageState extends State<EditCarPage> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12)),
                   ),
-                  child:Text("Cancel",
+                  child: Text("Cancel",
                       style: TextStyle(
                           fontFamily: fontFamily,
                           color: Color.fromARGB(255, 0, 0, 0),

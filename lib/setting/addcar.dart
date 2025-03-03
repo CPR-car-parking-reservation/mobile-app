@@ -34,7 +34,8 @@ class _AddCarPageState extends State<AddCarPage> {
         });
       } else {
         // ignore: use_build_context_synchronously
-        showCustomDialog(context, 'Please select an image file. (.png, .jpg, .jpeg)');
+        showCustomDialogWarning(
+            context, 'Please select an image file. (.png, .jpg, .jpeg)');
       }
     }
   }
@@ -51,7 +52,8 @@ class _AddCarPageState extends State<AddCarPage> {
           fillColor: Colors.white,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           labelText: label,
-          labelStyle: const TextStyle(color: Colors.black, fontSize: 16, fontFamily: fontFamily),
+          labelStyle: const TextStyle(
+              color: Colors.black, fontSize: 16, fontFamily: fontFamily),
           floatingLabelBehavior: FloatingLabelBehavior.never,
         ),
         style: const TextStyle(color: Colors.black, fontFamily: fontFamily),
@@ -80,7 +82,8 @@ class _AddCarPageState extends State<AddCarPage> {
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(color: Colors.blue, width: 2),
           ),
-          labelStyle: const TextStyle(color: Colors.black, fontSize: 16, fontFamily: fontFamily),
+          labelStyle: const TextStyle(
+              color: Colors.black, fontSize: 16, fontFamily: fontFamily),
           floatingLabelBehavior: FloatingLabelBehavior.never,
         ),
         items: ['Fuels', 'Electric'].map((String value) {
@@ -137,7 +140,8 @@ class _AddCarPageState extends State<AddCarPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         IconButton(
-                          icon: const Icon(Icons.arrow_back, color: Colors.white),
+                          icon:
+                              const Icon(Icons.arrow_back, color: Colors.white),
                           onPressed: () {
                             Navigator.pop(context);
                           },
@@ -151,7 +155,9 @@ class _AddCarPageState extends State<AddCarPage> {
                             fontFamily: fontFamily,
                           ),
                         ),
-                        const SizedBox(width: 48), // To balance the space taken by the back button
+                        const SizedBox(
+                            width:
+                                48), // To balance the space taken by the back button
                       ],
                     ),
                     const SizedBox(height: 16),
@@ -197,14 +203,16 @@ class _AddCarPageState extends State<AddCarPage> {
                               border: Border.all(color: Colors.white, width: 2),
                             ),
                             child: IconButton(
-                              icon: const Icon(Icons.edit, size: 16, color: Colors.white),
+                              icon: const Icon(Icons.edit,
+                                  size: 16, color: Colors.white),
                               onPressed: pickImage,
                             ),
                           ),
                       ],
                     ),
                     const SizedBox(height: 20),
-                    buildTextField("ป้ายทะเบียน", Icons.directions_car, plateController),
+                    buildTextField(
+                        "ป้ายทะเบียน", Icons.directions_car, plateController),
                     buildTextField("รุ่นรถ", Icons.car_repair, modelController),
                     buildDropdownField(),
                     const SizedBox(height: 20),
@@ -212,11 +220,11 @@ class _AddCarPageState extends State<AddCarPage> {
                       onPressed: () async {
                         if (imageFile != null) {
                           BlocProvider.of<SettingBloc>(context).add(AddCar(
-                                plate: plateController.text,
-                                model: modelController.text,
-                                type: selectedType,
-                                imageFile: imageFile!,
-                              ));
+                            plate: plateController.text,
+                            model: modelController.text,
+                            type: selectedType,
+                            imageFile: imageFile!,
+                          ));
                         } else {
                           showCustomDialogWarning(context, 'กรุณาเลือกภาพ');
                         }

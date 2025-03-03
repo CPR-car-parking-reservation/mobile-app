@@ -66,7 +66,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         });
       } else {
         // ignore: use_build_context_synchronously
-        showCustomDialog(
+        showCustomDialogWarning(
             context, 'Please select an image file. (.png, .jpg, .jpeg)');
       }
     }
@@ -89,7 +89,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
           listener: (context, state) {
             if (state is SettingSuccess) {
               Navigator.pop(context);
-              showCustomDialog(context, state.message); // Show success message
+              showCustomDialogSucess(
+                  context, state.message); // Show success message
             } else if (state is SettingError) {
               showCustomDialogError(
                   context, state.message); // Show error message
@@ -138,7 +139,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         ),
                         child: Text("Update",
                             style: TextStyle(
-                                fontFamily: fontFamily ,
+                                fontFamily: fontFamily,
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16)),
@@ -157,7 +158,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         ),
                         child: Text("Cancel",
                             style: TextStyle(
-                                fontFamily:  fontFamily,
+                                fontFamily: fontFamily,
                                 color: const Color.fromARGB(255, 0, 0, 0),
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16)),
@@ -219,7 +220,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         //Page profile
         if (state is SettingSuccess) {
           Navigator.pop(context, state.message);
-          showCustomDialog(context, state.message);
+          showCustomDialogSucess(context, state.message);
         } else if (state is SettingError) {
           showCustomDialogError(context, state.message);
         }
