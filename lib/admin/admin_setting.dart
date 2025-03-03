@@ -1,3 +1,4 @@
+import 'package:car_parking_reservation/Login/signin.dart';
 import 'package:car_parking_reservation/Login/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -61,13 +62,10 @@ class _MyHomePageState extends State<MyHomePage> {
           children: [
             ElevatedButton(
               onPressed: () {
-                Future.delayed(Duration.zero, () {
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => Welcome()),
-                    (route) => false,
-                  );
-                });
+                Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => const Signin()),
+                  (route) => false,
+                );
               },
               child: Text('Logout'),
             ),
