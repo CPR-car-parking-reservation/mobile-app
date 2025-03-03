@@ -1,13 +1,9 @@
-import 'dart:developer';
 
 import 'package:car_parking_reservation/Widget/home.dart';
-import 'package:car_parking_reservation/bloc/parking/parking_bloc.dart';
 import 'package:car_parking_reservation/bloc/reserved/reserved_bloc.dart';
 import 'package:car_parking_reservation/Qr-generator/qr_code.dart';
-import 'package:car_parking_reservation/history.dart';
 import 'package:car_parking_reservation/model/car.dart';
 import 'package:car_parking_reservation/model/history.dart';
-import 'package:car_parking_reservation/setting/setting_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -174,10 +170,10 @@ class _ReservState extends State<Reserv> {
                                   child: Row(
                                     children: [
                                       Image.network(
-                                          "${baseUrl}${car.image_url}",
+                                          "$baseUrl${car.image_url}",
                                           height: 50,
                                           width: 50),
-                                      Text(" ${car.car_number} "),
+                                      Text(" ${car.license_plate} "),
                                     ],
                                   ),
                                 );
@@ -210,7 +206,7 @@ class _ReservState extends State<Reserv> {
                                             padding: const EdgeInsets.only(
                                                 left: 5, top: 7.5),
                                             child: Text(
-                                              "${dateFormat.format(DateTime.now().toUtc())}",
+                                              dateFormat.format(DateTime.now().toUtc()),
                                               style: TextStyle(
                                                   fontFamily: "Amiko",
                                                   fontSize: 22,
@@ -237,7 +233,7 @@ class _ReservState extends State<Reserv> {
                                             padding: const EdgeInsets.only(
                                                 left: 5, top: 7.5),
                                             child: Text(
-                                              "${dateFormat.format(DateTime.now().toUtc())}",
+                                              dateFormat.format(DateTime.now().toUtc()),
                                               style: TextStyle(
                                                   fontFamily: "Amiko",
                                                   fontSize: 22,
@@ -332,14 +328,14 @@ class _ReservState extends State<Reserv> {
                                         _boolfade = true;
                                       });
 
-                                      String select_this_date =
-                                          "${dateFormat.format(DateTime.now().toUtc())}";
-                                      String select_this_time =
-                                          "${dateFormat.format(DateTime.now().toUtc())}";
+                                      String selectThisDate =
+                                          dateFormat.format(DateTime.now().toUtc());
+                                      String selectThisTime =
+                                          dateFormat.format(DateTime.now().toUtc());
 
                                       final historyData = History_data(
-                                        date: select_this_date,
-                                        start_at: select_this_time,
+                                        date: selectThisDate,
+                                        start_at: selectThisTime,
                                         end_at: "N/A",
                                         parkingSlot: ParkingSlot(
                                           id: widget.parking_slots_id ?? '',
@@ -357,7 +353,7 @@ class _ReservState extends State<Reserv> {
                                           SendReservation(
                                               _selectedValue ?? '',
                                               widget.parking_slots_id ?? '',
-                                              select_this_time));
+                                              selectThisTime));
                                       //log("car_id: ${_selectedValue}, parking_slot_id: ${historyData.parkingSlot.id}, start_time: ${historyData.start_at}");
                                       showDialog(
                                         context: context,

@@ -11,6 +11,7 @@ import 'package:car_parking_reservation/setting/editprofile.dart';
 import 'package:car_parking_reservation/Login/signin.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:car_parking_reservation/widget/custom_dialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 const String fontFamily = "amiko";
 
@@ -28,7 +29,7 @@ class _SettingState extends State<Setting> with RouteAware {
 
   @override
   void didPopNext() {
-    // Always reload data when coming back to this page
+    loadToken();
     context.read<SettingBloc>().add(LoadUserAndCars());
   }
 
@@ -45,6 +46,14 @@ class _SettingState extends State<Setting> with RouteAware {
   void dispose() {
     routeObserver.unsubscribe(this);
     super.dispose();
+  }
+
+  String userToken = '';
+  void loadToken() async {
+   SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userToken = prefs.getString('token') ?? '';
+    });
   }
 
   void logout(BuildContext context) {
@@ -80,7 +89,7 @@ class _SettingState extends State<Setting> with RouteAware {
                           color: Colors.black,
                           fontFamily: fontFamily,
                           fontWeight: FontWeight.bold)),
-                  Text(car[index].car_number,
+                  Text(car[index].license_plate,
                       style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w400,

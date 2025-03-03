@@ -12,8 +12,8 @@ showUpdateParkingDialog(BuildContext context, ModelParkingSlot parking) {
   if (state is AdminParkingLoaded) {
     floors = state.floors;
   }
-  final TextEditingController _slotNumberController = TextEditingController();
-  _slotNumberController.text = parking.slotNumber;
+  final TextEditingController slotNumberController = TextEditingController();
+  slotNumberController.text = parking.slotNumber;
   String? selectedFloor = parking.floor.floorNumber;
   String? selectedStatus = parking.status;
   showDialog(
@@ -39,7 +39,7 @@ showUpdateParkingDialog(BuildContext context, ModelParkingSlot parking) {
                   ),
                   const SizedBox(height: 5),
                   TextField(
-                    controller: _slotNumberController,
+                    controller: slotNumberController,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10)),
@@ -82,7 +82,7 @@ showUpdateParkingDialog(BuildContext context, ModelParkingSlot parking) {
                   log("Update Parking Slot");
                   log("id : ${parking.id}");
                   bloc.add(OnUpdate(
-                      selectedFloor!, _slotNumberController.text, parking.id));
+                      selectedFloor!, slotNumberController.text, parking.id));
                   Navigator.of(context).pop();
                 },
                 child: const Text("Update", style: TextStyle(fontSize: 16)),

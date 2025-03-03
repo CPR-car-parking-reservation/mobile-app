@@ -179,12 +179,12 @@ class AdminParkingBloc extends Bloc<AdminParkingEvent, AdminParkingState> {
   }
 
   Future<http.StreamedResponse> createParkingSlot(
-      slot_number, floor_number) async {
+      slotNumber, floorNumber) async {
     //from data
     final url = Uri.parse("$baseUrl/parking_slots");
     var request = http.MultipartRequest('POST', url)
-      ..fields['slot_number'] = slot_number
-      ..fields['floor_number'] = floor_number;
+      ..fields['slot_number'] = slotNumber
+      ..fields['floor_number'] = floorNumber;
     request.headers.addAll({
       "Accept": "application/json",
       "content-type": "application/json",
@@ -196,13 +196,13 @@ class AdminParkingBloc extends Bloc<AdminParkingEvent, AdminParkingState> {
   }
 
   Future<http.StreamedResponse> updateParkingSlot(
-      id, slot_number, floor_number) async {
-    log("Update Called $floor_number $slot_number $id");
+      id, slotNumber, floorNumber) async {
+    log("Update Called $floorNumber $slotNumber $id");
     //from data
     final url = Uri.parse("$baseUrl/parking_slots/id/$id");
     var request = http.MultipartRequest('PUT', url)
-      ..fields['slot_number'] = slot_number
-      ..fields['floor_number'] = floor_number;
+      ..fields['slot_number'] = slotNumber
+      ..fields['floor_number'] = floorNumber;
     request.headers.addAll({
       "Accept": "application/json",
       "content-type": "application/json",

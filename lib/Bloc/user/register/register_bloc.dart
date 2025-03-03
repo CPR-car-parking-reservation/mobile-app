@@ -41,7 +41,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   String baseUrl = dotenv.env['BASE_URL'].toString();
 
   Future<http.StreamedResponse> createUser(String email,
-      String password, String confirm_password, String name) async {
+      String password, String confirmPassword, String name) async {
     final url = Uri.parse('$baseUrl/register');
 
     log("Sending request to: $url");
@@ -50,7 +50,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     var request = http.MultipartRequest('POST', url)
       ..fields['email'] = email
       ..fields['password'] = password
-      ..fields['confirm_password'] = confirm_password
+      ..fields['confirm_password'] = confirmPassword
       ..fields['name'] = name;
 
     request.headers.addAll({

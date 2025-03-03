@@ -36,8 +36,7 @@ class _EditCarPageState extends State<EditCarPage> {
     plateController = TextEditingController();
     modelController = TextEditingController();
     typeController = TextEditingController();
-    BlocProvider.of<SettingBloc>(context)
-        .add(FetchCarById(carId: widget.car_id));
+    BlocProvider.of<SettingBloc>(context).add(FetchCarById(carId: widget.car_id));
   }
 
   @override
@@ -58,26 +57,6 @@ class _EditCarPageState extends State<EditCarPage> {
         imagePath = pickedFile.path;
       }
     }
-  }
-
-  void _showSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          style: const TextStyle(
-            color: Colors.white,
-            fontFamily: "amiko",
-          ),
-        ),
-        backgroundColor: Colors.blueAccent,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        margin: const EdgeInsets.all(10),
-      ),
-    );
   }
 
   Widget buildDropdownField() {
@@ -147,7 +126,7 @@ class _EditCarPageState extends State<EditCarPage> {
           showCustomDialog(context, state.message);
           Navigator.pop(context, state.message);
         } else if (state is SettingError) {
-          _showSnackBar(context, state.message);
+          showCustomDialogWarning(context, state.message);
         }
       },
       child: Scaffold(
@@ -177,7 +156,7 @@ class _EditCarPageState extends State<EditCarPage> {
                   selectedTypeNotifier.value = car.car_type;
                   typeController.text = car.car_type;
                 }
-                plateController.text = car.car_number;
+                plateController.text = car.license_plate;
                 modelController.text = car.car_model;
 
                 return SingleChildScrollView(
@@ -397,7 +376,7 @@ class ImageSection extends StatelessWidget {
           ),
           child: Container(
             width: double.infinity,
-            height: 200,
+            height: 180,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               image: imageFile != null

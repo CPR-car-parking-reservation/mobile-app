@@ -1,12 +1,9 @@
-import 'dart:developer';
 
 import 'package:car_parking_reservation/Bloc/user/register/register_bloc.dart';
 import 'package:car_parking_reservation/Login/signin.dart';
 import 'package:car_parking_reservation/Widget/custom_dialog.dart';
-import 'package:car_parking_reservation/Widget/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:http/http.dart';
 
 class Signup extends StatefulWidget {
   const Signup({super.key});

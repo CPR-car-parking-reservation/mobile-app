@@ -1,9 +1,7 @@
-import 'package:car_parking_reservation/Bloc/admin_bloc/admin_parking/admin_parking_bloc.dart';
 import 'package:car_parking_reservation/admin/widgets/parking/dialog/delete_parking.dart';
 import 'package:car_parking_reservation/admin/widgets/parking/dialog/update_parking.dart';
 import 'package:car_parking_reservation/model/admin/parking.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AdminListViewParking extends StatelessWidget {
   final List<ModelParkingSlot> parkings;

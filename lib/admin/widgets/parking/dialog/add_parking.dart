@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:car_parking_reservation/bloc/admin_bloc/admin_parking/admin_parking_bloc.dart';
 import 'package:car_parking_reservation/model/admin/parking.dart';
@@ -12,7 +11,7 @@ showAddParkingDialog(BuildContext context) {
   if (state is AdminParkingLoaded) {
     floors = state.floors;
   }
-  final TextEditingController _slotNumberController = TextEditingController();
+  final TextEditingController slotNumberController = TextEditingController();
   String? selectedFloor = "F1";
   showDialog(
     context: context,
@@ -37,7 +36,7 @@ showAddParkingDialog(BuildContext context) {
                   ),
                   const SizedBox(height: 5),
                   TextField(
-                    controller: _slotNumberController,
+                    controller: slotNumberController,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10)),
@@ -77,7 +76,7 @@ showAddParkingDialog(BuildContext context) {
             actions: [
               TextButton(
                 onPressed: () {
-                  bloc.add(OnCreate(_slotNumberController.text, selectedFloor));
+                  bloc.add(OnCreate(slotNumberController.text, selectedFloor));
                   Navigator.of(context).pop();
                 },
                 child: const Text("Add", style: TextStyle(fontSize: 16)),

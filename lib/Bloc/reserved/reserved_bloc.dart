@@ -1,10 +1,6 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:car_parking_reservation/model/history.dart';
-import 'package:equatable/equatable.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:car_parking_reservation/bloc/parking/parking_bloc.dart';
 import 'package:car_parking_reservation/model/car.dart';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -60,7 +56,7 @@ class ReservedBloc extends Bloc<ReservedEvent, ReservedState> {
         emit(
             ReservCreated(event.car_id, event.parking_slot_id, event.start_at));
 
-        log("${car_data} ${event.parking_slot_id} ${event.start_at}");
+        log("$car_data ${event.parking_slot_id} ${event.start_at}");
       } catch (e) {
         emit(ReservedError(e.toString()));
         emit(
@@ -91,13 +87,13 @@ class ReservedBloc extends Bloc<ReservedEvent, ReservedState> {
   // }
 
   Future<http.StreamedResponse> postData(
-      car_id, parking_slot_id, start_at) async {
+      carId, parkingSlotId, startAt) async {
     final url = Uri.parse("$baseUrl/reservation");
 
     var request = http.MultipartRequest('POST', url)
-      ..fields['car_id'] = car_id
-      ..fields['parking_slot_id'] = parking_slot_id
-      ..fields['start_at'] = start_at;
+      ..fields['car_id'] = carId
+      ..fields['parking_slot_id'] = parkingSlotId
+      ..fields['start_at'] = startAt;
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('token') ?? '';

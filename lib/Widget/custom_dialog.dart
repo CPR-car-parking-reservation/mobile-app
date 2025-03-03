@@ -38,7 +38,7 @@ void showCustomDialog(BuildContext context, String message) {
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Text(message,
+              child: Text("OK",
                   style: TextStyle(
                       fontFamily: "Amiko",
                       fontSize: 16,
@@ -90,7 +90,7 @@ void showCustomDialogWarning(BuildContext context, String message) {
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Text(message,
+              child: Text("OK",
                   style: TextStyle(
                       fontFamily: "Amiko",
                       fontSize: 16,
@@ -142,7 +142,7 @@ void showCustomDialogError(BuildContext context, String message) {
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Text(message,
+              child: Text("OK",
                   style: TextStyle(
                       fontFamily: "Amiko",
                       fontSize: 16,

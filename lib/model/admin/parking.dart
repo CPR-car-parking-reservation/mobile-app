@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 class ModelParkingSlot {
   final String id;

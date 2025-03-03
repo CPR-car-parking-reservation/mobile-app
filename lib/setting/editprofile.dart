@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:car_parking_reservation/Widget/custom_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:car_parking_reservation/model/profile.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -96,7 +95,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
             }
           },
           child: AlertDialog(
-            title: Text('Change Password', style: TextStyle(fontFamily: fontFamily)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            backgroundColor: Colors.white, // สีพื้นหลังขาว
+            title: Text('Change Password', style: TextStyle(fontFamily: fontFamily, color: Colors.black)),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -116,13 +119,19 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         confirm_password: confirmPasswordController.text,
                       ));
                 },
-                child: Text('Update Password', style: TextStyle(fontFamily: fontFamily)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green, // สีปุ่มสว่าง
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: Text('Update Password', style: TextStyle(fontFamily: fontFamily, color: Colors.white)),
               ),
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text('Cancel', style: TextStyle(fontFamily: fontFamily)),
+                child: Text('Cancel', style: TextStyle(fontFamily: fontFamily, color: Colors.red)),
               ),
             ],
           ),
@@ -132,33 +141,41 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Widget buildTextField(
-      String labelText, IconData icon, TextEditingController controller, keyboardType  , 
+      String labelText, IconData icon, TextEditingController controller, TextInputType keyboardType, 
       {bool readOnly = false}) {
-    return TextField(
-      controller: controller,
-      readOnly: readOnly,
-      keyboardType : keyboardType, 
-      decoration: InputDecoration(
-        labelStyle: TextStyle(fontFamily: fontFamily),
-        prefixIcon: Icon(icon),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        filled: true,
-        fillColor: Colors.white,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: TextField(
+        controller: controller,
+        readOnly: readOnly,
+        keyboardType: keyboardType,
+        decoration: InputDecoration(
+          labelStyle: TextStyle(fontFamily: fontFamily, color: Colors.black),
+          prefixIcon: Icon(icon, color: Colors.black),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          filled: true,
+          fillColor: Colors.white,
+        ),
+        style: TextStyle(fontFamily: fontFamily, color: Colors.black),
       ),
-      style: TextStyle(fontFamily: fontFamily, color: Colors.black),
     );
   }
 
   Widget buildPasswordField(String label, TextEditingController controller) {
-    return TextField(
-      controller: controller,
-      obscureText: true,
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: TextStyle(fontFamily: fontFamily),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: TextField(
+        controller: controller,
+        obscureText: true,
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: TextStyle(fontFamily: fontFamily, color: Colors.black),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          filled: true,
+          fillColor: Colors.grey[200],
+        ),
+        style: TextStyle(fontFamily: fontFamily, color: Colors.black),
       ),
-      style: TextStyle(fontFamily: fontFamily),
     );
   }
 
@@ -244,14 +261,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   ],
                 ),
                 const SizedBox(height: 40),
-                buildTextField("Username", Icons.person, usernameController , TextInputType.text),
-                const SizedBox(height: 15),
-                buildTextField("Surname", Icons.person, surnameController , TextInputType.text),
-                const SizedBox(height: 15),
-                buildTextField("Phone", Icons.phone, phoneController , TextInputType.number),
-                const SizedBox(height: 15),
-                buildTextField("Email", Icons.email, emailController, TextInputType.text,
-                    readOnly: true),
+                buildTextField("Username", Icons.person, usernameController, TextInputType.text),
+                buildTextField("Surname", Icons.person, surnameController, TextInputType.text),
+                buildTextField("Phone", Icons.phone, phoneController, TextInputType.number),
+                buildTextField("Email", Icons.email, emailController, TextInputType.text, readOnly: true),
                 const SizedBox(height: 20),
                 SizedBox(
                   width: double.infinity,

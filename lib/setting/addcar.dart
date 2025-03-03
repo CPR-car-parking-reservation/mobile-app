@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
+const String fontFamily = "amiko";
+
 class AddCarPage extends StatefulWidget {
   const AddCarPage({super.key});
 
@@ -37,68 +39,72 @@ class _AddCarPageState extends State<AddCarPage> {
     }
   }
 
-  
-
   Widget buildTextField(
       String label, IconData icon, TextEditingController controller) {
-    return TextField(
-      controller: controller,
-      decoration: InputDecoration(
-        prefixIcon: Icon(icon, color: Colors.black),
-        filled: true,
-        fillColor: Colors.white,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        labelText: label,
-        labelStyle: const TextStyle(color: Colors.black, fontSize: 16),
-        floatingLabelBehavior: FloatingLabelBehavior.never,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          prefixIcon: Icon(icon, color: Colors.black),
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          labelText: label,
+          labelStyle: const TextStyle(color: Colors.black, fontSize: 16, fontFamily: fontFamily),
+          floatingLabelBehavior: FloatingLabelBehavior.never,
+        ),
+        style: const TextStyle(color: Colors.black, fontFamily: fontFamily),
       ),
-      style: const TextStyle(color: Colors.black),
     );
   }
 
   Widget buildDropdownField() {
-    return DropdownButtonFormField<String>(
-      value: selectedType,
-      decoration: InputDecoration(
-        prefixIcon: Icon(Icons.category, color: Colors.black),
-        filled: true,
-        fillColor: Colors.white,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.black, width: 1),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.blue, width: 2),
-        ),
-        labelStyle: const TextStyle(color: Colors.black, fontSize: 16),
-        floatingLabelBehavior: FloatingLabelBehavior.never,
-      ),
-      items: ['Fuels', 'Electric'].map((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(
-            value,
-            style: const TextStyle(
-              color: Colors.black,
-              fontFamily: "amiko",
-            ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: DropdownButtonFormField<String>(
+        value: selectedType,
+        decoration: InputDecoration(
+          prefixIcon: Icon(Icons.category, color: Colors.black),
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
           ),
-        );
-      }).toList(),
-      onChanged: (newValue) {
-        setState(() {
-          selectedType = newValue!;
-        });
-      },
-      style: const TextStyle(color: Colors.black),
-      dropdownColor: Colors.white,
-      icon: const Icon(Icons.arrow_drop_down, color: Colors.black),
-      iconSize: 24,
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.black, width: 1),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.blue, width: 2),
+          ),
+          labelStyle: const TextStyle(color: Colors.black, fontSize: 16, fontFamily: fontFamily),
+          floatingLabelBehavior: FloatingLabelBehavior.never,
+        ),
+        items: ['Fuels', 'Electric'].map((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(
+              value,
+              style: const TextStyle(
+                color: Colors.black,
+                fontFamily: fontFamily,
+              ),
+            ),
+          );
+        }).toList(),
+        onChanged: (newValue) {
+          setState(() {
+            selectedType = newValue!;
+          });
+        },
+        style: const TextStyle(color: Colors.black, fontFamily: fontFamily),
+        dropdownColor: Colors.white,
+        icon: const Icon(Icons.arrow_drop_down, color: Colors.black),
+        iconSize: 24,
+      ),
     );
   }
 
@@ -142,7 +148,7 @@ class _AddCarPageState extends State<AddCarPage> {
                             color: Colors.white,
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
-                            fontFamily: "amiko",
+                            fontFamily: fontFamily,
                           ),
                         ),
                         const SizedBox(width: 48), // To balance the space taken by the back button
@@ -199,9 +205,7 @@ class _AddCarPageState extends State<AddCarPage> {
                     ),
                     const SizedBox(height: 20),
                     buildTextField("ป้ายทะเบียน", Icons.directions_car, plateController),
-                    const SizedBox(height: 10),
                     buildTextField("รุ่นรถ", Icons.car_repair, modelController),
-                    const SizedBox(height: 10),
                     buildDropdownField(),
                     const SizedBox(height: 20),
                     ElevatedButton(
@@ -231,7 +235,7 @@ class _AddCarPageState extends State<AddCarPage> {
                           color: Colors.white,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          fontFamily: "amiko",
+                          fontFamily: fontFamily,
                         ),
                       ),
                     ),
