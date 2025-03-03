@@ -51,8 +51,7 @@ class Home extends StatelessWidget {
                   case 2:
                     return History();
                   case 3:
-                    return BlocProvider(
-                        create: (context) => SettingBloc(), child: Setting());
+                    return Setting();
                   default:
                     return SizedBox.shrink();
                 }

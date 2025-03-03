@@ -82,92 +82,92 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   void _showChangePasswordModal(BuildContext context) {
+    final settingBloc = context.read<SettingBloc>(); // ดึง Bloc มาก่อน
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return BlocListener<SettingBloc, SettingState>(
-          listener: (context, state) {
-            if (state is SettingSuccess) {
-              Navigator.pop(context);
-              showCustomDialogSucess(
-                  context, state.message); // Show success message
-            } else if (state is SettingError) {
-              showCustomDialogError(
-                  context, state.message); // Show error message
-            }
-          },
-          child: Stack(
-            children: [
-              AlertDialog(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                backgroundColor: Colors.white, // สีพื้นหลังขาว
-                title: Text('Change Password',
-                    style:
-                        TextStyle(fontFamily: fontFamily, color: Colors.black)),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    buildPasswordField('Old Password', oldPasswordController),
-                    const SizedBox(height: 10),
-                    buildPasswordField('New Password', newPasswordController),
-                    const SizedBox(height: 10),
-                    buildPasswordField(
-                        'Confirm Password', confirmPasswordController),
-                  ],
-                ),
-                actions: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          context.read<SettingBloc>().add(UpdatePassword(
-                                oldPassword: oldPasswordController.text,
-                                newPassword: newPasswordController.text,
-                                confirm_password:
-                                    confirmPasswordController.text,
-                              ));
-                        },
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 15, vertical: 10),
-                          backgroundColor: Colors.green,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12)),
-                        ),
-                        child: Text("Update",
-                            style: TextStyle(
-                                fontFamily: fontFamily,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16)),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 15, vertical: 10),
-                          backgroundColor:
-                              const Color.fromARGB(255, 251, 251, 251),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12)),
-                        ),
-                        child: Text("Cancel",
-                            style: TextStyle(
-                                fontFamily: fontFamily,
-                                color: const Color.fromARGB(255, 0, 0, 0),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16)),
-                      ),
-                    ],
-                  ),
+        return BlocProvider.value(
+          value: settingBloc, // ให้ BlocProvider ใช้ Bloc เดียวกัน
+          child: BlocListener<SettingBloc, SettingState>(
+            listener: (context, state) {
+              if (state is SettingSuccess) {
+                Navigator.pop(context);
+                showCustomDialogSucess(
+                    context, state.message); // Show success message
+              } else if (state is SettingError) {
+                showCustomDialogError(
+                    context, state.message); // Show error message
+              }
+            },
+            child: AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              backgroundColor: Colors.white,
+              title: Text('Change Password',
+                  style:
+                      TextStyle(fontFamily: fontFamily, color: Colors.black)),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  buildPasswordField('Old Password', oldPasswordController),
+                  const SizedBox(height: 10),
+                  buildPasswordField('New Password', newPasswordController),
+                  const SizedBox(height: 10),
+                  buildPasswordField(
+                      'Confirm Password', confirmPasswordController),
                 ],
               ),
-            ],
+              actions: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        context.read<SettingBloc>().add(UpdatePassword(
+                              oldPassword: oldPasswordController.text,
+                              newPassword: newPasswordController.text,
+                              confirm_password: confirmPasswordController.text,
+                            ));
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                        backgroundColor: Colors.green,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                      ),
+                      child: Text("Update",
+                          style: TextStyle(
+                              fontFamily: fontFamily,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16)),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                        backgroundColor:
+                            const Color.fromARGB(255, 251, 251, 251),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                      ),
+                      child: Text("Cancel",
+                          style: TextStyle(
+                              fontFamily: fontFamily,
+                              color: const Color.fromARGB(255, 0, 0, 0),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16)),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         );
       },
