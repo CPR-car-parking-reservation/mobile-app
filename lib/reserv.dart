@@ -175,7 +175,7 @@ class _ReservState extends State<Reserv> {
                                           "${baseUrl}${car.image_url}",
                                           height: 50,
                                           width: 50),
-                                      Text(" ${car.car_number} "),
+                                      Text(" ${car.license_plate} "),
                                     ],
                                   ),
                                 );
