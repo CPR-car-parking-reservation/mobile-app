@@ -1,10 +1,16 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+<<<<<<< HEAD
+import 'package:car_parking_reservation/model/history.dart';
+import 'package:equatable/equatable.dart';
+import 'package:flutter/cupertino.dart';
+=======
 import 'package:car_parking_reservation/bloc/parking/parking_bloc.dart';
 import 'package:car_parking_reservation/model/car.dart';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+>>>>>>> d1904432a8f9d2f3d8271c742cd6f81c7ee00271
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 

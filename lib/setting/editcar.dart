@@ -1,10 +1,12 @@
 import 'dart:io';
+import 'package:car_parking_reservation/Widget/custom_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:car_parking_reservation/model/car.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:car_parking_reservation/bloc/setting/setting_bloc.dart';
 import 'package:car_parking_reservation/bloc/setting/setting_event.dart';
 import 'package:car_parking_reservation/bloc/setting/setting_state.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:image_picker/image_picker.dart';
 
 class EditCarPage extends StatefulWidget {
@@ -26,7 +28,7 @@ class _EditCarPageState extends State<EditCarPage> {
       ValueNotifier<String?>(null);
   String? imagePath;
 
-  String baseImgUrl = 'http://172.24.144.1:4000';
+  String baseUrl = dotenv.env['BASE_URL'].toString();
 
   @override
   void initState() {
@@ -63,7 +65,10 @@ class _EditCarPageState extends State<EditCarPage> {
       SnackBar(
         content: Text(
           message,
-          style: const TextStyle(color: Colors.white),
+          style: const TextStyle(
+            color: Colors.white,
+            fontFamily: "amiko",
+          ),
         ),
         backgroundColor: Colors.blueAccent,
         behavior: SnackBarBehavior.floating,
@@ -79,8 +84,16 @@ class _EditCarPageState extends State<EditCarPage> {
     return ValueListenableBuilder<String?>(
       valueListenable: selectedTypeNotifier,
       builder: (context, selectedType, child) {
+        // รายการที่สามารถเลือกได้
+        List<String> carTypes = ['Fuels', 'Electric'];
+
+        // ตรวจสอบว่า selectedType อยู่ในรายการหรือไม่
+        if (!carTypes.contains(selectedType)) {
+          selectedTypeNotifier.value = carTypes.first; // ตั้งค่าเริ่มต้นใหม่
+        }
+
         return DropdownButtonFormField<String>(
-          value: selectedType,
+          value: selectedTypeNotifier.value, // ใช้ค่าใหม่ที่ตรวจสอบแล้ว
           decoration: InputDecoration(
             prefixIcon: Icon(Icons.category, color: Colors.black),
             filled: true,
@@ -101,12 +114,15 @@ class _EditCarPageState extends State<EditCarPage> {
             labelStyle: const TextStyle(color: Colors.black, fontSize: 16),
             floatingLabelBehavior: FloatingLabelBehavior.never,
           ),
-          items: ['Fuels', 'Electric'].map((String value) {
+          items: carTypes.map((String value) {
             return DropdownMenuItem<String>(
               value: value,
               child: Text(
                 value,
-                style: const TextStyle(color: Colors.black),
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontFamily: "amiko",
+                ),
               ),
             );
           }).toList(),
@@ -128,8 +144,8 @@ class _EditCarPageState extends State<EditCarPage> {
     return BlocListener<SettingBloc, SettingState>(
       listener: (context, state) {
         if (state is SettingSuccess) {
-          _showSnackBar(context, state.message);
-          Navigator.pop(context);
+          showCustomDialog(context, state.message);
+          Navigator.pop(context, state.message);
         } else if (state is SettingError) {
           _showSnackBar(context, state.message);
         }
@@ -145,17 +161,22 @@ class _EditCarPageState extends State<EditCarPage> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
+                  return Center(
+                    child: Text(
+                      'Error: ${snapshot.error}',
+                      style: const TextStyle(
+                        fontFamily: "amiko",
+                      ),
+                    ),
+                  );
                 }
                 final car = snapshot.data!;
-
                 // ตั้งค่าเริ่มต้นสำหรับ Dropdown
                 if (selectedTypeNotifier.value == null ||
                     typeController.text.isEmpty) {
                   selectedTypeNotifier.value = car.car_type;
                   typeController.text = car.car_type;
                 }
-
                 plateController.text = car.car_number;
                 modelController.text = car.car_model;
 
@@ -172,8 +193,7 @@ class _EditCarPageState extends State<EditCarPage> {
                               icon: const Icon(Icons.arrow_back,
                                   color: Colors.white),
                               onPressed: () {
-                                Navigator.pop(context,
-                                    true); // Pass a result to indicate a reload is needed
+                                Navigator.pop(context, true);
                               },
                             ),
                             const Text(
@@ -182,11 +202,10 @@ class _EditCarPageState extends State<EditCarPage> {
                                 color: Colors.white,
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
+                                fontFamily: "amiko",
                               ),
                             ),
-                            const SizedBox(
-                                width:
-                                    48), // To balance the space taken by the back button
+                            const SizedBox(width: 48),
                           ],
                         ),
                         const SizedBox(height: 10),
@@ -196,7 +215,7 @@ class _EditCarPageState extends State<EditCarPage> {
                           valueListenable: imageNotifier,
                           builder: (context, imageFile, child) {
                             return ImageSection(
-                              baseImgUrl: baseImgUrl,
+                              baseImgUrl: baseUrl,
                               car: car,
                               imageFile: imageFile,
                               onImagePicked: (file, path) {
@@ -234,11 +253,15 @@ class _EditCarPageState extends State<EditCarPage> {
                                   backgroundColor: Colors.green,
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12))),
-                              child: const Text("Update Car",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold))),
+                              child: const Text(
+                                "Update Car",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: "amiko",
+                                ),
+                              )),
                         ),
                         const SizedBox(height: 10),
                         SizedBox(
@@ -260,6 +283,7 @@ class _EditCarPageState extends State<EditCarPage> {
                                 color: Colors.white,
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
+                                fontFamily: "amiko",
                               ),
                             ),
                           ),
@@ -294,12 +318,27 @@ class _EditCarPageState extends State<EditCarPage> {
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          title: const Text("Delete Car"),
-          content: const Text("คุณแน่ใจหรือไม่ว่าต้องการลบรถคันนี้?"),
+          title: const Text(
+            "Delete Car",
+            style: TextStyle(
+              fontFamily: "amiko",
+            ),
+          ),
+          content: const Text(
+            "คุณแน่ใจหรือไม่ว่าต้องการลบรถคันนี้?",
+            style: TextStyle(
+              fontFamily: "amiko",
+            ),
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext),
-              child: const Text("Cancel"),
+              child: const Text(
+                "Cancel",
+                style: TextStyle(
+                  fontFamily: "amiko",
+                ),
+              ),
             ),
             TextButton(
               onPressed: () {
@@ -307,7 +346,12 @@ class _EditCarPageState extends State<EditCarPage> {
                 Navigator.pop(dialogContext); // ปิด Dialog
               },
               style: TextButton.styleFrom(foregroundColor: Colors.red),
-              child: const Text("Delete"),
+              child: const Text(
+                "Delete",
+                style: TextStyle(
+                  fontFamily: "amiko",
+                ),
+              ),
             ),
           ],
         );
@@ -352,8 +396,8 @@ class ImageSection extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
           ),
           child: Container(
-            width: 350,
-            height: 230,
+            width: double.infinity,
+            height: 200,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               image: imageFile != null

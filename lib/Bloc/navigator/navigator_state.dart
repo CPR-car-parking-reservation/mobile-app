@@ -3,7 +3,6 @@ part of 'navigator_bloc.dart';
 abstract class NavigatorBlocState {
   const NavigatorBlocState();
 
-  @override
   List<Object> get props => [];
 }
 

@@ -16,6 +16,9 @@ class ReservedLoaded extends ReservedState {
   // State เมื่อโหลดข้อมูลเสร็จแล้ว จะมีข้อมูลในนี้
   // final History_data history;
 
+<<<<<<< HEAD
+  const ReservedLoaded(this.history);
+=======
   final String? parking_slot_id;
   final String? start_at;
   final List<car_data> carData;
@@ -33,6 +36,7 @@ class ReservCreated extends ReservedState {
   final String start_at;
 
   ReservCreated( this.car_id, this.parking_slot_id, this.start_at);
+>>>>>>> d1904432a8f9d2f3d8271c742cd6f81c7ee00271
 
 }
 
@@ -41,7 +45,7 @@ class ReservedError extends ReservedState {
   final String message;
 
   // สร้าง Constructor รับค่า message
-  ReservedError(this.message);
+  const ReservedError(this.message);
 
   @override
   List<Object> get props => [message];

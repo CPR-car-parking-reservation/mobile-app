@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:car_parking_reservation/Widget/custom_dialog.dart';
 import 'package:car_parking_reservation/bloc/setting/setting_bloc.dart';
 import 'package:car_parking_reservation/bloc/setting/setting_event.dart';
 import 'package:car_parking_reservation/bloc/setting/setting_state.dart';
@@ -31,27 +32,12 @@ class _AddCarPageState extends State<AddCarPage> {
         });
       } else {
         // ignore: use_build_context_synchronously
-        _showSnackBar(context, 'กรุณาเลือกไฟล์รูปภาพ (.png, .jpg, .jpeg)');
+        showCustomDialog(context, 'Please select an image file. (.png, .jpg, .jpeg)');
       }
     }
   }
 
-  void _showSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          style: const TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.blueAccent,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        margin: const EdgeInsets.all(10),
-      ),
-    );
-  }
+  
 
   Widget buildTextField(
       String label, IconData icon, TextEditingController controller) {
@@ -89,7 +75,6 @@ class _AddCarPageState extends State<AddCarPage> {
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: Colors.blue, width: 2),
         ),
-        labelText: "ประเภทรถ",
         labelStyle: const TextStyle(color: Colors.black, fontSize: 16),
         floatingLabelBehavior: FloatingLabelBehavior.never,
       ),
@@ -98,7 +83,10 @@ class _AddCarPageState extends State<AddCarPage> {
           value: value,
           child: Text(
             value,
-            style: const TextStyle(color: Colors.black),
+            style: const TextStyle(
+              color: Colors.black,
+              fontFamily: "amiko",
+            ),
           ),
         );
       }).toList(),
@@ -119,13 +107,14 @@ class _AddCarPageState extends State<AddCarPage> {
     return BlocListener<SettingBloc, SettingState>(
       listener: (context, state) {
         if (state is SettingSuccess) {
-          Navigator.pop(context, state.message); 
+          Navigator.pop(context, state.message);
+          //  showCustomDialog(context, state.message);
         } else if (state is SettingError) {
-          _showSnackBar(context, state.message);
+          showCustomDialogError(context, state.message);
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFF03174C), // Set background color
+        backgroundColor: const Color(0xFF03174C),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: SingleChildScrollView(
@@ -153,6 +142,7 @@ class _AddCarPageState extends State<AddCarPage> {
                             color: Colors.white,
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
+                            fontFamily: "amiko",
                           ),
                         ),
                         const SizedBox(width: 48), // To balance the space taken by the back button
@@ -170,8 +160,8 @@ class _AddCarPageState extends State<AddCarPage> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Container(
-                            width: 350,
-                            height: 230,
+                            width: double.infinity,
+                            height: 200,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
                               image: imageFile != null
@@ -224,7 +214,7 @@ class _AddCarPageState extends State<AddCarPage> {
                                 imageFile: imageFile!,
                               ));
                         } else {
-                          _showSnackBar(context, 'กรุณาเลือกภาพ');
+                          showCustomDialogWarning(context, 'กรุณาเลือกภาพ');
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -241,6 +231,7 @@ class _AddCarPageState extends State<AddCarPage> {
                           color: Colors.white,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
+                          fontFamily: "amiko",
                         ),
                       ),
                     ),

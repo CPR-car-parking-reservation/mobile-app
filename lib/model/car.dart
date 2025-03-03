@@ -1,4 +1,3 @@
-
 class car_data {
     String id;
     String car_number;
@@ -17,12 +16,12 @@ class car_data {
     });
 
     factory car_data.fromJson(Map<String, dynamic> json) => car_data(
-        id: json["id"],
-        car_number: json["car_number"],
-        car_model: json["car_model"],
-        car_type: json["car_type"],
-        user_id: json["user_id"],
-        image_url: json["image_url"],
+        id: json["id"] ?? '',
+        car_number: json["car_number"] ?? '',
+        car_model: json["car_model"] ?? '',
+        car_type: json["car_type"] ?? '',
+        user_id: json["user_id"] ?? '',
+        image_url: json["image_url"] ?? '',
     );
 
     Map<String, dynamic> toJson() => {

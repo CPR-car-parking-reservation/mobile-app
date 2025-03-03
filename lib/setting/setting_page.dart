@@ -1,4 +1,5 @@
 import 'package:car_parking_reservation/model/car.dart';
+import 'package:car_parking_reservation/model/profile.dart';
 import 'package:car_parking_reservation/setting/addcar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,16 +9,12 @@ import 'package:car_parking_reservation/bloc/setting/setting_state.dart';
 import 'package:car_parking_reservation/setting/editcar.dart';
 import 'package:car_parking_reservation/setting/editprofile.dart';
 import 'package:car_parking_reservation/Login/signin.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:car_parking_reservation/widget/custom_dialog.dart';
+
+const String fontFamily = "amiko";
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
-
-class Profile {
-  final String name;
-  final String phone;
-  final String avatar;
-
-  Profile({required this.name, required this.phone, required this.avatar});
-}
 
 class Setting extends StatefulWidget {
   const Setting({super.key});
@@ -27,22 +24,19 @@ class Setting extends StatefulWidget {
 }
 
 class _SettingState extends State<Setting> with RouteAware {
-  String baseImgUrl = 'http://172.24.144.1:4000';
-
-  Profile profile = Profile(
-    name: "Adewale Taiwo",
-    phone: "094-468-xxxx",
-    avatar: "assets/images/profile.png",
-  );
+  String baseUrl = dotenv.env['BASE_URL'].toString();
 
   @override
   void didPopNext() {
-    context.read<SettingBloc>().add(LoadCars()); // Reload data when coming back
+    // Always reload data when coming back to this page
+    context.read<SettingBloc>().add(LoadUserAndCars());
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    routeObserver.subscribe(
+        this, ModalRoute.of(context)! as PageRoute<dynamic>);
     routeObserver.subscribe(
         this, ModalRoute.of(context)! as PageRoute<dynamic>);
   }
@@ -61,6 +55,7 @@ class _SettingState extends State<Setting> with RouteAware {
   }
 
   ListView listviewshow(List<car_data> car) {
+    String baseUrl = dotenv.env['BASE_URL'].toString();
     return ListView.separated(
       itemBuilder: (context, index) {
         return Container(
@@ -71,24 +66,35 @@ class _SettingState extends State<Setting> with RouteAware {
           child: Row(
             children: [
               Image.network(
-                'http://172.24.144.1:4000${car[index].image_url}',
+                '$baseUrl${car[index].image_url}',
                 width: 100,
                 height: 60,
-                fit: BoxFit.cover,
+                fit: BoxFit.contain,
               ),
               const SizedBox(width: 12),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("ป้ายทะเบียนรถ",
-                      style: TextStyle(color: Colors.black)),
+                  const Text("License plate",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: fontFamily,
+                          fontWeight: FontWeight.bold)),
                   Text(car[index].car_number,
                       style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold)),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                          fontFamily: fontFamily)),
                   Text(car[index].car_model,
-                      style: const TextStyle(color: Colors.grey)),
+                      style: const TextStyle(
+                          color: Colors.grey,
+                          fontFamily: fontFamily,
+                          fontWeight: FontWeight.w300)),
                   Text(car[index].car_type,
-                      style: const TextStyle(color: Colors.grey)),
+                      style: const TextStyle(
+                          color: Colors.grey,
+                          fontFamily: fontFamily,
+                          fontWeight: FontWeight.w300)),
                 ],
               ),
               const Spacer(),
@@ -100,11 +106,11 @@ class _SettingState extends State<Setting> with RouteAware {
                       builder: (context) => EditCarPage(car_id: car[index].id),
                     ),
                   );
-                  if (result == true) {
+                  if (result is String) {
                     // ignore: use_build_context_synchronously
-                    context
-                        .read<SettingBloc>()
-                        .add(LoadCars()); // Reload data if result is true
+                    showCustomDialog(context, result);
+                    // ignore: use_build_context_synchronously
+                    context.read<SettingBloc>().add(LoadUserAndCars());
                   }
                 },
                 icon: const Icon(Icons.edit, color: Colors.orange),
@@ -118,27 +124,10 @@ class _SettingState extends State<Setting> with RouteAware {
     );
   }
 
-  void _showSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          style: const TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.blueAccent,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        margin: const EdgeInsets.all(10),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => SettingBloc()..add(LoadCars()),
+      create: (context) => SettingBloc()..add(LoadUserAndCars()),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         navigatorObservers: [routeObserver],
@@ -150,8 +139,9 @@ class _SettingState extends State<Setting> with RouteAware {
                 return const Center(child: CircularProgressIndicator());
               } else if (state is SettingError) {
                 return Center(child: Text(state.message));
-              } else if (state is SettingLoaded) {
+              } else if (state is UserAndCarsLoaded) {
                 final List<car_data> carSnapshot = state.cars;
+                final Profile_data profile = state.profile;
                 return SafeArea(
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
@@ -165,6 +155,7 @@ class _SettingState extends State<Setting> with RouteAware {
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
+                              fontFamily: fontFamily,
                             ),
                           ),
                         ),
@@ -178,7 +169,11 @@ class _SettingState extends State<Setting> with RouteAware {
 
                         // MY PROFILE
                         Text("MY PROFILE",
-                            style: TextStyle(color: Colors.white)),
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                                fontFamily: fontFamily,
+                                fontSize: 16)),
                         const SizedBox(height: 8),
                         Container(
                           decoration: BoxDecoration(
@@ -188,30 +183,83 @@ class _SettingState extends State<Setting> with RouteAware {
                           child: Row(
                             children: [
                               CircleAvatar(
-                                backgroundImage: AssetImage(profile.avatar),
+                                backgroundImage: NetworkImage(
+                                    '$baseUrl${profile.image_url}'),
                                 radius: 30,
                               ),
                               const SizedBox(width: 12),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(profile.name,
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold)),
-                                  Text("Tel. ${profile.phone}",
-                                      style: TextStyle(
-                                          color: Colors.red.shade400)),
-                                ],
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text('Name : ',
+                                            style: TextStyle(
+                                              color: Colors.red,
+                                              fontFamily: fontFamily,
+                                            )),
+                                        Expanded(
+                                          child: Text(
+                                            '${profile.name} ${profile.surname}',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w400,
+                                              fontFamily: fontFamily,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text('Email : ',
+                                            style: TextStyle(
+                                              color: Colors.red,
+                                              fontFamily: fontFamily,
+                                              overflow: TextOverflow.ellipsis,
+                                            )),
+                                        Text(profile.email,
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w400,
+                                              fontFamily: fontFamily,
+                                              overflow: TextOverflow.ellipsis,
+                                            )),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text('Phone : ',
+                                            style: TextStyle(
+                                              color: Colors.red,
+                                              fontFamily: fontFamily,
+                                            )),
+                                        Expanded(
+                                          child: Text(
+                                            profile.phone,
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w400,
+                                              fontFamily: fontFamily,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
-                              const Spacer(),
                               IconButton(
                                 onPressed: () {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) =>
-                                              const EditProfilePage()));
+                                          builder: (context) => EditProfilePage(
+                                              profile: profile)));
                                 },
                                 icon: const Icon(Icons.edit,
                                     color: Colors.orange),
@@ -223,8 +271,13 @@ class _SettingState extends State<Setting> with RouteAware {
                         const SizedBox(height: 20),
 
                         // MY CAR
-                        Text("MY CAR", style: TextStyle(color: Colors.white)),
-                        const SizedBox(height: 8),
+                        Text("MY CAR",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                                fontFamily: fontFamily,
+                                fontSize: 16)),
+                        const SizedBox(height: 5),
 
                         // แสดง ListView
                         Expanded(
@@ -247,31 +300,32 @@ class _SettingState extends State<Setting> with RouteAware {
                                 );
                                 if (result is String) {
                                   // ignore: use_build_context_synchronously
-                                  _showSnackBar(context, result);
+                                  showCustomDialog(context, result);
                                   // ignore: use_build_context_synchronously
-                                  context.read<SettingBloc>().add(LoadCars());
+                                  context
+                                      .read<SettingBloc>()
+                                      .add(LoadUserAndCars());
                                 }
                               },
                               backgroundColor:
                                   const Color.fromRGBO(41, 206, 121, 1),
                               icon: const Icon(Icons.add, color: Colors.white),
-                              label: const Text("เพิ่มรถ",
-                                  style: TextStyle(color: Colors.white)),
+                              label: const Text("Add Car",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontFamily: fontFamily)),
                             ),
-                            ElevatedButton(
+                            FloatingActionButton.extended(
                               onPressed: () {
                                 logout(context);
                               },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFF44336),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10)),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 6),
-                              ),
-                              child: const Text("Log-Out",
+                              backgroundColor: Colors.red,
+                              icon:
+                                  const Icon(Icons.logout, color: Colors.white),
+                              label: const Text("Logout",
                                   style: TextStyle(
-                                      color: Colors.white, fontSize: 14)),
+                                      color: Colors.white,
+                                      fontFamily: fontFamily)),
                             ),
                           ],
                         ),
@@ -288,3 +342,4 @@ class _SettingState extends State<Setting> with RouteAware {
     );
   }
 }
+
