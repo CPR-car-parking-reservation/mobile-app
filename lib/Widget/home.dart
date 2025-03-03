@@ -48,8 +48,6 @@ class Home extends StatelessWidget {
                     );
                   case 1:
                     return GenQR();
-
-                  // return GenQR(reservationId: state.reservationId);
                   case 2:
                     return History();
                   case 3:
