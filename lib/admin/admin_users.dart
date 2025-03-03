@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:car_parking_reservation/Bloc/admin_bloc/admin_user/admin_user_bloc.dart';
+import 'package:car_parking_reservation/Widget/custom_dialog.dart';
 import 'package:car_parking_reservation/admin/widgets/users/user_list_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,9 +17,19 @@ class _AdminUserPageState extends State<AdminUserPage> {
   final TextEditingController _searchController = TextEditingController();
 
   @override
+  void initState() {
+    context.read<AdminUserBloc>().add(OnUsersPageLoad());
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AdminUserBloc()..add(OnUsersPageLoad()),
+    return BlocListener<AdminUserBloc, AdminUserState>(
+      listener: (context, state) {
+        if (state is AdminUserError) {
+          showCustomDialogError(context, state.message);
+        }
+      },
       child: Scaffold(
         body: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -53,7 +66,7 @@ class _AdminUserPageState extends State<AdminUserPage> {
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
                                 fontFamily: "Amiko"),
-                            hintText: "Search by name",
+                            hintText: "Search by name or email",
                             prefixIcon: Icon(Icons.search),
                             border: OutlineInputBorder(
                               borderSide:
@@ -75,9 +88,10 @@ class _AdminUserPageState extends State<AdminUserPage> {
                             ),
                           ),
                           onChanged: (value) {
-                            // context
-                            //     .read<AdminUserBloc>()
-                            //     .add(OnSearch(search: value));
+                            log("Search: $value");
+                            context
+                                .read<AdminUserBloc>()
+                                .add(OnSearch(search: value));
                           },
                         ),
                       ),
@@ -94,7 +108,18 @@ class _AdminUserPageState extends State<AdminUserPage> {
                   } else if (state is AdminUserError) {
                     return Center(child: Text(state.message));
                   } else if (state is AdminUserLoaded) {
-                    return AdminListViewUser(users: state.users);
+                    if (state.users.isNotEmpty) {
+                      return AdminListViewUser(users: state.users);
+                    } else {
+                      return Center(
+                          child: Text(
+                        "No data found",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: "Amiko"),
+                      ));
+                    }
                   }
                   return const SizedBox.shrink();
                 },

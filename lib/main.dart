@@ -3,7 +3,7 @@ import 'package:car_parking_reservation/Bloc/user/register/register_bloc.dart';
 import 'package:car_parking_reservation/admin/admin_home.dart';
 import 'package:car_parking_reservation/bloc/navigator/navigator_bloc.dart';
 import 'package:car_parking_reservation/reserv.dart';
-import 'package:car_parking_reservation/setting/setting_page.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';

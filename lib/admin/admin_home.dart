@@ -36,7 +36,10 @@ class AdminHomePage extends StatelessWidget {
                     case 0:
                       return AdminDashBoard();
                     case 1:
-                      return AdminUserPage();
+                      return BlocProvider(
+                        create: (context) => AdminUserBloc(),
+                        child: AdminUserPage(),
+                      );
                     case 2:
                       return BlocProvider(
                         create: (context) => AdminParkingBloc(),

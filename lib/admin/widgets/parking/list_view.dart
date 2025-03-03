@@ -20,22 +20,61 @@ class AdminListViewParking extends StatelessWidget {
       builder: (context) {
         return AlertDialog(
           backgroundColor: Colors.white,
-          title: Text("Delete Parking Slot $slotNumber",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          content: Text("Are you sure you want to delete this parking slot?"),
+          title: const Text(
+            "Delete Parking Slot",
+            style: TextStyle(
+                fontSize: 20, fontWeight: FontWeight.bold, fontFamily: "Amiko"),
+          ),
+          content: Row(
+            children: [
+              Text("Are you sure to delete ",
+                  style: TextStyle(
+                      fontFamily: "Amiko", color: Colors.black, fontSize: 16)),
+              Expanded(
+                child: Text(slotNumber,
+                    style: TextStyle(
+                        overflow: TextOverflow.ellipsis,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: "Amiko",
+                        color: Colors.red,
+                        fontSize: 16)),
+              ),
+            ],
+          ),
           actions: [
-            TextButton(
+            ElevatedButton(
               onPressed: () {
                 bloc.add(OnDelete(id));
+              },
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                backgroundColor: Colors.red,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+              ),
+              child: const Text("Delete",
+                  style: TextStyle(
+                      fontFamily: "Amiko",
+                      color: Color.fromARGB(255, 255, 255, 255),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16)),
+            ),
+            ElevatedButton(
+              onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text("Delete", style: TextStyle(fontSize: 16)),
-            ),
-
-            // ✅ ปุ่มปิด Dialog
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text("Close", style: TextStyle(fontSize: 16)),
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                backgroundColor: const Color.fromARGB(255, 251, 251, 251),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+              ),
+              child: const Text("Cancel",
+                  style: TextStyle(
+                      fontFamily: "Amiko",
+                      color: Color.fromARGB(255, 0, 0, 0),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16)),
             ),
           ],
         );
@@ -63,7 +102,10 @@ class AdminListViewParking extends StatelessWidget {
               backgroundColor: Colors.white,
               title: const Text(
                 "Update Parking Slot",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: "Amiko"),
               ),
               content: SingleChildScrollView(
                 child: Column(
@@ -73,12 +115,18 @@ class AdminListViewParking extends StatelessWidget {
                     // 🌟 Slot Number
                     const Text(
                       "Slot Number",
-                      style:
-                          TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          fontFamily: "Amiko"),
                     ),
                     const SizedBox(height: 5),
                     TextField(
                       controller: _slotNumberController,
+                      style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: "Amiko"),
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10)),
@@ -91,8 +139,10 @@ class AdminListViewParking extends StatelessWidget {
                     // 🌟 Floor Filter
                     const Text(
                       "Floor",
-                      style:
-                          TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          fontFamily: "Amiko"),
                     ),
                     const SizedBox(height: 5),
                     DropdownButtonFormField<String>(
@@ -117,17 +167,41 @@ class AdminListViewParking extends StatelessWidget {
                 ),
               ),
               actions: [
-                TextButton(
+                ElevatedButton(
                   onPressed: () {
                     bloc.add(OnUpdate(selectedFloor!,
                         _slotNumberController.text, parking.id));
                     Navigator.of(context).pop();
                   },
-                  child: const Text("Update", style: TextStyle(fontSize: 16)),
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                    backgroundColor: Colors.green,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: const Text("Update",
+                      style: TextStyle(
+                          fontFamily: "Amiko",
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16)),
                 ),
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text("Close", style: TextStyle(fontSize: 16)),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                    backgroundColor: const Color.fromARGB(255, 251, 251, 251),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: const Text("Cancel",
+                      style: TextStyle(
+                          fontFamily: "Amiko",
+                          color: Color.fromARGB(255, 0, 0, 0),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16)),
                 ),
               ],
             );
@@ -171,107 +245,111 @@ class AdminListViewParking extends StatelessWidget {
                       child: Column(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 5),
+                            padding: const EdgeInsets.only(
+                                left: 10, top: 10, bottom: 15, right: 0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Flexible(
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        width: 10,
-                                        height: 10,
-                                        decoration: BoxDecoration(
-                                          color: slot.status == "IDLE"
-                                              ? Colors.green
-                                              : slot.status == "RESERVED"
-                                                  ? Colors.orange
-                                                  : slot.status == "FULL"
-                                                      ? Colors.red
-                                                      : Colors.grey,
-                                          shape: BoxShape.circle,
+                                  child: Stack(children: [
+                                    Row(
+                                      children: [
+                                        Container(
+                                          width: 10,
+                                          height: 10,
+                                          decoration: BoxDecoration(
+                                            color: slot.status == "IDLE"
+                                                ? Colors.green
+                                                : slot.status == "RESERVED"
+                                                    ? Colors.orange
+                                                    : slot.status == "FULL"
+                                                        ? Colors.red
+                                                        : Colors.grey,
+                                            shape: BoxShape.circle,
+                                          ),
                                         ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        slot.status == "RESERVED"
-                                            ? "RES..."
-                                            : slot.status,
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: slot.status == "IDLE"
-                                              ? Colors.green
-                                              : slot.status == "RESERVED"
-                                                  ? Colors.orange
-                                                  : slot.status == "FULL"
-                                                      ? Colors.red
-                                                      : Colors.grey,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                IntrinsicWidth(
-                                  child: Align(
-                                    alignment: Alignment.centerRight,
-                                    child: DropdownButtonHideUnderline(
-                                      child: DropdownButton<String>(
-                                        dropdownColor: Colors.white,
-                                        icon: const Icon(Icons.more_horiz,
-                                            size: 24, color: Colors.black),
-                                        menuMaxHeight: 150,
-                                        items: [
-                                          DropdownMenuItem(
-                                            value: "edit",
-                                            child: Row(
-                                              children: const [
-                                                Icon(Icons.edit,
-                                                    size: 20,
-                                                    color: Colors.blue),
-                                                SizedBox(width: 8),
-                                                Text("Edit"),
-                                              ],
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: Text(
+                                            overflow: TextOverflow.ellipsis,
+                                            slot.status,
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: slot.status == "IDLE"
+                                                  ? Colors.green
+                                                  : slot.status == "RESERVED"
+                                                      ? Colors.orange
+                                                      : slot.status == "FULL"
+                                                          ? Colors.red
+                                                          : Colors.grey,
                                             ),
                                           ),
-                                          DropdownMenuItem(
-                                            value: "delete",
-                                            child: Row(
-                                              children: const [
-                                                Icon(Icons.delete,
-                                                    size: 20,
-                                                    color: Colors.red),
-                                                SizedBox(width: 8),
-                                                Text("Delete"),
-                                              ],
+                                        ),
+                                      ],
+                                    ),
+                                    Positioned(
+                                      top: -15,
+                                      left: 30,
+                                      child: DropdownButtonHideUnderline(
+                                        child: DropdownButton<String>(
+                                          dropdownColor: Colors.white,
+                                          icon: const Icon(Icons.more_horiz,
+                                              size: 28, color: Colors.black),
+                                          menuMaxHeight: 150,
+                                          items: [
+                                            DropdownMenuItem(
+                                              value: "edit",
+                                              child: Row(
+                                                children: const [
+                                                  Icon(Icons.edit,
+                                                      size: 20,
+                                                      color: Colors.blue),
+                                                  SizedBox(width: 8),
+                                                  Text("Edit"),
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                        onChanged: (value) {
-                                          if (value == "edit") {
-                                            showUpdateParkingDialog(
-                                                context, slot);
-                                          } else if (value == "delete") {
-                                            showDeleteParkingDialog(context,
-                                                slot.id, slot.slotNumber);
-                                          }
-                                        },
+                                            DropdownMenuItem(
+                                              value: "delete",
+                                              child: Row(
+                                                children: const [
+                                                  Icon(Icons.delete,
+                                                      size: 20,
+                                                      color: Colors.red),
+                                                  SizedBox(width: 8),
+                                                  Text("Delete"),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                          onChanged: (value) {
+                                            if (value == "edit") {
+                                              showUpdateParkingDialog(
+                                                  context, slot);
+                                            } else if (value == "delete") {
+                                              showDeleteParkingDialog(context,
+                                                  slot.id, slot.slotNumber);
+                                            }
+                                          },
+                                        ),
                                       ),
                                     ),
-                                  ),
+                                  ]),
                                 ),
                               ],
                             ),
                           ),
-                          Text(
-                            slot.slotNumber.length > 3
-                                ? "${slot.slotNumber.substring(0, 3)}..."
-                                : slot.slotNumber,
-                            style: const TextStyle(
-                              fontFamily: "Amiko",
-                              fontSize: 40,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.black,
+                          Expanded(
+                            child: Text(
+                              slot.slotNumber,
+                              style: const TextStyle(
+                                fontFamily: "Amiko",
+                                fontSize: 40,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.black,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ),
                           const SizedBox(height: 10),

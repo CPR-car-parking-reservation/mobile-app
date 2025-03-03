@@ -6,6 +6,7 @@ import 'package:car_parking_reservation/model/admin/parking.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'admin_parking_event.dart';
 part 'admin_parking_state.dart';
@@ -115,11 +116,11 @@ class AdminParkingBloc extends Bloc<AdminParkingEvent, AdminParkingState> {
     });
   }
   String baseUrl = dotenv.env['BASE_URL'].toString();
-  String token =
-      "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6ImYzYTg5MTAzLTJlMjctNDA2ZC04MTU2LWZjNTI4MDg2NmZiZSIsImV4cCI6MTc0MTAyODUyNn0._hD5l_iZEtPOkdyNStwLABdEjtsUjCMBiiOZa4-L64k";
 
   Future<List<ModelParkingSlot>> fetchParkingSlot(
       seacrhText, floor, status) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
     try {
       seacrhText ??= "";
       floor ??= "";
@@ -147,6 +148,8 @@ class AdminParkingBloc extends Bloc<AdminParkingEvent, AdminParkingState> {
   }
 
   Future<List<ModelFloor>> fetchFloor() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
     final response = await http.get(
       Uri.parse("$baseUrl/floors"),
       headers: {
@@ -168,7 +171,8 @@ class AdminParkingBloc extends Bloc<AdminParkingEvent, AdminParkingState> {
 
   Future<http.StreamedResponse> createParkingSlot(
       slot_number, floor_number) async {
-    //from data
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
     final url = Uri.parse("$baseUrl/admin/parking_slots");
     var request = http.MultipartRequest('POST', url)
       ..fields['slot_number'] = slot_number
@@ -185,6 +189,8 @@ class AdminParkingBloc extends Bloc<AdminParkingEvent, AdminParkingState> {
   }
 
   Future<http.Response> deleteParkingSlot(String id) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
     final response = await http.delete(
       Uri.parse("$baseUrl/admin/parking_slots/id/$id"),
       headers: {
@@ -199,7 +205,8 @@ class AdminParkingBloc extends Bloc<AdminParkingEvent, AdminParkingState> {
 
   Future<http.StreamedResponse> updateParkingSlot(
       id, slot_number, floor_number) async {
-    log("Update Called $floor_number $slot_number $id");
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
     //from data
     final url = Uri.parse("$baseUrl/admin/parking_slots/id/$id");
     var request = http.MultipartRequest('PUT', url)

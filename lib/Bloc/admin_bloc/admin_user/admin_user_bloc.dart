@@ -6,6 +6,7 @@ import 'package:car_parking_reservation/model/admin/users.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'admin_user_event.dart';
 part 'admin_user_state.dart';
@@ -16,7 +17,17 @@ class AdminUserBloc extends Bloc<AdminUserEvent, AdminUserState> {
       emit(AdminUserLoading());
       try {
         final data = await fetchUsers("");
-        log(data.toString());
+        // log(data.toString());
+        emit(AdminUserLoaded(users: data));
+      } catch (e) {
+        emit(AdminUserError(message: e.toString()));
+      }
+    });
+
+    on<OnSearch>((event, emit) async {
+      emit(AdminUserLoading());
+      try {
+        final data = await fetchUsers(event.search);
         emit(AdminUserLoaded(users: data));
       } catch (e) {
         emit(AdminUserError(message: e.toString()));
@@ -25,15 +36,15 @@ class AdminUserBloc extends Bloc<AdminUserEvent, AdminUserState> {
   }
 
   String baseUrl = dotenv.env['BASE_URL'].toString();
-  String token =
-      "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6ImYzYTg5MTAzLTJlMjctNDA2ZC04MTU2LWZjNTI4MDg2NmZiZSIsImV4cCI6MTc0MTAyODUyNn0._hD5l_iZEtPOkdyNStwLABdEjtsUjCMBiiOZa4-L64k";
 
   Future<List<ModelUsers>> fetchUsers(seacrhText) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
     try {
       seacrhText ??= "";
 
-      final response =
-          await http.get(Uri.parse("$baseUrl/admin/users?search="), headers: {
+      final response = await http
+          .get(Uri.parse("$baseUrl/admin/users?search=$seacrhText"), headers: {
         "Accept": "application/json",
         "content-type": "application/json",
         "Authorization": "Bearer $token"

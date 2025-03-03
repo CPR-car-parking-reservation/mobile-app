@@ -45,7 +45,10 @@ class _AdminParkingPageState extends State<AdminParkingPage> {
                 backgroundColor: Colors.white,
                 title: const Text(
                   "Add Parking Slot",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: "Amiko"),
                 ),
                 content: SingleChildScrollView(
                   child: Column(
@@ -99,17 +102,43 @@ class _AdminParkingPageState extends State<AdminParkingPage> {
                   ),
                 ),
                 actions: [
-                  TextButton(
+                  ElevatedButton(
                     onPressed: () {
                       bloc.add(
                           OnCreate(_slotNumberController.text, selectedFloor));
                       Navigator.of(context).pop();
                     },
-                    child: const Text("Add", style: TextStyle(fontSize: 16)),
+                    style: ElevatedButton.styleFrom(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      backgroundColor: Colors.green,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: const Text("Add",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontFamily: "Amiko",
+                            fontWeight: FontWeight.bold)),
                   ),
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Text("Close", style: TextStyle(fontSize: 16)),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      backgroundColor: const Color.fromARGB(255, 251, 251, 251),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: const Text("Cancel",
+                        style: TextStyle(
+                            fontFamily: "Amiko",
+                            color: Color.fromARGB(255, 0, 0, 0),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16)),
                   ),
                 ],
               );
@@ -142,83 +171,150 @@ class _AdminParkingPageState extends State<AdminParkingPage> {
               return AlertDialog(
                 backgroundColor: Colors.white,
                 title: const Text(
-                  "Filter Options",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  "Filter Parking Slot",
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: "Amiko"),
                 ),
-                content: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // 🌟 Floor Filter
-                      const Text(
-                        "Floor",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w600, fontSize: 16),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 🌟 Floor Filter
+                    const Text(
+                      "Floor",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          fontFamily: "Amiko"),
+                    ),
+                    const SizedBox(height: 5),
+                    DropdownButtonFormField<String>(
+                      value: selectedFloor,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        contentPadding:
+                            const EdgeInsets.symmetric(horizontal: 10),
                       ),
-                      const SizedBox(height: 5),
-                      DropdownButtonFormField<String>(
-                        value: selectedFloor,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                          contentPadding:
-                              const EdgeInsets.symmetric(horizontal: 10),
-                        ),
-                        items: floors.map((floor) {
-                          return DropdownMenuItem(
-                              value: floor,
-                              child: Text(floor == "" ? "All" : floor));
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() =>
-                              selectedFloor = value); // ✅ อัปเดตค่าใน Dialog
-                        },
-                      ),
-                      const SizedBox(height: 15),
+                      items: floors.map((floor) {
+                        return DropdownMenuItem(
+                            value: floor,
+                            child: Text(
+                              floor == "" ? "All" : floor,
+                              style: TextStyle(
+                                  fontFamily: "Amiko",
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold),
+                            ));
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() => selectedFloor = value);
+                      },
+                    ),
+                    const SizedBox(height: 15),
 
-                      // 🌟 Status Filter
-                      const Text(
-                        "Status",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w600, fontSize: 16),
+                    // 🌟 Status Filter
+                    const Text(
+                      "Status",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          fontFamily: "Amiko"),
+                    ),
+                    const SizedBox(height: 5),
+                    DropdownButtonFormField<String>(
+                      value: selectedStatus,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        contentPadding:
+                            const EdgeInsets.symmetric(horizontal: 10),
                       ),
-                      const SizedBox(height: 5),
-                      DropdownButtonFormField<String>(
-                        value: selectedStatus,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                          contentPadding:
-                              const EdgeInsets.symmetric(horizontal: 10),
-                        ),
-                        items: const [
-                          DropdownMenuItem(value: "", child: Text("All")),
-                          DropdownMenuItem(value: "FULL", child: Text("FULL")),
-                          DropdownMenuItem(value: "IDLE", child: Text("IDLE")),
-                          DropdownMenuItem(
-                              value: "RESERVED", child: Text("RESERVED")),
-                        ],
-                        onChanged: (value) {
-                          setState(() => selectedStatus = value);
-                        },
-                      ),
-                    ],
-                  ),
+                      items: const [
+                        DropdownMenuItem(
+                            value: "",
+                            child: Text(
+                              "All",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  fontFamily: "Amiko"),
+                            )),
+                        DropdownMenuItem(
+                            value: "FULL",
+                            child: Text(
+                              "FULL",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  fontFamily: "Amiko"),
+                            )),
+                        DropdownMenuItem(
+                            value: "IDLE",
+                            child: Text(
+                              "IDLE",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  fontFamily: "Amiko"),
+                            )),
+                        DropdownMenuItem(
+                            value: "RESERVED",
+                            child: Text(
+                              "RESERVED",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  fontFamily: "Amiko"),
+                            )),
+                      ],
+                      onChanged: (value) {
+                        setState(() => selectedStatus = value);
+                      },
+                    ),
+                  ],
                 ),
                 actions: [
-                  TextButton(
+                  ElevatedButton(
                     onPressed: () {
                       bloc.add(OnSearch(
                           floor: selectedFloor ?? "",
                           status: selectedStatus ?? ""));
                       Navigator.of(context).pop();
                     },
-                    child: const Text("Apply", style: TextStyle(fontSize: 16)),
+                    style: ElevatedButton.styleFrom(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      backgroundColor: Colors.green,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: const Text("Apply",
+                        style: TextStyle(
+                            fontFamily: "Amiko",
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16)),
                   ),
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Text("Close", style: TextStyle(fontSize: 16)),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      backgroundColor: const Color.fromARGB(255, 251, 251, 251),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: const Text("Cancel",
+                        style: TextStyle(
+                            fontFamily: "Amiko",
+                            color: Color.fromARGB(255, 0, 0, 0),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16)),
                   ),
                 ],
               );
@@ -240,14 +336,6 @@ class _AdminParkingPageState extends State<AdminParkingPage> {
         floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.green,
           onPressed: () {
-            // Get the bloc and floors directly here
-            final bloc = context.read<AdminParkingBloc>();
-            final state = bloc.state;
-            List<ModelFloor> floors = [];
-            if (state is AdminParkingLoaded) {
-              floors = state.floors;
-            }
-            // Pass bloc and floors to the extracted function
             showAddParkingDialog(context);
           },
           child: const Icon(
@@ -360,10 +448,21 @@ class _AdminParkingPageState extends State<AdminParkingPage> {
                   } else if (state is AdminParkingError) {
                     return Center(child: Text(state.message));
                   } else if (state is AdminParkingLoaded) {
-                    return AdminListViewParking(
-                      parkings: state.parkings,
-                      floors: state.floors,
-                    );
+                    if (state.parkings.isNotEmpty) {
+                      return AdminListViewParking(
+                        parkings: state.parkings,
+                        floors: state.floors,
+                      );
+                    } else {
+                      return Center(
+                          child: Text(
+                        "No data found",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: "Amiko"),
+                      ));
+                    }
                   }
                   return const SizedBox.shrink();
                 },
