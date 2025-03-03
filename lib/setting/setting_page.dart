@@ -80,7 +80,7 @@ class _SettingState extends State<Setting> with RouteAware {
                           color: Colors.black,
                           fontFamily: fontFamily,
                           fontWeight: FontWeight.bold)),
-                  Text(car[index].car_number,
+                  Text(car[index].license_plate,
                       style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
@@ -342,4 +342,3 @@ class _SettingState extends State<Setting> with RouteAware {
     );
   }
 }
-

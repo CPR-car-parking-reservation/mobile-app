@@ -28,12 +28,13 @@ class ReservedLoaded extends ReservedState {
 }
 
 class ReservCreated extends ReservedState {
+  final String reservationId;
   final String car_id;
   final String parking_slot_id;
   final String start_at;
 
-  ReservCreated( this.car_id, this.parking_slot_id, this.start_at);
-
+  ReservCreated(
+      this.car_id, this.parking_slot_id, this.start_at, this.reservationId);
 }
 
 class ReservedError extends ReservedState {
@@ -49,10 +50,12 @@ class ReservedError extends ReservedState {
 
 class ReservedSuccess extends ReservedState {
   // State ที่โหลดข้อมูลไม่สำเร็จ จะมี error message ในนี้
+    final String reservationId;
+
   final String message;
 
   // สร้าง Constructor รับค่า message
-  ReservedSuccess(this.message);
+  ReservedSuccess({required this.reservationId, required this.message});
 
   @override
   List<Object> get props => [message];

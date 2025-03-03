@@ -9,8 +9,9 @@ abstract class NavigatorBlocEvent {
 
 class ChangeIndex extends NavigatorBlocEvent {
   final int index;
-  const ChangeIndex({required this.index});
+  final String? reservationId;
+  const ChangeIndex({required this.index, this.reservationId});
 
   @override
-  List<Object> get props => [index];
+  List<Object> get props => [index, reservationId ?? ''];
 }

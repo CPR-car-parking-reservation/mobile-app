@@ -141,7 +141,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     try {
       final url = Uri.parse('$baseUrl/cars');
       var request = http.MultipartRequest('POST', url);
-      request.fields['car_number'] = event.plate;
+      request.fields['license_plate'] = event.plate;
       request.fields['car_model'] = event.model;
       request.fields['car_type'] = event.type;
       request.fields['user_id'] = userId;
@@ -186,7 +186,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     try {
       final url = Uri.parse('$baseUrl/cars/id/${event.id}');
       var request = http.MultipartRequest('PUT', url);
-      request.fields['car_number'] = event.plate;
+      request.fields['license_plate'] = event.plate;
       request.fields['car_model'] = event.model;
       request.fields['car_type'] = event.type;
       if (event.imageFile != null) {

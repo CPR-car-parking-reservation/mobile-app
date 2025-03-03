@@ -177,7 +177,7 @@ class _EditCarPageState extends State<EditCarPage> {
                   selectedTypeNotifier.value = car.car_type;
                   typeController.text = car.car_type;
                 }
-                plateController.text = car.car_number;
+                plateController.text = car.license_plate;
                 modelController.text = car.car_model;
 
                 return SingleChildScrollView(

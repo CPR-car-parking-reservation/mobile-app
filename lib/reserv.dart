@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:car_parking_reservation/Widget/home.dart';
+import 'package:car_parking_reservation/bloc/navigator/navigator_bloc.dart';
 import 'package:car_parking_reservation/bloc/parking/parking_bloc.dart';
 import 'package:car_parking_reservation/bloc/reserved/reserved_bloc.dart';
 import 'package:car_parking_reservation/Qr-generator/qr_code.dart';
@@ -8,6 +9,7 @@ import 'package:car_parking_reservation/history.dart';
 import 'package:car_parking_reservation/model/car.dart';
 import 'package:car_parking_reservation/model/history.dart';
 import 'package:car_parking_reservation/setting/setting_page.dart';
+import 'package:car_parking_reservation/widget/custom_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -63,17 +65,26 @@ class _ReservState extends State<Reserv> {
     });
   }
 
+  // บันทึก reservation_id ลง SharedPreferences
+  void _saveReservationId(String reservationId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('reservation_id', reservationId);
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<ReservedBloc, ReservedState>(
       listener: (context, state) {
         if (state is ReservedSuccess) {
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => Home()),
-            (route) => false, // ลบทุกเส้นทางที่ผ่านมาหมด
-          );
-        } else if (state is ReservedError) {}
+          Navigator.of(context).pop();
+          _saveReservationId(state.reservationId);
+          context.read<NavigatorBloc>().add(ChangeIndex(index: 1));
+
+          // context.read<NavigatorBloc>().add(ChangeIndex(index: 1 , reservationId: state.reservationId));
+          showCustomDialog(context, "Reservation Success");
+        } else if (state is ReservedError) {
+          showCustomDialogError(context, state.message);
+        }
       },
       child: Scaffold(
         appBar: AppBar(
@@ -173,9 +184,20 @@ class _ReservState extends State<Reserv> {
                                     children: [
                                       Image.network(
                                           "${baseUrl}${car.image_url}",
-                                          height: 50,
-                                          width: 50),
-                                      Text(" ${car.car_number} "),
+                                          height: 75,
+                                          width: 75),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 10),
+                                        child: Text(
+                                          " ${car.license_plate}",
+                                          style: TextStyle(
+                                            fontFamily: "Amiko",
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 );
@@ -201,7 +223,7 @@ class _ReservState extends State<Reserv> {
                                         children: [
                                           Icon(
                                             Icons.date_range_outlined,
-                                            color: Colors.white,
+                                            color: Colors.yellow[700],
                                             size: 30,
                                           ),
                                           Padding(
@@ -227,7 +249,7 @@ class _ReservState extends State<Reserv> {
                                                 const EdgeInsets.only(left: 15),
                                             child: Icon(
                                               Icons.access_time,
-                                              color: Colors.white,
+                                              color: Colors.yellow[700],
                                               size: 30,
                                             ),
                                           ),
@@ -266,76 +288,17 @@ class _ReservState extends State<Reserv> {
                                 String select_this_time =
                                     "${dateFormat.format(DateTime.now().toUtc().toLocal().add(Duration(hours: 7)))}";
 
-                                log("${dateFormat.format(DateTime.now().toUtc().toLocal().add(Duration(hours: 7)))}");
+                                // log("${dateFormat.format(DateTime.now().toUtc().toLocal().add(Duration(hours: 7)))}");
 
-                                final historyData = History_data(
-                                  date: select_this_date,
-                                  start_at: select_this_time,
-                                  end_at: "N/A",
-                                  parkingSlot: ParkingSlot(
-                                    id: widget.parking_slots_id ?? '',
-                                    slot_number: widget.slot_number ?? '',
-                                    status: widget.status ?? '',
-                                    floorId: widget.floor_number ?? '',
-                                    floor: Floor(
-                                      id: widget.floor_number ?? '',
-                                      floor_number: widget.floor_number ?? '',
-                                    ),
-                                  ),
-                                );
                                 context.read<ReservedBloc>().add(
                                     SendReservation(
                                         _selectedValue ?? '',
                                         widget.parking_slots_id ?? '',
                                         select_this_time));
                                 //log("car_id: ${_selectedValue}, parking_slot_id: ${historyData.parkingSlot.id}, start_time: ${historyData.start_at}");
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    title: Column(
-                                      children: [
-                                        Icon(Icons.check_circle,
-                                            color: Colors.green, size: 50),
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 10),
-                                          child: Text(
-                                            "Reservation Success",
-                                            style: TextStyle(
-                                                fontFamily: "Amiko",
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.w700,
-                                                color: Colors.black),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
                               } else {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    title: Column(
-                                      children: [
-                                        Icon(Icons.error_rounded,
-                                            color: Colors.red, size: 50),
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 10),
-                                          child: Text(
-                                            "Reservation Fail",
-                                            style: TextStyle(
-                                                fontFamily: "Amiko",
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.w700,
-                                                color: Colors.black),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
+                                showCustomDialogError(
+                                    context, "Reservation Failed");
                               }
                             },
                             child: Padding(

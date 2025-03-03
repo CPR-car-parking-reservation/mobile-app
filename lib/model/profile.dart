@@ -3,7 +3,7 @@ class Profile_data {
   String id;
   String name;
   String surname;
-  String phone ; 
+  String phone;
   String email;
   String image_url;
   String role;
@@ -21,14 +21,17 @@ class Profile_data {
   });
 
   factory Profile_data.fromJson(Map<String, dynamic> json) => Profile_data(
-        id: json["data"]?["id"] ,
-        name: json["data"]?["name"] ,
-        surname: json["data"]?["surname"] ,
-        phone: json["data"]?["phone"] ,
-        email: json["data"]?["email"] ,
-        image_url: json["data"]?["image_url"] ,
+        id: json["data"]?["id"],
+        name: json["data"]?["name"],
+        surname: json["data"]?["surname"],
+        phone: json["data"]?["phone"],
+        email: json["data"]?["email"],
+        image_url: json["data"]?["image_url"],
         role: json["data"]?["role"] ?? 'USER',
-        cars: (json["data"]?["car"] as List?)?.map((x) => Car.fromJson(x)).toList() ?? [],
+        cars: (json["data"]?["car"] as List?)
+                ?.map((x) => Car.fromJson(x))
+                .toList() ??
+            [],
       );
 
   Map<String, dynamic> toJson() => {
@@ -48,7 +51,7 @@ class Profile_data {
 
 class Car {
   String id;
-  String car_number;
+  String license_plate;
   String car_model;
   String car_type;
   String image_url;
@@ -58,7 +61,7 @@ class Car {
 
   Car({
     required this.id,
-    required this.car_number,
+    required this.license_plate,
     required this.car_model,
     required this.car_type,
     required this.image_url,
@@ -68,19 +71,19 @@ class Car {
   });
 
   factory Car.fromJson(Map<String, dynamic> json) => Car(
-        id: json["id"] ,
-        car_number: json["car_number"] ,
-        car_model: json["car_model"] ,
-        car_type: json["car_type"] ,
-        image_url: json["image_url"] ,
-        created_at: json["created_at"] ,
-        updated_at: json["updated_at"] ,
-        user_id: json["user_id"] ,
+        id: json["id"],
+        license_plate: json["license_plate"],
+        car_model: json["car_model"],
+        car_type: json["car_type"],
+        image_url: json["image_url"],
+        created_at: json["created_at"],
+        updated_at: json["updated_at"],
+        user_id: json["user_id"],
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "car_number": car_number,
+        "license_plate": license_plate,
         "car_model": car_model,
         "car_type": car_type,
         "image_url": image_url,
