@@ -1,4 +1,5 @@
 import 'package:car_parking_reservation/Bloc/reserved/reserved_bloc.dart';
+import 'package:car_parking_reservation/Bloc/setting/setting_bloc.dart';
 import 'package:car_parking_reservation/Qr-generator/qr_code.dart';
 import 'package:car_parking_reservation/Widget/parking_slots.dart';
 import 'package:car_parking_reservation/bloc/navigator/navigator_bloc.dart';
@@ -9,18 +10,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Home extends StatelessWidget {
-  Home({super.key});
+  const Home({super.key});
 
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-
-  // static const List<Widget> _widgetOptions = <Widget>[
-  //   ParkingSlots(),
-  //   GenQR(),
-  //   // Reserv(),
-  //   History(),
-  //   Setting(),
-  // ];
 
   @override
   Widget build(BuildContext context) {
@@ -43,22 +36,26 @@ class Home extends StatelessWidget {
                 ),
               ),
               body: Center(
-                child: IndexedStack(
-                  index: state.index,
-                  children: [
-                    BlocProvider(
-                      create: (context) => ParkingBloc(),
-                      child: ParkingSlots(),
-                    ),
-                    GenQR(),
-                    History(),
-                    Setting(),
-                    // BlocProvider(
-                    //   create: (context) => ReservedBloc(),
-                    //   child: Reserv(),
-                    // ),
-                  ],
-                ),
+                child: () {
+                  switch (state.index) {
+                    case 0:
+                      return BlocProvider(
+                        create: (context) => ParkingBloc(),
+                        child: ParkingSlots(),
+                      );
+                    case 1:
+                      return GenQR();
+                    case 2:
+                      return History();
+                    case 3:
+                      return BlocProvider(
+                          create: (context) => SettingBloc(), 
+                          child: Setting()
+                      );
+                    default:
+                      return SizedBox.shrink();
+                  }
+                }(),
               ),
               bottomNavigationBar: BottomNavigationBar(
                 type: BottomNavigationBarType.fixed,
