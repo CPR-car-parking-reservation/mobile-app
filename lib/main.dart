@@ -1,6 +1,6 @@
 import 'package:car_parking_reservation/Bloc/reserved/reserved_bloc.dart';
 import 'package:car_parking_reservation/bloc/navigator/navigator_bloc.dart';
-import 'package:car_parking_reservation/bloc/setting/setting_bloc.dart'; // Import SettingBloc
+import 'package:car_parking_reservation/bloc/setting/setting_bloc.dart'; 
 import 'package:car_parking_reservation/reserv.dart';
 import 'package:car_parking_reservation/setting/setting_page.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<ReservedBloc>(
           create: (context) => ReservedBloc(),
         ),
-        BlocProvider<SettingBloc>( // Add SettingBloc here
+        BlocProvider<SettingBloc>( 
           create: (context) => SettingBloc(),
         ),
       ],

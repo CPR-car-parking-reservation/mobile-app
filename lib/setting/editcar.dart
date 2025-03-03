@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:car_parking_reservation/Widget/custom_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:car_parking_reservation/model/car.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -143,8 +144,8 @@ class _EditCarPageState extends State<EditCarPage> {
     return BlocListener<SettingBloc, SettingState>(
       listener: (context, state) {
         if (state is SettingSuccess) {
-          _showSnackBar(context, state.message);
-          Navigator.pop(context, true);
+          showCustomDialog(context, state.message);
+          Navigator.pop(context, state.message);
         } else if (state is SettingError) {
           _showSnackBar(context, state.message);
         }

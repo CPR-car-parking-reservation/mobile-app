@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:car_parking_reservation/Widget/custom_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:car_parking_reservation/model/profile.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -21,19 +22,21 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late TextEditingController usernameController;
   late TextEditingController surnameController;
   late TextEditingController emailController;
+  late TextEditingController phoneController;
   late TextEditingController oldPasswordController;
   late TextEditingController newPasswordController;
   late TextEditingController confirmPasswordController;
   File? imageFile;
 
   String baseUrl = dotenv.env['BASE_URL'].toString();
-  final String fontFamily = "amiko"; 
+  final String fontFamily = "amiko";
 
   @override
   void initState() {
     super.initState();
     usernameController = TextEditingController(text: widget.profile.name);
     surnameController = TextEditingController(text: widget.profile.surname);
+    phoneController = TextEditingController(text: widget.profile.phone);
     emailController = TextEditingController(text: widget.profile.email);
     oldPasswordController = TextEditingController();
     newPasswordController = TextEditingController();
@@ -44,6 +47,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   void dispose() {
     usernameController.dispose();
     surnameController.dispose();
+    phoneController.dispose();
     emailController.dispose();
     oldPasswordController.dispose();
     newPasswordController.dispose();
@@ -62,7 +66,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         });
       } else {
         // ignore: use_build_context_synchronously
-        _showSnackBar(
+        showCustomDialog(
             context, 'Please select an image file. (.png, .jpg, .jpeg)');
       }
     }
@@ -72,31 +76,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
     context.read<SettingBloc>().add(UpdateProfile(
           name: usernameController.text,
           surname: surnameController.text,
+          phone: phoneController.text,
           imageFile: imageFile,
         ));
-  }
-
-  void _showSnackBar(BuildContext context, String message) {
-    Future.delayed(Duration.zero, () {
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            message,
-            style: TextStyle(
-              color: Colors.white,
-              fontFamily: fontFamily, // เรียกใช้ตัวแปร fontFamily
-            ),
-          ),
-          backgroundColor: Colors.blueAccent,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          margin: const EdgeInsets.all(10),
-        ),
-      );
-    });
   }
 
   void _showChangePasswordModal(BuildContext context) {
@@ -106,10 +88,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
         return BlocListener<SettingBloc, SettingState>(
           listener: (context, state) {
             if (state is SettingSuccess) {
-              Navigator.of(context).pop(); 
-              _showSnackBar(context, state.message);  
+              Navigator.pop(context); 
+              showCustomDialog(context, state.message); // Show success message
             } else if (state is SettingError) {
-              _showSnackBar(context, state.message); 
+              showCustomDialogError(context, state.message); // Show error message
             }
           },
           child: AlertDialog(
@@ -137,7 +119,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ),
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  Navigator.pop(context);
                 },
                 child: Text('Cancel', style: TextStyle(fontFamily: fontFamily)),
               ),
@@ -182,11 +164,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget build(BuildContext context) {
     return BlocListener<SettingBloc, SettingState>(
       listener: (context, state) {
+        //Page profile
         if (state is SettingSuccess) {
-          _showSnackBar(context, state.message);
           Navigator.pop(context, state.message);
+          showCustomDialog(context, state.message);
         } else if (state is SettingError) {
-          _showSnackBar(context, state.message);
+          showCustomDialogError(context, state.message);
         }
       },
       child: Scaffold(
@@ -262,6 +245,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 buildTextField("Username", Icons.person, usernameController),
                 const SizedBox(height: 15),
                 buildTextField("Surname", Icons.person, surnameController),
+                const SizedBox(height: 15),
+                buildTextField("Phone", Icons.phone, phoneController),
                 const SizedBox(height: 15),
                 buildTextField("Email", Icons.email, emailController,
                     readOnly: true),

@@ -3,6 +3,7 @@ class Profile_data {
   String id;
   String name;
   String surname;
+  String phone ; 
   String email;
   String image_url;
   String role;
@@ -12,6 +13,7 @@ class Profile_data {
     required this.id,
     required this.name,
     required this.surname,
+    required this.phone,
     required this.email,
     required this.image_url,
     this.role = 'USER',
@@ -22,6 +24,7 @@ class Profile_data {
         id: json["data"]?["id"] ,
         name: json["data"]?["name"] ,
         surname: json["data"]?["surname"] ,
+        phone: json["data"]?["phone"] ,
         email: json["data"]?["email"] ,
         image_url: json["data"]?["image_url"] ,
         role: json["data"]?["role"] ?? 'USER',
@@ -32,6 +35,8 @@ class Profile_data {
         "data": {
           "id": id,
           "name": name,
+          "surname": surname,
+          "phone": phone,
           "email": email,
           "image_url": image_url,
           "role": role,

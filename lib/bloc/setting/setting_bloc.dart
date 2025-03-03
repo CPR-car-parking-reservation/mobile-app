@@ -13,9 +13,9 @@ import 'package:http_parser/http_parser.dart';
 
 class SettingBloc extends Bloc<SettingEvent, SettingState> {
   final String? baseUrl = dotenv.env['BASE_URL'];
-  final String userId = '65dec3c6-37b4-4e1a-b55d-b0583420fc02';
+  final String userId = '38c9d187-a2a1-40e3-9579-3b6b3044446e';
   final String token =
-      'eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY1ZGVjM2M2LTM3YjQtNGUxYS1iNTVkLWIwNTgzNDIwZmMwMiIsImV4cCI6MTc0MTAyODczNH0.IauhFqmkRp68JzGi3I6uQQRM-0zvDqL7RkEdgqDhqa4';
+      'eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjM4YzlkMTg3LWEyYTEtNDBlMy05NTc5LTNiNmIzMDQ0NDQ2ZSIsImV4cCI6MTc0MTA4Njc0NX0.wBEe1QQZpDELDxDswfGcnbRZAKcEpWNmzb13-4UwvNs';
 
   SettingBloc() : super(SettingInitial()) {
     on<LoadCars>(_onLoadCars);
@@ -243,6 +243,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
         });
       request.fields['name'] = event.name;
       request.fields['surname'] = event.surname;
+      request.fields['phone'] = event.phone;
       if (event.imageFile != null) {
         request.files.add(await http.MultipartFile.fromPath(
           'image',
@@ -286,8 +287,8 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
       final responseJson = json.decode(responseBody);
 
       if (response.statusCode == 200) {
-        log(responseJson.toString());
         emit(SettingSuccess(message: responseJson['message']));
+        log(responseJson.toString());
       } else {
         log(responseJson.toString());
         emit(SettingError(message: responseJson['message']));

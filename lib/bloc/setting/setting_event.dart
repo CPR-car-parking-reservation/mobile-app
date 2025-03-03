@@ -2,9 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 @immutable
-abstract class SettingEvent   {
+abstract class SettingEvent {
   const SettingEvent();
-
 
   List<Object> get props => [];
 }
@@ -24,7 +23,6 @@ class FetchCarById extends SettingEvent {
   List<Object> get props => [carId];
 }
 
-
 class AddCar extends SettingEvent {
   final String plate;
   final String model;
@@ -41,7 +39,6 @@ class AddCar extends SettingEvent {
   @override
   List<Object> get props => [plate, model, type, imageFile];
 }
-
 
 class UpdateCar extends SettingEvent {
   final String id;
@@ -62,7 +59,6 @@ class UpdateCar extends SettingEvent {
   List<Object> get props => [id, plate, model, type, imageFile ?? ''];
 }
 
-
 class DeleteCar extends SettingEvent {
   final String id;
 
@@ -74,17 +70,19 @@ class DeleteCar extends SettingEvent {
 
 class UpdateProfile extends SettingEvent {
   final String name;
-  final String surname ; 
+  final String surname;
+  final String phone;
   final File? imageFile;
 
   const UpdateProfile({
     required this.name,
     required this.surname,
+    required this.phone,
     this.imageFile,
   });
 
   @override
-  List<Object> get props => [name,surname,imageFile ?? ''];
+  List<Object> get props => [name, surname,phone, imageFile ?? ''];
 }
 
 class UpdatePassword extends SettingEvent {
@@ -94,14 +92,11 @@ class UpdatePassword extends SettingEvent {
   final String confirm_password;
 
   // ignore: non_constant_identifier_names
-  const UpdatePassword({required this.oldPassword, required this.newPassword , required this.confirm_password});
+  const UpdatePassword(
+      {required this.oldPassword,
+      required this.newPassword,
+      required this.confirm_password});
 
   @override
-  List<Object> get props => [oldPassword, newPassword , confirm_password];
+  List<Object> get props => [oldPassword, newPassword, confirm_password];
 }
-
-
-
-
-
-

@@ -10,6 +10,7 @@ import 'package:car_parking_reservation/setting/editcar.dart';
 import 'package:car_parking_reservation/setting/editprofile.dart';
 import 'package:car_parking_reservation/Login/signin.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:car_parking_reservation/widget/custom_dialog.dart';
 
 const String fontFamily = "amiko";
 
@@ -97,12 +98,18 @@ class _SettingState extends State<Setting> with RouteAware {
               const Spacer(),
               IconButton(
                 onPressed: () async {
-                  await Navigator.push(
+                  final result = await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => EditCarPage(car_id: car[index].id),
                     ),
                   );
+                  if (result is String) {
+                    // ignore: use_build_context_synchronously
+                    showCustomDialog(context, result);
+                    // ignore: use_build_context_synchronously
+                    context.read<SettingBloc>().add(LoadUserAndCars());
+                  }
                 },
                 icon: const Icon(Icons.edit, color: Colors.orange),
               ),
@@ -112,42 +119,6 @@ class _SettingState extends State<Setting> with RouteAware {
       },
       separatorBuilder: (context, index) => const Divider(),
       itemCount: car.length,
-    );
-  }
-
-  void _showSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: const Color(0xFF29CE79),
-        duration: Duration(milliseconds: 1500),
-        content: Padding(
-          padding: const EdgeInsets.only(left: 20),
-          child: Row(
-            children: [
-              Icon(
-                Icons.check_circle,
-                color: Colors.white,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 20),
-                child: Text(
-                  'Success',
-                  style: TextStyle(
-                      fontFamily: fontFamily,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white),
-                ),
-              ),
-            ],
-          ),
-        ),
-        padding: EdgeInsets.all(2),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
-        ),
-        behavior: SnackBarBehavior.floating,
-      ),
     );
   }
 
@@ -257,6 +228,26 @@ class _SettingState extends State<Setting> with RouteAware {
                                             )),
                                       ],
                                     ),
+                                    Row(
+                                      children: [
+                                        Text('Phone : ',
+                                            style: TextStyle(
+                                              color: Colors.red,
+                                              fontFamily: fontFamily,
+                                            )),
+                                        Expanded(
+                                          child: Text(
+                                            profile.phone,
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w400,
+                                              fontFamily: fontFamily,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ],
                                 ),
                               ),
@@ -307,7 +298,7 @@ class _SettingState extends State<Setting> with RouteAware {
                                 );
                                 if (result is String) {
                                   // ignore: use_build_context_synchronously
-                                  _showSnackBar(context, result);
+                                  showCustomDialog(context, result);
                                   // ignore: use_build_context_synchronously
                                   context
                                       .read<SettingBloc>()
