@@ -14,12 +14,26 @@ class ReserveLoading
 
 class ReservedLoaded extends ReservedState {
   // State เมื่อโหลดข้อมูลเสร็จแล้ว จะมีข้อมูลในนี้
-  final List<History_data> history;
+  // final History_data history;
 
-  ReservedLoaded(this.history);
+  final String? parking_slot_id;
+  final String? start_at;
+  final List<car_data> carData;
 
-  @override
-  List<Object> get props => [history];
+  ReservedLoaded({
+    this.parking_slot_id,
+    this.start_at,
+    required this.carData,
+  });
+}
+
+class ReservCreated extends ReservedState {
+  final String car_id;
+  final String parking_slot_id;
+  final String start_at;
+
+  ReservCreated( this.car_id, this.parking_slot_id, this.start_at);
+
 }
 
 class ReservedError extends ReservedState {

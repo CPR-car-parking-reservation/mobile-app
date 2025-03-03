@@ -22,25 +22,25 @@ class History extends StatefulWidget {
 
 class _HistoryState extends State<History> {
   late List<Map<String, String>> mockHistoryData;
-  void initState() {
-    super.initState();
-    context.read<ReservedBloc>().add(FetchAllReservation());
+  // void initState() {
+  //   super.initState();
+  //   context.read<ReservedBloc>().add(FetchAllReservation());
 
-    mockHistoryData = [];
+  //   mockHistoryData = [];
 
-    if (widget.date != null &&
-        widget.start_at != null &&
-        widget.end_at != null &&
-        widget.parking_slots_id != null) {
-      mockHistoryData.add({
-        "date": widget.date!,
-        "inTime": widget.start_at!,
-        "outTime": widget.end_at!,
-        "price": "",
-        "slot_number": widget.parking_slots_id!
-      });
-    }
-  }
+  //   if (widget.date != null &&
+  //       widget.start_at != null &&
+  //       widget.end_at != null &&
+  //       widget.parking_slots_id != null) {
+  //     mockHistoryData.add({
+  //       "date": widget.date!,
+  //       "inTime": widget.start_at!,
+  //       "outTime": widget.end_at!,
+  //       "price": "",
+  //       "slot_number": widget.parking_slots_id!
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -72,146 +72,146 @@ class _HistoryState extends State<History> {
                   if (state is ReservedError) {
                     return Center(child: Text(state.message));
                   }
-                  if (state is ReservedLoaded) {
-                    List<History_data> history = state.history;
-                    return ListView.builder(
-                      padding: const EdgeInsets.only(top: 20, bottom: 10),
-                      itemCount: history.length,
-                      itemBuilder: (context, index) {
-                        final item = history[index];
-                        return Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(10),
-                            child: Stack(
-                              children: [
-                                Container(
-                                  height: 130,
-                                  width: 350,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 50, left: 25),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            const Text(
-                                              "In : ",
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.w700,
-                                                  fontFamily: "Amiko",
-                                                  fontSize: 16),
-                                            ),
-                                            Text(
-                                              item.start_at ?? '',
-                                              style: const TextStyle(
-                                                  fontFamily: "Amiko",
-                                                  fontSize: 16),
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          children: [
-                                            const Text(
-                                              "Out : ",
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.w700,
-                                                  fontFamily: "Amiko",
-                                                  fontSize: 16),
-                                            ),
-                                            Text(
-                                              item.end_at ?? '',
-                                              style: const TextStyle(
-                                                  fontFamily: "Amiko",
-                                                  fontSize: 16),
-                                            ),
-                                          ],
-                                        ),
-                                        // Row(
-                                        //   children: [
-                                        //     const Text(
-                                        //       "Price : ",
-                                        //       style: TextStyle(
-                                        //           fontWeight: FontWeight.w700,
-                                        //           fontFamily: "Amiko",
-                                        //           fontSize: 16),
-                                        //     ),
-                                        //     Text(
-                                        //       '200',
-                                        //       style: const TextStyle(
-                                        //           fontFamily: "Amiko",
-                                        //           fontSize: 16),
-                                        //     ),
-                                        //   ],
-                                        // ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
-                                    height: 35,
-                                    width: 200,
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFF03174C),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 20, vertical: 8),
-                                      child: Row(
-                                        children: [
-                                          const Text(
-                                            "Date : ",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontFamily: "Amiko",
-                                                fontWeight: FontWeight.w700),
-                                          ),
-                                          Text(
-                                            item.start_at ?? '',
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontFamily: "Amiko",
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  left: 285,
-                                  bottom: 40,
-                                  child: Container(
-                                    height: 50,
-                                    width: 50,
-                                    decoration: const BoxDecoration(
-                                        color: Colors.white),
-                                    child: Center(
-                                      child: Text(
-                                        item.parkingSlot.slot_number ?? '',
-                                        style: const TextStyle(
-                                            fontFamily: "Amiko",
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w700),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  }
+                  // if (state is ReservedLoaded) {
+                  //   List<History_data> history = state.history;
+                  //   return ListView.builder(
+                  //     padding: const EdgeInsets.only(top: 20, bottom: 10),
+                  //     itemCount: history.length,
+                  //     itemBuilder: (context, index) {
+                  //       final item = history[index];
+                  //       return Center(
+                  //         child: Padding(
+                  //           padding: EdgeInsets.all(10),
+                  //           child: Stack(
+                  //             children: [
+                  //               Container(
+                  //                 height: 130,
+                  //                 width: 350,
+                  //                 decoration: BoxDecoration(
+                  //                   color: Colors.white,
+                  //                   borderRadius: BorderRadius.circular(20),
+                  //                 ),
+                  //                 child: Padding(
+                  //                   padding: const EdgeInsets.only(
+                  //                       top: 50, left: 25),
+                  //                   child: Column(
+                  //                     crossAxisAlignment:
+                  //                         CrossAxisAlignment.start,
+                  //                     children: [
+                  //                       Row(
+                  //                         children: [
+                  //                           const Text(
+                  //                             "In : ",
+                  //                             style: TextStyle(
+                  //                                 fontWeight: FontWeight.w700,
+                  //                                 fontFamily: "Amiko",
+                  //                                 fontSize: 16),
+                  //                           ),
+                  //                           Text(
+                  //                             item.start_at ?? '',
+                  //                             style: const TextStyle(
+                  //                                 fontFamily: "Amiko",
+                  //                                 fontSize: 16),
+                  //                           ),
+                  //                         ],
+                  //                       ),
+                  //                       Row(
+                  //                         children: [
+                  //                           const Text(
+                  //                             "Out : ",
+                  //                             style: TextStyle(
+                  //                                 fontWeight: FontWeight.w700,
+                  //                                 fontFamily: "Amiko",
+                  //                                 fontSize: 16),
+                  //                           ),
+                  //                           Text(
+                  //                             item.end_at ?? '',
+                  //                             style: const TextStyle(
+                  //                                 fontFamily: "Amiko",
+                  //                                 fontSize: 16),
+                  //                           ),
+                  //                         ],
+                  //                       ),
+                  //                       // Row(
+                  //                       //   children: [
+                  //                       //     const Text(
+                  //                       //       "Price : ",
+                  //                       //       style: TextStyle(
+                  //                       //           fontWeight: FontWeight.w700,
+                  //                       //           fontFamily: "Amiko",
+                  //                       //           fontSize: 16),
+                  //                       //     ),
+                  //                       //     Text(
+                  //                       //       '200',
+                  //                       //       style: const TextStyle(
+                  //                       //           fontFamily: "Amiko",
+                  //                       //           fontSize: 16),
+                  //                       //     ),
+                  //                       //   ],
+                  //                       // ),
+                  //                     ],
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //               Padding(
+                  //                 padding: const EdgeInsets.all(8.0),
+                  //                 child: Container(
+                  //                   height: 35,
+                  //                   width: 200,
+                  //                   decoration: BoxDecoration(
+                  //                     color: const Color(0xFF03174C),
+                  //                     borderRadius: BorderRadius.circular(20),
+                  //                   ),
+                  //                   child: Padding(
+                  //                     padding: const EdgeInsets.symmetric(
+                  //                         horizontal: 20, vertical: 8),
+                  //                     child: Row(
+                  //                       children: [
+                  //                         const Text(
+                  //                           "Date : ",
+                  //                           style: TextStyle(
+                  //                               color: Colors.white,
+                  //                               fontFamily: "Amiko",
+                  //                               fontWeight: FontWeight.w700),
+                  //                         ),
+                  //                         Text(
+                  //                           item.start_at ?? '',
+                  //                           style: const TextStyle(
+                  //                             color: Colors.white,
+                  //                             fontFamily: "Amiko",
+                  //                           ),
+                  //                         ),
+                  //                       ],
+                  //                     ),
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //               Positioned(
+                  //                 left: 285,
+                  //                 bottom: 40,
+                  //                 child: Container(
+                  //                   height: 50,
+                  //                   width: 50,
+                  //                   decoration: const BoxDecoration(
+                  //                       color: Colors.white),
+                  //                   child: Center(
+                  //                     child: Text(
+                  //                       item.parkingSlot.slot_number ?? '',
+                  //                       style: const TextStyle(
+                  //                           fontFamily: "Amiko",
+                  //                           fontSize: 20,
+                  //                           fontWeight: FontWeight.w700),
+                  //                     ),
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //             ],
+                  //           ),
+                  //         ),
+                  //       );
+                  //     },
+                  //   );
+                  // }
                   return const SizedBox();
                 },
               ),

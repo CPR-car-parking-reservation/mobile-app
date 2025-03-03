@@ -1,5 +1,6 @@
 import 'package:car_parking_reservation/Widget/custom_dialog.dart';
 import 'package:car_parking_reservation/model/parking_slot.dart';
+import 'package:car_parking_reservation/reserv.dart';
 // import 'package:car_parking_reservation/reserv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -134,7 +135,7 @@ class _ParkingSlots extends State<ParkingSlots> {
               // แสดงที่จอดฝั่งซ้าย
               Positioned(
                 left: 12,
-                top: MediaQuery.of(context).size.height * 0.27,
+                top: MediaQuery.of(context).size.height * 0.28,
                 child: Column(
                   children: leftSlots
                       .map((column) => Column(
@@ -147,7 +148,7 @@ class _ParkingSlots extends State<ParkingSlots> {
               // แสดงที่จอดฝั่งขวา
               Positioned(
                 right: 12,
-                top: MediaQuery.of(context).size.height * 0.27,
+                top: MediaQuery.of(context).size.height * 0.28,
                 child: Column(
                   children: rightSlots
                       .map((column) => Column(
@@ -235,11 +236,15 @@ class ParkingSlotButton extends StatelessWidget {
             ),
             onPressed: () {
               if (parking.status == "IDLE") {
-                context.read<ParkingBloc>().add(SenderParkingSlot(parking));
-
-                context.read<NavigatorBloc>().add(ChangeIndex(index: 1));
-                // Navigator.pushNamed(context, '/reserv',
-                //     arguments: parking); // ส่งข้อมูลที่จอดรถไปยังหน้า Reserv
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Reserv(
+                              parking_slots_id: parking.id,
+                              slot_number: parking.slot_number,
+                              floor_number: parking.floor.floor_number,
+                              status: parking.status,
+                            )));
               }
               if (parking.status == "RESERVED") {
                 showCustomDialogWarning(context, "Reserved");
