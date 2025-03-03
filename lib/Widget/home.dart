@@ -52,7 +52,7 @@ class Home extends StatelessWidget {
                     ),
                     GenQR(),
                     History(),
-                    Setting(),
+
                     // BlocProvider(
                     //   create: (context) => ReservedBloc(),
                     //   child: Reserv(),
