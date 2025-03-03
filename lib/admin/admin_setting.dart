@@ -1,3 +1,4 @@
+import 'package:car_parking_reservation/Login/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -52,49 +53,24 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  Future<void> _saveUserData() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('username', usernameController.text);
-    await prefs.setString('password', passwordController.text);
-    await prefs.setString('token', 'Success');
-
-    _loadDataUser(); // โหลดข้อมูลใหม่
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            TextField(
-              controller: usernameController,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Enter your username',
-              ),
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: passwordController,
-              obscureText: true, // ซ่อนรหัสผ่าน
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Enter your password',
-              ),
-            ),
-            const SizedBox(height: 10),
+          children: [
             ElevatedButton(
               onPressed: () {
-                _saveUserData();
+                Future.delayed(Duration.zero, () {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => Welcome()),
+                    (route) => false,
+                  );
+                });
               },
-              child: const Text("Send"),
+              child: Text('Logout'),
             ),
-            const SizedBox(height: 20),
-            Text('Username: $username'),
-            Text('Password: $password'),
-            Text("Token: $token"), // ✅ แก้ไขข้อความ token
           ],
         ),
       ),
