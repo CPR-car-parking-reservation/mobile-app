@@ -44,6 +44,7 @@ dependencies:
   flutter_dotenv: ^5.2.1
   qr_flutter: ^4.1.0
   shared_preferences: ^2.5.2
+  expansion_tile_card: ^3.0.0
 
 dev_dependencies:
   flutter_test:

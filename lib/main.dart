@@ -1,7 +1,7 @@
 import 'package:car_parking_reservation/admin/admin_home.dart';
 import 'package:car_parking_reservation/bloc/navigator/navigator_bloc.dart';
 import 'package:car_parking_reservation/bloc/reserved/reserved_bloc.dart';
-import 'package:car_parking_reservation/bloc/setting/setting_bloc.dart'; 
+import 'package:car_parking_reservation/bloc/setting/setting_bloc.dart';
 import 'package:car_parking_reservation/reserv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
         useMaterial3: true,
       ),
-      initialRoute: '/',
+      initialRoute: '/admin',
       routes: {
         //'/': (context) => AdminHomePage(),
         '/': (context) => Welcome(),
