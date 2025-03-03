@@ -28,21 +28,6 @@ final class AdminParkingError extends AdminParkingState {
   AdminParkingError({required this.message});
 }
 
-final class AdminParkingFilter extends AdminParkingState {
-  final List<ModelParkingSlot> parkings;
-
-  AdminParkingFilter({required this.parkings});
-}
-
-final class AdminParkingSearch extends AdminParkingState {
-  final String search;
-  final String floor;
-  final String status;
-
-  AdminParkingSearch(
-      {required this.floor, required this.status, required this.search});
-}
-
 final class AdminParkingSuccess extends AdminParkingState {
   final String message;
 

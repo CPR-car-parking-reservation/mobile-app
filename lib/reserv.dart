@@ -7,7 +7,7 @@ import 'package:car_parking_reservation/Qr-generator/qr_code.dart';
 import 'package:car_parking_reservation/history.dart';
 import 'package:car_parking_reservation/model/car.dart';
 import 'package:car_parking_reservation/model/history.dart';
-import 'package:car_parking_reservation/setting/setting_page.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -175,7 +175,7 @@ class _ReservState extends State<Reserv> {
                                           "${baseUrl}${car.image_url}",
                                           height: 50,
                                           width: 50),
-                                      Text(" ${car.car_number} "),
+                                      Text(" ${car.license_plate} "),
                                     ],
                                   ),
                                 );
