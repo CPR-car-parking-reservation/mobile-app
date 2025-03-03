@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:car_parking_reservation/Widget/custom_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:car_parking_reservation/model/profile.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -131,11 +132,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Widget buildTextField(
-      String labelText, IconData icon, TextEditingController controller,
+      String labelText, IconData icon, TextEditingController controller, keyboardType  , 
       {bool readOnly = false}) {
     return TextField(
       controller: controller,
       readOnly: readOnly,
+      keyboardType : keyboardType, 
       decoration: InputDecoration(
         labelStyle: TextStyle(fontFamily: fontFamily),
         prefixIcon: Icon(icon),
@@ -242,13 +244,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   ],
                 ),
                 const SizedBox(height: 40),
-                buildTextField("Username", Icons.person, usernameController),
+                buildTextField("Username", Icons.person, usernameController , TextInputType.text),
                 const SizedBox(height: 15),
-                buildTextField("Surname", Icons.person, surnameController),
+                buildTextField("Surname", Icons.person, surnameController , TextInputType.text),
                 const SizedBox(height: 15),
-                buildTextField("Phone", Icons.phone, phoneController),
+                buildTextField("Phone", Icons.phone, phoneController , TextInputType.number),
                 const SizedBox(height: 15),
-                buildTextField("Email", Icons.email, emailController,
+                buildTextField("Email", Icons.email, emailController, TextInputType.text,
                     readOnly: true),
                 const SizedBox(height: 20),
                 SizedBox(
