@@ -238,7 +238,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
   Future<void> _onUpdateProfile(
       UpdateProfile event, Emitter<SettingState> emit) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String token = prefs.getString('token')!;
+    final String token = prefs.getString('token')!;
     emit(SettingLoading());
     try {
       final url = Uri.parse('$baseUrl/profile');
@@ -276,7 +276,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
   Future<void> _onUpdatePassword(
       UpdatePassword event, Emitter<SettingState> emit) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String token = prefs.getString('token')!;
+    final String token = prefs.getString('token')!;
     emit(SettingLoading());
     try {
       final url = Uri.parse('$baseUrl/profile/reset_password');

@@ -88,50 +88,83 @@ class _EditProfilePageState extends State<EditProfilePage> {
         return BlocListener<SettingBloc, SettingState>(
           listener: (context, state) {
             if (state is SettingSuccess) {
-              Navigator.pop(context); 
+              Navigator.pop(context);
               showCustomDialog(context, state.message); // Show success message
             } else if (state is SettingError) {
-              showCustomDialogError(context, state.message); // Show error message
+              showCustomDialogError(
+                  context, state.message); // Show error message
             }
           },
-          child: AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            backgroundColor: Colors.white, // สีพื้นหลังขาว
-            title: Text('Change Password', style: TextStyle(fontFamily: fontFamily, color: Colors.black)),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                buildPasswordField('Old Password', oldPasswordController),
-                const SizedBox(height: 10),
-                buildPasswordField('New Password', newPasswordController),
-                const SizedBox(height: 10),
-                buildPasswordField('Confirm Password', confirmPasswordController),
-              ],
-            ),
-            actions: [
-              ElevatedButton(
-                onPressed: () {
-                  context.read<SettingBloc>().add(UpdatePassword(
-                        oldPassword: oldPasswordController.text,
-                        newPassword: newPasswordController.text,
-                        confirm_password: confirmPasswordController.text,
-                      ));
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green, // สีปุ่มสว่าง
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+          child: Stack(
+            children: [
+              AlertDialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                child: Text('Update Password', style: TextStyle(fontFamily: fontFamily, color: Colors.white)),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text('Cancel', style: TextStyle(fontFamily: fontFamily, color: Colors.red)),
+                backgroundColor: Colors.white, // สีพื้นหลังขาว
+                title: Text('Change Password',
+                    style:
+                        TextStyle(fontFamily: fontFamily, color: Colors.black)),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    buildPasswordField('Old Password', oldPasswordController),
+                    const SizedBox(height: 10),
+                    buildPasswordField('New Password', newPasswordController),
+                    const SizedBox(height: 10),
+                    buildPasswordField(
+                        'Confirm Password', confirmPasswordController),
+                  ],
+                ),
+                actions: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          context.read<SettingBloc>().add(UpdatePassword(
+                                oldPassword: oldPasswordController.text,
+                                newPassword: newPasswordController.text,
+                                confirm_password:
+                                    confirmPasswordController.text,
+                              ));
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 10),
+                          backgroundColor: Colors.green,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: Text("Update",
+                            style: TextStyle(
+                                fontFamily: fontFamily ,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16)),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 10),
+                          backgroundColor:
+                              const Color.fromARGB(255, 251, 251, 251),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: Text("Cancel",
+                            style: TextStyle(
+                                fontFamily:  fontFamily,
+                                color: const Color.fromARGB(255, 0, 0, 0),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16)),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ],
           ),
@@ -140,8 +173,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-  Widget buildTextField(
-      String labelText, IconData icon, TextEditingController controller, TextInputType keyboardType, 
+  Widget buildTextField(String labelText, IconData icon,
+      TextEditingController controller, TextInputType keyboardType,
       {bool readOnly = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -261,10 +294,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   ],
                 ),
                 const SizedBox(height: 40),
-                buildTextField("Username", Icons.person, usernameController, TextInputType.text),
-                buildTextField("Surname", Icons.person, surnameController, TextInputType.text),
-                buildTextField("Phone", Icons.phone, phoneController, TextInputType.number),
-                buildTextField("Email", Icons.email, emailController, TextInputType.text, readOnly: true),
+                buildTextField("Username", Icons.person, usernameController,
+                    TextInputType.text),
+                buildTextField("Surname", Icons.person, surnameController,
+                    TextInputType.text),
+                buildTextField("Phone", Icons.phone, phoneController,
+                    TextInputType.number),
+                buildTextField(
+                    "Email", Icons.email, emailController, TextInputType.text,
+                    readOnly: true),
                 const SizedBox(height: 20),
                 SizedBox(
                   width: double.infinity,

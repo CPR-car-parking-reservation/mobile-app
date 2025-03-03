@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:car_parking_reservation/Widget/custom_dialog.dart';
+import 'package:car_parking_reservation/setting/addcar.dart';
 import 'package:flutter/material.dart';
 import 'package:car_parking_reservation/model/car.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -36,7 +37,8 @@ class _EditCarPageState extends State<EditCarPage> {
     plateController = TextEditingController();
     modelController = TextEditingController();
     typeController = TextEditingController();
-    BlocProvider.of<SettingBloc>(context).add(FetchCarById(carId: widget.car_id));
+    BlocProvider.of<SettingBloc>(context)
+        .add(FetchCarById(carId: widget.car_id));
   }
 
   @override
@@ -300,37 +302,56 @@ class _EditCarPageState extends State<EditCarPage> {
           title: const Text(
             "Delete Car",
             style: TextStyle(
-              fontFamily: "amiko",
+              fontFamily: fontFamily,
             ),
           ),
           content: const Text(
-            "คุณแน่ใจหรือไม่ว่าต้องการลบรถคันนี้?",
+            "Are you sure you want to delete this car?",
             style: TextStyle(
-              fontFamily: "amiko",
+              fontFamily: fontFamily,
+              fontSize: 16,
             ),
           ),
           actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: const Text(
-                "Cancel",
-                style: TextStyle(
-                  fontFamily: "amiko",
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    context
+                        .read<SettingBloc>()
+                        .add(DeleteCar(id: widget.car_id));
+                    Navigator.pop(dialogContext);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                    backgroundColor: const Color.fromARGB(255, 255, 0, 0),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: Text("Delete",
+                      style: TextStyle(
+                          fontFamily: fontFamily,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16)),
                 ),
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                context.read<SettingBloc>().add(DeleteCar(id: widget.car_id));
-                Navigator.pop(dialogContext); // ปิด Dialog
-              },
-              style: TextButton.styleFrom(foregroundColor: Colors.red),
-              child: const Text(
-                "Delete",
-                style: TextStyle(
-                  fontFamily: "amiko",
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(dialogContext),
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                    backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child:Text("Cancel",
+                      style: TextStyle(
+                          fontFamily: fontFamily,
+                          color: Color.fromARGB(255, 0, 0, 0),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16)),
                 ),
-              ),
+              ],
             ),
           ],
         );
