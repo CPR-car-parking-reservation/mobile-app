@@ -4,7 +4,6 @@ import 'package:car_parking_reservation/reserv.dart';
 // import 'package:car_parking_reservation/reserv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/navigator/navigator_bloc.dart';
 import '../bloc/parking/parking_bloc.dart';
 
 /// Widget หลักที่ใช้แสดงที่จอดรถทั้งหมด

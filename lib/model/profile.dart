@@ -71,14 +71,14 @@ class Car {
   });
 
   factory Car.fromJson(Map<String, dynamic> json) => Car(
-        id: json["id"],
-        license_plate: json["license_plate"],
-        car_model: json["car_model"],
-        car_type: json["car_type"],
-        image_url: json["image_url"],
-        created_at: json["created_at"],
-        updated_at: json["updated_at"],
-        user_id: json["user_id"],
+        id: json["id"] ,
+        license_plate: json["license_plate"] ,
+        car_model: json["car_model"] ,
+        car_type: json["car_type"] ,
+        image_url: json["image_url"] ,
+        created_at: json["created_at"] ,
+        updated_at: json["updated_at"] ,
+        user_id: json["user_id"] ,
       );
 
   Map<String, dynamic> toJson() => {

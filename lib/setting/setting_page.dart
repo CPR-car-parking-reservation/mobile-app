@@ -11,6 +11,7 @@ import 'package:car_parking_reservation/setting/editprofile.dart';
 import 'package:car_parking_reservation/Login/signin.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:car_parking_reservation/widget/custom_dialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 const String fontFamily = "amiko";
 
@@ -28,7 +29,7 @@ class _SettingState extends State<Setting> with RouteAware {
 
   @override
   void didPopNext() {
-    // Always reload data when coming back to this page
+    loadToken();
     context.read<SettingBloc>().add(LoadUserAndCars());
   }
 
@@ -45,6 +46,14 @@ class _SettingState extends State<Setting> with RouteAware {
   void dispose() {
     routeObserver.unsubscribe(this);
     super.dispose();
+  }
+
+  String userToken = '';
+  void loadToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userToken = prefs.getString('token') ?? '';
+    });
   }
 
   void logout(BuildContext context) {
@@ -83,18 +92,18 @@ class _SettingState extends State<Setting> with RouteAware {
                   Text(car[index].license_plate,
                       style: const TextStyle(
                           fontSize: 16,
-                          fontWeight: FontWeight.w400,
+                          fontWeight: FontWeight.w500,
                           fontFamily: fontFamily)),
                   Text(car[index].car_model,
                       style: const TextStyle(
                           color: Colors.grey,
                           fontFamily: fontFamily,
-                          fontWeight: FontWeight.w300)),
+                          fontWeight: FontWeight.w500)),
                   Text(car[index].car_type,
                       style: const TextStyle(
                           color: Colors.grey,
                           fontFamily: fontFamily,
-                          fontWeight: FontWeight.w300)),
+                          fontWeight: FontWeight.w500)),
                 ],
               ),
               const Spacer(),
@@ -108,7 +117,7 @@ class _SettingState extends State<Setting> with RouteAware {
                   );
                   if (result is String) {
                     // ignore: use_build_context_synchronously
-                    showCustomDialog(context, result);
+                    showCustomDialogSucess(context, result);
                     // ignore: use_build_context_synchronously
                     context.read<SettingBloc>().add(LoadUserAndCars());
                   }
@@ -121,6 +130,68 @@ class _SettingState extends State<Setting> with RouteAware {
       },
       separatorBuilder: (context, index) => const Divider(),
       itemCount: car.length,
+    );
+  }
+
+  void confirmLogout(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text(
+            "Log out",
+            style: TextStyle(
+              fontFamily: fontFamily,
+            ),
+          ),
+          content: const Text(
+            "Are you sure you want to log out?",
+            style: TextStyle(
+              fontFamily: fontFamily,
+              fontSize: 16,
+            ),
+          ),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    logout(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                    backgroundColor: const Color.fromARGB(255, 255, 0, 0),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: Text("Confirm",
+                      style: TextStyle(
+                          fontFamily: fontFamily,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16)),
+                ),
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(dialogContext),
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                    backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: Text("Cancel",
+                      style: TextStyle(
+                          fontFamily: fontFamily,
+                          color: Color.fromARGB(255, 0, 0, 0),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16)),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -187,66 +258,87 @@ class _SettingState extends State<Setting> with RouteAware {
                                     '$baseUrl${profile.image_url}'),
                                 radius: 30,
                               ),
-                              const SizedBox(width: 12),
+                              const SizedBox(width: 3),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Row(
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        Text('Name : ',
-                                            style: TextStyle(
-                                              color: Colors.red,
-                                              fontFamily: fontFamily,
-                                            )),
-                                        Expanded(
-                                          child: Text(
-                                            '${profile.name} ${profile.surname}',
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w400,
-                                              fontFamily: fontFamily,
+                                        Row(
+                                          children: [
+                                            Text(
+                                              'Name :',
+                                              style: TextStyle(
+                                                color: Colors.red,
+                                                fontFamily: fontFamily,
+                                              ),
                                             ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
+                                            const SizedBox(width: 8),
+                                            Expanded(
+                                              child: Text(
+                                                '${profile.name} ${profile.surname}',
+                                                style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w400,
+                                                  fontFamily: fontFamily,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        Text('Email : ',
-                                            style: TextStyle(
-                                              color: Colors.red,
-                                              fontFamily: fontFamily,
-                                              overflow: TextOverflow.ellipsis,
-                                            )),
-                                        Text(profile.email,
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w400,
-                                              fontFamily: fontFamily,
-                                              overflow: TextOverflow.ellipsis,
-                                            )),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        Text('Phone : ',
-                                            style: TextStyle(
-                                              color: Colors.red,
-                                              fontFamily: fontFamily,
-                                            )),
-                                        Expanded(
-                                          child: Text(
-                                            profile.phone,
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w400,
-                                              fontFamily: fontFamily,
+                                        Row(
+                                          children: [
+                                            Text(
+                                              'Email :',
+                                              style: TextStyle(
+                                                color: Colors.red,
+                                                fontFamily: fontFamily,
+                                              ),
                                             ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
+                                            const SizedBox(width: 8),
+                                            Expanded(
+                                              child: Text(
+                                                profile.email,
+                                                style: TextStyle(
+                                                  fontSize: 15,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w400,
+                                                  fontFamily: fontFamily,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              'Phone :',
+                                              style: TextStyle(
+                                                color: Colors.red,
+                                                fontFamily: fontFamily,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Expanded(
+                                              child: Text(
+                                                profile.phone,
+                                                style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w400,
+                                                  fontFamily: fontFamily,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
@@ -300,7 +392,7 @@ class _SettingState extends State<Setting> with RouteAware {
                                 );
                                 if (result is String) {
                                   // ignore: use_build_context_synchronously
-                                  showCustomDialog(context, result);
+                                  showCustomDialogSucess(context, result);
                                   // ignore: use_build_context_synchronously
                                   context
                                       .read<SettingBloc>()
@@ -317,7 +409,7 @@ class _SettingState extends State<Setting> with RouteAware {
                             ),
                             FloatingActionButton.extended(
                               onPressed: () {
-                                logout(context);
+                                confirmLogout(context);
                               },
                               backgroundColor: Colors.red,
                               icon:

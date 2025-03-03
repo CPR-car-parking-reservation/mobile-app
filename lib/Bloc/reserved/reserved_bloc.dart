@@ -92,13 +92,13 @@ class ReservedBloc extends Bloc<ReservedEvent, ReservedState> {
   // }
 
   Future<http.StreamedResponse> postData(
-      car_id, parking_slot_id, start_at) async {
+      carId, parkingSlotId, startAt) async {
     final url = Uri.parse("$baseUrl/reservation");
 
     var request = http.MultipartRequest('POST', url)
-      ..fields['car_id'] = car_id
-      ..fields['parking_slot_id'] = parking_slot_id
-      ..fields['start_at'] = start_at;
+      ..fields['car_id'] = carId
+      ..fields['parking_slot_id'] = parkingSlotId
+      ..fields['start_at'] = startAt;
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('token') ?? '';

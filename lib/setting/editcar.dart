@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:car_parking_reservation/Widget/custom_dialog.dart';
+import 'package:car_parking_reservation/setting/addcar.dart';
 import 'package:flutter/material.dart';
 import 'package:car_parking_reservation/model/car.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -58,26 +59,6 @@ class _EditCarPageState extends State<EditCarPage> {
         imagePath = pickedFile.path;
       }
     }
-  }
-
-  void _showSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          style: const TextStyle(
-            color: Colors.white,
-            fontFamily: "amiko",
-          ),
-        ),
-        backgroundColor: Colors.blueAccent,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        margin: const EdgeInsets.all(10),
-      ),
-    );
   }
 
   Widget buildDropdownField() {
@@ -144,10 +125,10 @@ class _EditCarPageState extends State<EditCarPage> {
     return BlocListener<SettingBloc, SettingState>(
       listener: (context, state) {
         if (state is SettingSuccess) {
-          showCustomDialog(context, state.message);
+          showCustomDialogSucess(context, state.message);
           Navigator.pop(context, state.message);
         } else if (state is SettingError) {
-          _showSnackBar(context, state.message);
+          showCustomDialogWarning(context, state.message);
         }
       },
       child: Scaffold(
@@ -321,37 +302,56 @@ class _EditCarPageState extends State<EditCarPage> {
           title: const Text(
             "Delete Car",
             style: TextStyle(
-              fontFamily: "amiko",
+              fontFamily: fontFamily,
             ),
           ),
           content: const Text(
-            "คุณแน่ใจหรือไม่ว่าต้องการลบรถคันนี้?",
+            "Are you sure you want to delete this car?",
             style: TextStyle(
-              fontFamily: "amiko",
+              fontFamily: fontFamily,
+              fontSize: 16,
             ),
           ),
           actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: const Text(
-                "Cancel",
-                style: TextStyle(
-                  fontFamily: "amiko",
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    context
+                        .read<SettingBloc>()
+                        .add(DeleteCar(id: widget.car_id));
+                    Navigator.pop(dialogContext);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                    backgroundColor: const Color.fromARGB(255, 255, 0, 0),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: Text("Delete",
+                      style: TextStyle(
+                          fontFamily: fontFamily,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16)),
                 ),
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                context.read<SettingBloc>().add(DeleteCar(id: widget.car_id));
-                Navigator.pop(dialogContext); // ปิด Dialog
-              },
-              style: TextButton.styleFrom(foregroundColor: Colors.red),
-              child: const Text(
-                "Delete",
-                style: TextStyle(
-                  fontFamily: "amiko",
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(dialogContext),
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                    backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: Text("Cancel",
+                      style: TextStyle(
+                          fontFamily: fontFamily,
+                          color: Color.fromARGB(255, 0, 0, 0),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16)),
                 ),
-              ),
+              ],
             ),
           ],
         );
@@ -397,7 +397,7 @@ class ImageSection extends StatelessWidget {
           ),
           child: Container(
             width: double.infinity,
-            height: 200,
+            height: 180,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               image: imageFile != null

@@ -8,6 +8,8 @@ class OnCreateRegister extends RegisterEvent {
   final String password;
   final String confirm_password;
   final String name;
+  final String surname;
+  final String phone;
 
-  OnCreateRegister(this.name, this.email, this.password, this.confirm_password);
+  OnCreateRegister(this.name, this.surname, this.email, this.password, this.confirm_password, this.phone);
 }

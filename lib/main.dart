@@ -27,7 +27,7 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -38,15 +38,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
         useMaterial3: true,
       ),
-      initialRoute: '/',
-      routes: {
-        //'/': (context) => AdminHomePage(),
-        '/': (context) => Welcome(),
-        '/signin': (context) => Signin(),
-        '/signup': (context) => Signup(),
-        '/home': (context) => Home(),
-        '/admin': (context) => AdminHomePage(),
-      },
+      home: Welcome(),
     );
   }
 }

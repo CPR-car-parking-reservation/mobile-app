@@ -5,7 +5,6 @@ import 'package:car_parking_reservation/bloc/navigator/navigator_bloc.dart';
 import 'package:car_parking_reservation/bloc/parking/parking_bloc.dart';
 import 'package:car_parking_reservation/bloc/reserved/reserved_bloc.dart';
 import 'package:car_parking_reservation/Qr-generator/qr_code.dart';
-import 'package:car_parking_reservation/history.dart';
 import 'package:car_parking_reservation/model/car.dart';
 import 'package:car_parking_reservation/model/history.dart';
 import 'package:car_parking_reservation/setting/setting_page.dart';
@@ -81,7 +80,7 @@ class _ReservState extends State<Reserv> {
           context.read<NavigatorBloc>().add(ChangeIndex(index: 1));
 
           // context.read<NavigatorBloc>().add(ChangeIndex(index: 1 , reservationId: state.reservationId));
-          showCustomDialog(context, "Reservation Success");
+          showCustomDialogSucess(context, "Reservation Success");
         } else if (state is ReservedError) {
           showCustomDialogError(context, state.message);
         }

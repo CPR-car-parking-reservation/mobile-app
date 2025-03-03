@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
@@ -26,11 +25,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', token);
-        await prefs.setString('role', role);
-        log(token);
+
         Future.delayed(Duration(seconds: 1));
-        emit(LoginSuccess(token, role));
-        // Navigator.pushNamed(event.context, '/home');
+        emit(LoginSuccess(role: role));
+        log("role: $role");
       } catch (e) {
         emit(LoginError(e.toString()));
       }

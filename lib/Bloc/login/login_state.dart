@@ -12,13 +12,11 @@ final class LoginInitial extends LoginState {}
 final class LoginLoading extends LoginState {}
 
 final class LoginSuccess extends LoginState {
-  final String emai;
-  final String password;
-
-  LoginSuccess(this.emai, this.password);
+  final String role;
+  LoginSuccess({required this.role});
 
   @override
-  List<Object> get props => [emai, password];
+  List<Object> get props => [role];
 }
 
 final class LoginError extends LoginState {

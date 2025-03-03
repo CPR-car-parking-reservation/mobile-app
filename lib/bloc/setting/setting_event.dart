@@ -8,7 +8,6 @@ abstract class SettingEvent {
   List<Object> get props => [];
 }
 
-class LoadCars extends SettingEvent {}
 
 class LoadUser extends SettingEvent {}
 
@@ -95,6 +94,7 @@ class UpdatePassword extends SettingEvent {
   const UpdatePassword(
       {required this.oldPassword,
       required this.newPassword,
+      // ignore: non_constant_identifier_names
       required this.confirm_password});
 
   @override

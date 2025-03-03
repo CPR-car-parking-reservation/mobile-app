@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:car_parking_reservation/Login/signup.dart';
 import 'package:car_parking_reservation/Widget/home.dart';
+import 'package:car_parking_reservation/admin/admin_home.dart';
 import 'package:car_parking_reservation/bloc/Login/login_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -128,13 +129,38 @@ class _SigninState extends State<Signin> {
                           );
                         }
                         if (state is LoginSuccess) {
-                          Future.delayed(Duration.zero, () {
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(builder: (context) => Home()),
-                              (route) => false,
-                            );
-                          });
+                          if (state.role == "ADMIN") {
+                            Future.delayed(Duration.zero, () {
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => AdminHomePage()),
+                                (route) => false,
+                              );
+                            });
+                          } else {
+                            Future.delayed(Duration.zero, () {
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(builder: (context) => Home()),
+                                (route) => false,
+                              );
+                            });
+                          }
+                          return ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFEF4637),
+                                elevation: 3),
+                            onPressed: () {
+                              context.read<LoginBloc>().add(onSubmit(
+                                  emailController.text, passController.text));
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 15, horizontal: 100),
+                              child: CircularProgressIndicator(),
+                            ),
+                          );
                         }
 
                         return ElevatedButton(
