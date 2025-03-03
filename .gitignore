@@ -44,6 +44,8 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-.env 
+.env
 .env.local
-.env.*
+.env.*    # Ignore .env ทุกเวอร์ชัน เช่น .env.production, .env.development
+
+pubspec.lock

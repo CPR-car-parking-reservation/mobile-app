@@ -1,6 +1,10 @@
+import 'dart:developer';
+
 import 'package:car_parking_reservation/Login/signup.dart';
 import 'package:car_parking_reservation/Widget/home.dart';
+import 'package:car_parking_reservation/bloc/Login/login_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Signin extends StatefulWidget {
   const Signin({super.key});
@@ -10,98 +14,63 @@ class Signin extends StatefulWidget {
 }
 
 class _SigninState extends State<Signin> {
-  // final userController = TextEditingController();
-  // final passController = TextEditingController();
+  final emailController = TextEditingController();
+  final passController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    emailController.text = "user";
+    passController.text = "12345678";
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(''),
-      ),
-      body: Center(
-        child: Padding(
-          padding: EdgeInsets.all(15),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SizedBox(
-                height: 250,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.waving_hand_rounded,
-                          size: 32,
-                          color: Colors.amber,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 20, top: 5),
-                          child: Text(
-                            "Welcome Back!",
-                            style: TextStyle(
-                                fontSize: 28,
-                                fontFamily: "Amiko",
-                                fontWeight: FontWeight.w700),
+    return BlocProvider(
+      create: (context) => LoginBloc(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(''),
+        ),
+        body: Center(
+          child: Padding(
+            padding: EdgeInsets.all(15),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SizedBox(
+                  height: 50,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.waving_hand_rounded,
+                            size: 32,
+                            color: Colors.amber,
                           ),
-                        ),
-                      ],
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white, elevation: 3),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => Home()),
-                        );
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 30),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Image.asset(
-                              "assets/images/logogoogle.png",
-                              height: 35,
-                            ),
-                            Text(
-                              "CONTINUE WITH GOOGLE",
+                          Padding(
+                            padding: const EdgeInsets.only(left: 20, top: 5),
+                            child: Text(
+                              "Welcome Back!",
                               style: TextStyle(
-                                  color: Colors.black54,
+                                  fontSize: 28,
                                   fontFamily: "Amiko",
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 15),
+                                  fontWeight: FontWeight.w700),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ),
-                    Text(
-                      "OR LOG IN WITH EMAIL",
-                      style: TextStyle(
-                          fontSize: 14,
-                          fontFamily: "Amiko",
-                          fontWeight: FontWeight.w700,
-                          color: Colors.grey),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(
-                height: 25,
-              ),
-              SizedBox(
-                height: 400,
-                child: Column(
+                Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    TextField(
-                      // controller: userController,
+                    TextFormField(
+                      controller: emailController,
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.grey[100],
@@ -119,8 +88,9 @@ class _SigninState extends State<Signin> {
                     SizedBox(
                       height: 25,
                     ),
-                    TextField(
-                      // controller: passController,
+                    TextFormField(
+                      controller: passController,
+                      obscureText: true,
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.grey[100],
@@ -138,82 +108,88 @@ class _SigninState extends State<Signin> {
                     SizedBox(
                       height: 40,
                     ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFEF4637),
-                          elevation: 3),
+                    BlocBuilder<LoginBloc, LoginState>(
+                      builder: (context, state) {
+                        log(state.toString());
+                        if (state is LoginLoading) {
+                          return ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFEF4637),
+                                elevation: 3),
+                            onPressed: () {
+                              context.read<LoginBloc>().add(onSubmit(
+                                  emailController.text, passController.text));
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 15, horizontal: 100),
+                              child: CircularProgressIndicator(),
+                            ),
+                          );
+                        }
+                        if (state is LoginSuccess) {
+                          Future.delayed(Duration.zero, () {
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(builder: (context) => Home()),
+                              (route) => false,
+                            );
+                          });
+                        }
+
+                        return ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFEF4637),
+                              elevation: 3),
+                          onPressed: () {
+                            context.read<LoginBloc>().add(onSubmit(
+                                emailController.text, passController.text));
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(builder: (context) => Home()),
+                            // );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 15, horizontal: 100),
+                            child: Text(
+                              "LOG IN",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: "Amiko",
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 16),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("ALREADY HAVE AN ACCOUNT?"),
+                    TextButton(
                       onPressed: () {
-                        //if (userController.text.isEmpty ||
-                        //    passController.text.isEmpty) {
-                        //  ScaffoldMessenger.of(context).showSnackBar(
-                        //    SnackBar(
-                        //      content: Text(
-                        //        "Fail",
-                        //        style: TextStyle(
-                        //            color: Colors.white,
-                        //            fontWeight: FontWeight.bold),
-                        //      ),
-                        //      backgroundColor:
-                        //          const Color(0xFFEF4637),
-                        //    ),
-                        //  );
-                        //} else {
-                        //  ScaffoldMessenger.of(context).showSnackBar(
-                        //    SnackBar(
-                        //      content: Text(
-                        //        "Success",
-                        //        style: TextStyle(
-                        //            color: Colors.black,
-                        //            fontWeight: FontWeight.bold),
-                        //      ),
-                        //      backgroundColor: const Color(0xFF29CE79),
-                        //    ),
-                        //  );
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => Home()),
+                          MaterialPageRoute(
+                            builder: (context) => Signup(),
+                          ),
                         );
-                        //}
                       },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 15, horizontal: 135),
-                        child: Text(
-                          "LOG IN",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontFamily: "Amiko",
-                              fontWeight: FontWeight.w700,
-                              fontSize: 16),
+                      child: Text(
+                        "SIGN UP",
+                        style: TextStyle(
+                          color: const Color(0xFFEF4637),
                         ),
                       ),
                     ),
                   ],
                 ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("ALREADY HAVE AN ACCOUNT?"),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Signup(),
-                        ),
-                      );
-                    },
-                    child: Text(
-                      "SIGN UP",
-                      style: TextStyle(
-                        color: const Color(0xFFEF4637),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

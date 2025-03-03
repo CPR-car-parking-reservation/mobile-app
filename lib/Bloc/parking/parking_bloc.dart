@@ -17,7 +17,7 @@ class ParkingBloc extends Bloc<ParkingEvent, ParkingState> {
         final parkingSlots = await onFetchData();
         emit(ParkingLoaded(parkingSlots));
       } catch (e) {
-        emit(ParkingError("Failed to load data!"));
+        emit(ParkingError("Now : Failed to load data!"));
       }
     });
 
@@ -38,17 +38,20 @@ class ParkingBloc extends Bloc<ParkingEvent, ParkingState> {
       log("🚗 Selected Parking Slot: ${event.selectedSlot.slot_number}");
       log("🚗 Selected Parking Slot: ${event.selectedSlot.floor.floor_number}");
       log("🚗 Selected Parking Slot: ${event.selectedSlot.status}");
-      
 
       emit(ParkingSlotSelected(event.selectedSlot));
 
       log("🔹 State Changed to ParkingSlotSelected");
     });
   }
+    String baseUrl = dotenv.env['BASE_URL'].toString();
 
   Future<List<ParkingSlot>> onFetchData() async {
+<<<<<<< HEAD
     String baseUrl = dotenv.env['BASE_URL'].toString();
     
+=======
+>>>>>>> d1904432a8f9d2f3d8271c742cd6f81c7ee00271
     final response =
         await http.get(Uri.parse("$baseUrl/parking_slots"), headers: {
       "Accept": "application/json",

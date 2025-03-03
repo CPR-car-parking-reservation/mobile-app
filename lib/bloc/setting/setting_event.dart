@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 @immutable
 abstract class SettingEvent {
+abstract class SettingEvent {
   const SettingEvent();
 
   List<Object> get props => [];

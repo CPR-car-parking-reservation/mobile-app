@@ -37,6 +37,8 @@ class _SettingState extends State<Setting> with RouteAware {
     super.didChangeDependencies();
     routeObserver.subscribe(
         this, ModalRoute.of(context)! as PageRoute<dynamic>);
+    routeObserver.subscribe(
+        this, ModalRoute.of(context)! as PageRoute<dynamic>);
   }
 
   @override
@@ -340,3 +342,4 @@ class _SettingState extends State<Setting> with RouteAware {
     );
   }
 }
+

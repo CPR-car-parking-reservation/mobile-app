@@ -1,9 +1,20 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
+<<<<<<< HEAD
 import 'package:car_parking_reservation/model/history.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
+=======
+import 'package:car_parking_reservation/bloc/parking/parking_bloc.dart';
+import 'package:car_parking_reservation/model/car.dart';
+
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+>>>>>>> d1904432a8f9d2f3d8271c742cd6f81c7ee00271
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'reserved_event.dart';
 part 'reserved_state.dart';
@@ -13,105 +24,136 @@ class ReservedBloc extends Bloc<ReservedEvent, ReservedState> {
     on<FectchFirstReserved>((event, emit) async {
       emit(ReserveLoading());
       try {
-        final history = await fetchData();
-        emit(ReservedLoaded(history));
-      } catch (e) {
-        emit(ReservedError("Failed  to load data!"));
-      }
-    });
-
-    // on<SendReservation>((event, emit) {
-    //   if (state is ReservedLoaded) {
-    //     final currentList =
-    //         List<History_data>.from((state as ReservedLoaded).history);
-    //     currentList.add(event.history);
-    //     emit(ReservedLoaded(currentList));
-    //   } else {
-    //     emit(ReservedLoaded([event.history]));
-    //   }
-    // });
-
-    on<SendReservation>((event, emit) async {
-      // emit(ReserveLoading());
-      try {
-        final success = await postData(event.history);
-        if (success) {
-          debugPrint("Data posted successfully");
-
-          // if (state is ReservedLoaded) {
-          //   final currentList =
-          //       List<History_data>.from((state as ReservedLoaded).history);
-          //   currentList.add(event.history);
-          //   emit(ReservedLoaded(currentList));
-          // } else {
-          //   emit(ReservedLoaded([event.history]));
-          // }
-        } else {
-          emit(ReservedError("Failed to post data to server."));
-        }
+        final currentData = await _onFetchUser();
+        log("Data: $currentData");
+        emit(ReservedLoaded(carData: currentData));
       } catch (e) {
         emit(ReservedError(e.toString()));
+        log("Error fetching data: $e");
       }
     });
 
-    on<FetchAllReservation>((event, emit) async {
-      emit(ReserveLoading()); // แสดง Loading Indicator ขณะดึงข้อมูล
+    on<SendReservation>((event, emit) async {
+      emit(ReserveLoading());
+      // try{
+      //   final respones = await postData(
+      //     event.carData.car_id, event.parking_slot_id, event.start_at);
+      //   )
+
+      // } catch (e) {
+      //   emit(ReservedError(e.toString()));
+      //   log("Error fetching data: $e");
+      // }
+      emit(ReserveLoading());
+      // debugPrint("Sending Reservation Data:");
+      // debugPrint(jsonEncode(event.toJson()));
+
       try {
-        final history =
-            await fetchData(); // เรียกใช้ API เพื่อดึงข้อมูลจาก Database
-        emit(ReservedLoaded(
-            history)); // อัปเดต State เพื่อให้แสดงข้อมูลในหน้า History
-        debugPrint("Fetched data from database successfully");
+        final respones =
+            await postData(event.car_id, event.parking_slot_id, event.start_at);
+        if (respones.statusCode != 200) {
+          final responseBody = await respones.stream.bytesToString();
+          final responseJson = jsonDecode(responseBody);
+          emit(ReservedError(responseJson['message']));
+          throw Exception(responseJson['message']);
+        }
+
+        emit(ReservedSuccess("Reservation Success"));
+        
+        emit(
+            ReservCreated(event.car_id, event.parking_slot_id, event.start_at));
+
+        log("${car_data} ${event.parking_slot_id} ${event.start_at}");
       } catch (e) {
-        emit(ReservedError("Failed to load data from server!"));
-        debugPrint("Error fetching data: $e");
+        emit(ReservedError(e.toString()));
+        emit(
+            ReservCreated(event.car_id, event.parking_slot_id, event.start_at));
       }
     });
   }
+  String baseUrl = dotenv.env['BASE_URL'].toString();
+  // Future<List<History_data>> fetchData() async {
+  //   debugPrint('url: $baseUrl');
+  //   final response =
+  //       await http.get(Uri.parse("$baseUrl/reservation"), headers: {
+  //     "Accept": "application/json",
+  //     "content-type": "application/json",
+  //   });
 
-  Future<List<History_data>> fetchData() async {
-    String strUrl = 'https://names-celebrity-web-round.trycloudflare.com';
-    debugPrint('url: $strUrl');
-    final response = await http.get(Uri.parse("$strUrl/reservation"), headers: {
+  //   if (response.statusCode == 200) {
+  //     // List<dynamic> data = jsonDecode(response.body);  // ok
+  //     List data = json.decode(response.body); // ok
+
+  //     return data
+  //         .map((e) => History_data.fromJson(e))
+  //         .toList(); // use method in class
+  //   } else {
+  //     debugPrint('failed loading');
+  //     throw Exception('Failed to load data!');
+  //   }
+  // }
+
+  Future<http.StreamedResponse> postData(
+      car_id, parking_slot_id, start_at) async {
+    final url = Uri.parse("$baseUrl/reservation");
+
+    var request = http.MultipartRequest('POST', url)
+      ..fields['car_id'] = car_id
+      ..fields['parking_slot_id'] = parking_slot_id
+      ..fields['start_at'] = start_at;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString('token') ?? '';
+    await prefs.setString('token', token);
+
+    request.headers.addAll({
       "Accept": "application/json",
       "content-type": "application/json",
+      "Authorization": "Bearer $token",
     });
 
-    if (response.statusCode == 200) {
-      // List<dynamic> data = jsonDecode(response.body);  // ok
-      List data = json.decode(response.body); // ok
+    var response = await request.send();
 
-      return data
-          .map((e) => History_data.fromJson(e))
-          .toList(); // use method in class
-    } else {
-      debugPrint('failed loading');
-      throw Exception('Failed to load data!');
+    final responseBody = await response.stream.bytesToString();
+    log("Response Status: ${response.statusCode}");
+    log("Response Body: $responseBody");
+
+    if (response.statusCode != 200) {
+      throw Exception("Failed to send data! Error: $responseBody");
     }
+
+    return response;
   }
 
-  Future<bool> postData(History_data reservation) async {
-    String strUrl = 'https://names-celebrity-web-round.trycloudflare.com';
-    debugPrint('url: $strUrl');
-    final response = await http.post(
-      Uri.parse("$strUrl/reservation"),
-      headers: {
-        "Accept": "application/json",
-        "content-type": "application/json",
-      },
-      body: jsonEncode(
-        reservation.toJson(),
-      ),
-    );
-    // Debug: แสดงผลลัพธ์ที่ได้จาก server
-    debugPrint("POST response status: ${response.statusCode}");
-    debugPrint("POST response body: ${response.body}");
+  //get all car_data well using car_id, car_number
+  Future<List<car_data>> _onFetchUser() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String token = prefs.getString('token') ?? '';
 
-    if (response.statusCode == 201) {
-      return true;
-    } else {
-      debugPrint('failed posting');
-      throw Exception('Failed to post data!');
+      final response = await http.get(
+        Uri.parse("$baseUrl/profile/cars"),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      log("Response Status: ${response.statusCode}");
+      log("Response Body: ${response.body}");
+
+      final jsonData = json.decode(response.body);
+
+      // ตรวจสอบว่า response มี "data" และ "car" หรือไม่
+      if (jsonData["data"] != null && jsonData["data"]["car"] is List) {
+        return (jsonData["data"]["car"] as List)
+            .map((e) => car_data.fromJson(e))
+            .toList();
+      } else {
+        throw Exception("Unexpected data format: Missing 'data' or 'car' list");
+      }
+    } catch (e) {
+      throw Exception('Error: ${e.toString()}');
     }
   }
 }
