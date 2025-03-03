@@ -43,15 +43,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
         useMaterial3: true,
       ),
-      initialRoute: '/admin',
-      routes: {
-        //'/': (context) => AdminHomePage(),
-        '/': (context) => Welcome(),
-        '/signin': (context) => Signin(),
-        '/signup': (context) => Signup(),
-        '/home': (context) => Home(),
-        '/admin': (context) => AdminHomePage(),
-      },
+      home: Welcome(),
     );
   }
 }
