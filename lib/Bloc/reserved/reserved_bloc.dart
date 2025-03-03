@@ -29,19 +29,6 @@ class ReservedBloc extends Bloc<ReservedEvent, ReservedState> {
 
     on<SendReservation>((event, emit) async {
       emit(ReserveLoading());
-      // try{
-      //   final respones = await postData(
-      //     event.carData.car_id, event.parking_slot_id, event.start_at);
-      //   )
-
-      // } catch (e) {
-      //   emit(ReservedError(e.toString()));
-      //   log("Error fetching data: $e");
-      // }
-      emit(ReserveLoading());
-      // debugPrint("Sending Reservation Data:");
-      // debugPrint(jsonEncode(event.toJson()));
-
       try {
         final respones =
             await postData(event.car_id, event.parking_slot_id, event.start_at);
@@ -53,15 +40,12 @@ class ReservedBloc extends Bloc<ReservedEvent, ReservedState> {
         }
 
         emit(ReservedSuccess("Reservation Success"));
-        
-        emit(
-            ReservCreated(event.car_id, event.parking_slot_id, event.start_at));
+        emit(ReservCreated(event.car_id, event.parking_slot_id, event.start_at));
 
         log("${car_data} ${event.parking_slot_id} ${event.start_at}");
       } catch (e) {
         emit(ReservedError(e.toString()));
-        emit(
-            ReservCreated(event.car_id, event.parking_slot_id, event.start_at));
+        emit(ReservCreated(event.car_id, event.parking_slot_id, event.start_at));
       }
     });
   }
