@@ -27,7 +27,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         await prefs.setString('token', token);
 
         Future.delayed(Duration(seconds: 1));
-        emit(LoginSuccess(role: role));
+        emit(LoginSuccess(role: role, meaasge: decodedResponse['message']));
         log("role: $role");
       } catch (e) {
         emit(LoginError(e.toString()));

@@ -13,10 +13,11 @@ final class LoginLoading extends LoginState {}
 
 final class LoginSuccess extends LoginState {
   final String role;
-  LoginSuccess({required this.role});
+  final String meaasge;
+  LoginSuccess({required this.role, required this.meaasge});
 
   @override
-  List<Object> get props => [role];
+  List<Object> get props => [role, meaasge];
 }
 
 final class LoginError extends LoginState {
