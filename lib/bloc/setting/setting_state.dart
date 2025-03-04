@@ -21,13 +21,31 @@ class SettingLoaded extends SettingState {
 
   @override
   List<Object> get props => [cars];
-  
+
 }
 
 class SettingError extends SettingState {
   final String message;
 
   const SettingError({required this.message});
+
+  @override
+  List<Object> get props => [message];
+}
+
+class EditSuccess extends SettingState {
+  final String message;
+
+  const EditSuccess({required this.message});
+
+  @override
+  List<Object> get props => [message];
+}
+
+class EditError extends SettingState {
+  final String message;
+
+  const EditError({required this.message});
 
   @override
   List<Object> get props => [message];
@@ -60,4 +78,3 @@ class UserAndCarsLoaded extends SettingState {
   @override
   List<Object> get props => [profile, cars];
 }
-

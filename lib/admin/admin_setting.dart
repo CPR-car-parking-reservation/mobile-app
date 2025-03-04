@@ -1,5 +1,4 @@
 import 'package:car_parking_reservation/Login/signin.dart';
-import 'package:car_parking_reservation/Login/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

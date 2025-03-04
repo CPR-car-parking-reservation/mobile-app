@@ -15,8 +15,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 const String fontFamily = "amiko";
 
-final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
-
 class Setting extends StatefulWidget {
   const Setting({super.key});
 
@@ -36,15 +34,10 @@ class _SettingState extends State<Setting> with RouteAware {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    routeObserver.subscribe(
-        this, ModalRoute.of(context)! as PageRoute<dynamic>);
-    routeObserver.subscribe(
-        this, ModalRoute.of(context)! as PageRoute<dynamic>);
   }
 
   @override
   void dispose() {
-    routeObserver.unsubscribe(this);
     super.dispose();
   }
 
@@ -201,7 +194,6 @@ class _SettingState extends State<Setting> with RouteAware {
       create: (context) => SettingBloc()..add(LoadUserAndCars()),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        navigatorObservers: [routeObserver],
         home: Scaffold(
           backgroundColor: const Color(0xFF03174C),
           body: BlocBuilder<SettingBloc, SettingState>(

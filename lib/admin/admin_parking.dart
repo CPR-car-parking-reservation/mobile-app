@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AdminParkingPage extends StatefulWidget {
-  AdminParkingPage({super.key});
+  const AdminParkingPage({super.key});
 
   @override
   State<AdminParkingPage> createState() => _AdminParkingPageState();
@@ -32,7 +32,7 @@ class _AdminParkingPageState extends State<AdminParkingPage> {
       if (state is AdminParkingLoaded) {
         floors = state.floors;
       }
-      final TextEditingController _slotNumberController =
+      final TextEditingController slotNumberController =
           TextEditingController();
       String? selectedFloor = floors[0].floorNumber;
       showDialog(
@@ -62,7 +62,7 @@ class _AdminParkingPageState extends State<AdminParkingPage> {
                       ),
                       const SizedBox(height: 5),
                       TextField(
-                        controller: _slotNumberController,
+                        controller: slotNumberController,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10)),
@@ -104,7 +104,7 @@ class _AdminParkingPageState extends State<AdminParkingPage> {
                   ElevatedButton(
                     onPressed: () {
                       bloc.add(
-                          OnCreate(_slotNumberController.text, selectedFloor));
+                          OnCreate(slotNumberController.text, selectedFloor));
                       Navigator.of(context).pop();
                     },
                     style: ElevatedButton.styleFrom(

@@ -82,22 +82,24 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   void _showChangePasswordModal(BuildContext context) {
-    final settingBloc = context.read<SettingBloc>(); // ดึง Bloc มาก่อน
+    final settingBloc = context.read<SettingBloc>();
+
+    final oldPasswordController = TextEditingController();
+    final newPasswordController = TextEditingController();
+    final confirmPasswordController = TextEditingController();
 
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return BlocProvider.value(
-          value: settingBloc, // ให้ BlocProvider ใช้ Bloc เดียวกัน
+          value: settingBloc,
           child: BlocListener<SettingBloc, SettingState>(
             listener: (context, state) {
-              if (state is SettingSuccess) {
-                Navigator.pop(context);
-                showCustomDialogSucess(
-                    context, state.message); // Show success message
+              if (state is EditSuccess) {
+                Navigator.pop(dialogContext);
+                showCustomDialogSucess(context, state.message);
               } else if (state is SettingError) {
-                showCustomDialogError(
-                    context, state.message); // Show error message
+                showCustomDialogError(context, state.message);
               }
             },
             child: AlertDialog(
@@ -106,8 +108,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ),
               backgroundColor: Colors.white,
               title: Text('Change Password',
-                  style:
-                      TextStyle(fontFamily: fontFamily, color: Colors.black)),
+                  style: TextStyle(fontFamily: fontFamily, color: Colors.black)),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -147,7 +148,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.of(context).pop();
+                        Navigator.of(dialogContext).pop();
                       },
                       style: ElevatedButton.styleFrom(
                         padding:
@@ -215,142 +216,146 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<SettingBloc, SettingState>(
-      listener: (context, state) {
-        //Page profile
-        if (state is SettingSuccess) {
-          Navigator.pop(context, state.message);
-          showCustomDialogSucess(context, state.message);
-        } else if (state is SettingError) {
-          showCustomDialogError(context, state.message);
-        }
-      },
-      child: Scaffold(
-        appBar: AppBar(
+    final settingBloc = context.read<SettingBloc>();
+    return BlocProvider.value(
+      value: settingBloc,
+      child: BlocListener<SettingBloc, SettingState>(
+        listener: (context, state) {
+          if (state is SettingSuccess) {
+           
+            Navigator.pop(context);
+            showCustomDialogSucess(context, state.message);
+          } else if (state is SettingError) {
+            showCustomDialogError(context, state.message);
+          }
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: const Color(0xFF03174C),
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            title: Text(
+              "Edit Profile",
+              style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: fontFamily), // เรียกใช้ตัวแปร fontFamily
+            ),
+            centerTitle: true,
+          ),
           backgroundColor: const Color(0xFF03174C),
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          title: Text(
-            "Edit Profile",
-            style: TextStyle(
-                color: Colors.white,
-                fontFamily: fontFamily), // เรียกใช้ตัวแปร fontFamily
-          ),
-          centerTitle: true,
-        ),
-        backgroundColor: const Color(0xFF03174C),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              children: [
-                const SizedBox(height: 10),
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                children: [
+                  const SizedBox(height: 10),
 
-                // Divider เส้นคั่น
-                Divider(color: Colors.white70, thickness: 1.5),
+                  // Divider เส้นคั่น
+                  Divider(color: Colors.white70, thickness: 1.5),
 
-                const SizedBox(height: 16),
-                Stack(
-                  alignment: Alignment.bottomRight,
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white, // สีขาวครอบ
-                      ),
-                      padding: const EdgeInsets.all(7.0),
-                      child: CircleAvatar(
-                        radius: 60,
-                        backgroundColor: Colors.white,
-                        child: ClipOval(
-                          child: imageFile != null
-                              ? Image.file(imageFile!,
-                                  fit: BoxFit.cover, width: 140, height: 140)
-                              : Image.network(
-                                  '$baseUrl${widget.profile.image_url}',
-                                  fit: BoxFit.cover,
-                                  width: 140,
-                                  height: 140),
+                  const SizedBox(height: 16),
+                  Stack(
+                    alignment: Alignment.bottomRight,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white, // สีขาวครอบ
+                        ),
+                        padding: const EdgeInsets.all(7.0),
+                        child: CircleAvatar(
+                          radius: 60,
+                          backgroundColor: Colors.white,
+                          child: ClipOval(
+                            child: imageFile != null
+                                ? Image.file(imageFile!,
+                                    fit: BoxFit.cover, width: 140, height: 140)
+                                : Image.network(
+                                    '$baseUrl${widget.profile.image_url}',
+                                    fit: BoxFit.cover,
+                                    width: 140,
+                                    height: 140),
+                          ),
                         ),
                       ),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.orange,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 2),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.orange,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 2),
+                        ),
+                        child: IconButton(
+                          icon: const Icon(Icons.edit,
+                              size: 16, color: Colors.white),
+                          onPressed: () {
+                            pickImage();
+                          },
+                        ),
                       ),
-                      child: IconButton(
-                        icon: const Icon(Icons.edit,
-                            size: 16, color: Colors.white),
-                        onPressed: () {
-                          pickImage();
-                        },
+                    ],
+                  ),
+                  const SizedBox(height: 40),
+                  buildTextField("Username", Icons.person, usernameController,
+                      TextInputType.text),
+                  buildTextField("Surname", Icons.person, surnameController,
+                      TextInputType.text),
+                  buildTextField("Phone", Icons.phone, phoneController,
+                      TextInputType.number),
+                  buildTextField(
+                      "Email", Icons.email, emailController, TextInputType.text,
+                      readOnly: true),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: _updateProfile,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 40),
-                buildTextField("Username", Icons.person, usernameController,
-                    TextInputType.text),
-                buildTextField("Surname", Icons.person, surnameController,
-                    TextInputType.text),
-                buildTextField("Phone", Icons.phone, phoneController,
-                    TextInputType.number),
-                buildTextField(
-                    "Email", Icons.email, emailController, TextInputType.text,
-                    readOnly: true),
-                const SizedBox(height: 20),
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: _updateProfile,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                      child: Text(
+                        "Update Profile",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: fontFamily),
                       ),
-                    ),
-                    child: Text(
-                      "Update Profile",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: fontFamily),
                     ),
                   ),
-                ),
-                const SizedBox(height: 20),
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      _showChangePasswordModal(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _showChangePasswordModal(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Text(
+                        "Change Password",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: fontFamily),
                       ),
                     ),
-                    child: Text(
-                      "Change Password",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: fontFamily),
-                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
