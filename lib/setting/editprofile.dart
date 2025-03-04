@@ -98,7 +98,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               if (state is EditSuccess) {
                 Navigator.pop(dialogContext);
                 showCustomDialogSucess(context, state.message);
-              } else if (state is SettingError) {
+              } else if (state is EditError) {
                 showCustomDialogError(context, state.message);
               }
             },

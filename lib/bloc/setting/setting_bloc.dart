@@ -298,7 +298,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
         emit(EditSuccess(message: responseJson['message']));
       } else {
         log(responseJson.toString());
-        emit(SettingError(message: responseJson['message']));
+        emit(EditError(message: responseJson['message']));
       }
     } catch (e) {
       log(e.toString());
