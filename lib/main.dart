@@ -1,4 +1,4 @@
-import 'package:car_parking_reservation/Bloc/setting/setting_bloc.dart';
+
 import 'package:car_parking_reservation/Bloc/user/register/register_bloc.dart';
 import 'package:car_parking_reservation/bloc/navigator/navigator_bloc.dart';
 import 'package:car_parking_reservation/bloc/reserved/reserved_bloc.dart';
@@ -21,9 +21,6 @@ Future<void> main() async {
         BlocProvider(
           create: (context) => RegisterBloc(),
         ),
-        BlocProvider(
-          create: (context) => SettingBloc()
-        )
       ],
       child: MyApp(),
     ),

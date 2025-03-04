@@ -266,7 +266,8 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
         add(LoadUserAndCars());
         emit(SettingSuccess(message: responseJson['message']));
       } else {
-        emit(SettingError(message: responseJson['message']));
+        add(LoadUserAndCars());
+        throw Exception(responseJson['message']);
       }
     } catch (e) {
       emit(SettingError(message: 'Error: ${e.toString()}'));
@@ -295,11 +296,12 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
       final responseJson = json.decode(responseBody);
 
       if (response.statusCode == 200) {
-        emit(SettingSuccess(message: responseJson['message']));
-        log(responseJson.toString());
+        add(LoadUserAndCars());
+        emit(EditSuccess(message: responseJson['message']));
       } else {
         log(responseJson.toString());
-        emit(SettingError(message: responseJson['message']));
+        add(LoadUserAndCars());
+        emit(EditError(message: responseJson['message']));
       }
     } catch (e) {
       log(e.toString());
