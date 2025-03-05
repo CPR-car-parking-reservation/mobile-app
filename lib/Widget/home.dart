@@ -2,6 +2,7 @@
 
 import 'package:car_parking_reservation/Qr-generator/qr_code.dart';
 import 'package:car_parking_reservation/Widget/parking_slots.dart';
+import 'package:car_parking_reservation/bloc/history/history_bloc.dart';
 import 'package:car_parking_reservation/bloc/navigator/navigator_bloc.dart';
 import 'package:car_parking_reservation/bloc/parking/parking_bloc.dart';
 import 'package:car_parking_reservation/history.dart';
@@ -49,7 +50,10 @@ class Home extends StatelessWidget {
                     case 1:
                       return GenQR();
                     case 2:
-                      return History();
+                      return BlocProvider(
+                        create: (context) => HistoryBloc(),
+                        child: History(),
+                      );
                     case 3:
                       return Setting();
                     default:
