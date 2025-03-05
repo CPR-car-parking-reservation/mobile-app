@@ -34,10 +34,3 @@ class ParkingSlotSelected extends ParkingState{
   ParkingSlotSelected(this.selectedSlot);
 
 }
-
-
-// class SelectParkingSlotToReserv extends ParkingState {
-//   final ParkingSlot selectedSlot;
-
-//   SelectParkingSlotToReserv(this.selectedSlot);
-// }
