@@ -37,8 +37,7 @@ class _EditCarPageState extends State<EditCarPage> {
     plateController = TextEditingController();
     modelController = TextEditingController();
     typeController = TextEditingController();
-    BlocProvider.of<SettingBloc>(context)
-        .add(FetchCarById(carId: widget.car_id));
+  
   }
 
   @override
