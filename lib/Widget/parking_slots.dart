@@ -8,6 +8,9 @@ import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/parking/parking_bloc.dart';
+import 'package:uuid/data.dart';
+import 'package:uuid/uuid.dart';
+import 'package:uuid/rng.dart';
 
 /// Widget หลักที่ใช้แสดงที่จอดรถทั้งหมด
 class ParkingSlots extends StatefulWidget {
@@ -39,21 +42,27 @@ late MqttServerClient client;
 class _ParkingSlots extends State<ParkingSlots> {
   String selectedFloor = "F1"; // กำหนดชั้นที่เลือกเริ่มต้นเป็น F1
   String message = 'Waiting for message...';
+  var uuid = Uuid();
+  var v4 = Uuid().v4();
 
   Future<void> mqttConnect() async {
-    // Configure client with your broker, client ID, and port
+    // Configure client with your broker, client ID, and port with uuid as client ID
     client = MqttServerClient.withPort(
       'broker.hivemq.com',
-      '4dc0d8cc-fc91-4000-8d56-48c176ae3a02',
+      'flutter_client_${DateTime.now().millisecondsSinceEpoch}_$v4',
       1883,
     );
+    // client = MqttServerClient.withPort(
+    //   'broker.hivemq.com',
+
+    //   1883,
+    // );
     client.keepAlivePeriod = 60;
     client.onConnected = onConnected;
     client.onDisconnected = onDisconnected;
     client.onSubscribed = onSubscribed;
     client.onSubscribeFail = onSubscribeFail;
     client.autoReconnect = true;
-
 
     // Connect to the broker
     try {
@@ -67,7 +76,8 @@ class _ParkingSlots extends State<ParkingSlots> {
     }
 
     // Subscribe to any topic you need
-    client.subscribe('kL8<472gCPRQAb/cpr/from_server/trigger', MqttQos.exactlyOnce);
+    client.subscribe(
+        'kL8<472gCPRQAb/cpr/from_server/trigger', MqttQos.exactlyOnce);
 
     // Optionally listen for incoming messages
     client.updates?.listen((List<MqttReceivedMessage<MqttMessage>>? c) {
