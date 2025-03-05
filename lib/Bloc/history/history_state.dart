@@ -12,9 +12,9 @@ class HistoryInitial extends HistoryState {}
 class HistoryLoading extends HistoryState {}
 
 class HistoryLoaded extends HistoryState {
-  final Reservation_Model history;
+  final List<Reservation_Model> history;
 
-  HistoryLoaded(this.history);
+  HistoryLoaded({required this.history});
 }
 
 class HistoryError extends HistoryState {

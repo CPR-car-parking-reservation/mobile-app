@@ -41,12 +41,9 @@ class _ReservState extends State<Reserv> {
   final dateFormat = DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
   final currentDate = DateTime.now().toUtc().add(Duration(hours: 7));
 
-  late List<Map<String, dynamic>> history;
-
   @override
   void initState() {
     initializeDateFormatting();
-    history = [];
     carData = [];
     context.read<ReservedBloc>().add(FectchFirstReserved());
     _loadToken();
