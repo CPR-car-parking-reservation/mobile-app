@@ -4,6 +4,8 @@ abstract class ParkingEvent {}
 
 class OnFirstParkingSlot extends ParkingEvent {}
 
+class RefrechParkingSlot extends ParkingEvent {}
+
 class SenderParkingSlot extends ParkingEvent {
   final ParkingSlot parkingSlot;
 
