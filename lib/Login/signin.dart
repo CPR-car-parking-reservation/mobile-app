@@ -124,7 +124,12 @@ class _SigninState extends State<Signin> {
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
                                   vertical: 15, horizontal: 100),
-                              child: CircularProgressIndicator(),
+                              child: CircularProgressIndicator(
+                                backgroundColor: Colors.white,
+                                strokeWidth: 2.5,
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.black),
+                              ),
                             ),
                           );
                         }
