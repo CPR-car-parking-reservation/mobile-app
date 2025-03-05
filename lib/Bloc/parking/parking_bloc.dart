@@ -1,3 +1,4 @@
+import 'dart:async'; // เพิ่ม Timer
 import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,14 +11,30 @@ part 'parking_state.dart';
 part 'parking_event.dart';
 
 class ParkingBloc extends Bloc<ParkingEvent, ParkingState> {
+  Timer? _timer; // เพิ่มตัวจับเวลา
+
   ParkingBloc() : super(ParkingInitial()) {
     on<OnFirstParkingSlot>((event, emit) async {
       emit(ParkingLoading());
       try {
         final parkingSlots = await onFetchData();
         emit(ParkingLoaded(parkingSlots));
+
+        // ตั้งค่าให้รีเฟรชทุก 30 วินาที
+        _startAutoRefresh();
       } catch (e) {
         emit(ParkingError("Now : Failed to load data!"));
+      }
+    });
+
+    on<RefrechParkingSlot>((event, emit) async {
+      if (state is ParkingLoaded) {
+        try {
+          final parkingSlots = await onFetchData();
+          emit(ParkingLoaded(parkingSlots)); // อัปเดตสถานะโดยไม่ต้องแสดง Loading
+        } catch (e) {
+          emit(ParkingError("Now : Failed to load data!"));
+        }
       }
     });
 
@@ -44,11 +61,10 @@ class ParkingBloc extends Bloc<ParkingEvent, ParkingState> {
       log("🔹 State Changed to ParkingSlotSelected");
     });
   }
-    String baseUrl = dotenv.env['BASE_URL'].toString();
+
+  String baseUrl = dotenv.env['BASE_URL'].toString();
 
   Future<List<ParkingSlot>> onFetchData() async {
-    String baseUrl = dotenv.env['BASE_URL'].toString();
-    
     final response =
         await http.get(Uri.parse("$baseUrl/parking_slots"), headers: {
       "Accept": "application/json",
@@ -67,4 +83,18 @@ class ParkingBloc extends Bloc<ParkingEvent, ParkingState> {
       throw Exception('Failed to load data!');
     }
   }
+
+  void _startAutoRefresh() {
+    _timer?.cancel(); // ยกเลิก Timer เดิมก่อน
+    _timer = Timer.periodic(const Duration(seconds: 30), (timer) {
+      add(RefrechParkingSlot()); // Trigger event ทุก 30 วินาที
+    });
+  }
+
+  @override
+  Future<void> close() {
+    _timer?.cancel(); // ปิด Timer เมื่อ Bloc ถูกปิด
+    return super.close();
+  }
 }
+

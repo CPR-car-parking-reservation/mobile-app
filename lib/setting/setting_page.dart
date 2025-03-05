@@ -1,3 +1,4 @@
+import 'package:car_parking_reservation/bloc/navigator/navigator_bloc.dart';
 import 'package:car_parking_reservation/model/car.dart';
 import 'package:car_parking_reservation/model/profile.dart';
 import 'package:car_parking_reservation/setting/addcar.dart';
@@ -54,6 +55,7 @@ class _SettingState extends State<Setting> with RouteAware {
       MaterialPageRoute(builder: (context) => const Signin()),
       (route) => false,
     );
+    context.read<NavigatorBloc>().add(ChangeIndex(index: 0));
   }
 
   ListView listviewshow(List<car_data> car) {

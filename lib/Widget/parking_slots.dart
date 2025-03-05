@@ -1,10 +1,16 @@
+import 'dart:developer';
+
 import 'package:car_parking_reservation/Widget/custom_dialog.dart';
 import 'package:car_parking_reservation/model/parking_slot.dart';
 import 'package:car_parking_reservation/reserv.dart';
-// import 'package:car_parking_reservation/reserv.dart';
+import 'package:mqtt_client/mqtt_client.dart';
+import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/parking/parking_bloc.dart';
+import 'package:uuid/data.dart';
+import 'package:uuid/uuid.dart';
+import 'package:uuid/rng.dart';
 
 /// Widget หลักที่ใช้แสดงที่จอดรถทั้งหมด
 class ParkingSlots extends StatefulWidget {
@@ -19,6 +25,8 @@ class ParkingSlots extends StatefulWidget {
     switch (status) {
       case "FULL":
         return Colors.red;
+      case "Maintenance":
+        return Colors.grey;
       case "RESERVED":
         return Colors.amber;
       case "IDLE":
@@ -28,9 +36,85 @@ class ParkingSlots extends StatefulWidget {
   }
 }
 
+late MqttServerClient client;
+
 // State ของ ParkingSlots
 class _ParkingSlots extends State<ParkingSlots> {
   String selectedFloor = "F1"; // กำหนดชั้นที่เลือกเริ่มต้นเป็น F1
+  String message = 'Waiting for message...';
+  var uuid = Uuid();
+  var v4 = Uuid().v4();
+
+  Future<void> mqttConnect() async {
+    // Configure client with your broker, client ID, and port with uuid as client ID
+    client = MqttServerClient.withPort(
+      'broker.hivemq.com',
+      'flutter_client_${DateTime.now().millisecondsSinceEpoch}_$v4',
+      1883,
+    );
+    // client = MqttServerClient.withPort(
+    //   'broker.hivemq.com',
+
+    //   1883,
+    // );
+    client.keepAlivePeriod = 60;
+    client.onConnected = onConnected;
+    client.onDisconnected = onDisconnected;
+    client.onSubscribed = onSubscribed;
+    client.onSubscribeFail = onSubscribeFail;
+    client.autoReconnect = true;
+
+    // Connect to the broker
+    try {
+      await client.connect();
+    } on NoConnectionException catch (e) {
+      log('Connection exception: $e');
+      rethrow;
+    } catch (e) {
+      log('Unexpected error: $e');
+      rethrow;
+    }
+
+    // Subscribe to any topic you need
+    client.subscribe(
+        'kL8<472gCPRQAb/cpr/from_server/trigger', MqttQos.exactlyOnce);
+
+    // Optionally listen for incoming messages
+    client.updates?.listen((List<MqttReceivedMessage<MqttMessage>>? c) {
+      final recMessage = c?[0].payload as MqttPublishMessage;
+      final payload =
+          MqttPublishPayload.bytesToStringAsString(recMessage.payload.message);
+
+      setState(() {
+        message = 'Received: $payload';
+        log(message);
+      });
+
+      // ตรวจสอบว่าข้อความที่ได้รับคือ "fetch slot" หรือไม่
+      if (payload.trim().toLowerCase() == "fetch slot") {
+        log("🔄 Received 'fetch slot' command, refreshing data...");
+        // ignore: use_build_context_synchronously
+        context.read<ParkingBloc>().add(RefrechParkingSlot());
+      }
+    });
+  }
+
+  void onConnected() {
+    log('Connected to broker');
+    client.subscribe('test', MqttQos.atMostOnce);
+  }
+
+  void onDisconnected() {
+    log('Disconnected from broker');
+  }
+
+  void onSubscribed(String topic) {
+    log('Subscribed to: $topic');
+  }
+
+  void onSubscribeFail(String topic) {
+    log('Subscription failed for: $topic');
+  }
 
   // กรองเฉพาะที่จอดรถที่อยู่ในชั้นที่เลือก
   List<ParkingSlot> getFilteredSlots(List<ParkingSlot> slots) {
@@ -60,6 +144,7 @@ class _ParkingSlots extends State<ParkingSlots> {
   @override
   void initState() {
     context.read<ParkingBloc>().add(OnFirstParkingSlot());
+    mqttConnect();
     super.initState();
   }
 
@@ -117,6 +202,8 @@ class _ParkingSlots extends State<ParkingSlots> {
                         const Divider(
                           color: Colors.white,
                         ),
+                        // Text(message,
+                        //     style: const TextStyle(color: Colors.white)),
                       ],
                     ),
                   ),
@@ -247,6 +334,10 @@ class ParkingSlotButton extends StatelessWidget {
               }
               if (parking.status == "RESERVED") {
                 showCustomDialogWarning(context, "Reserved");
+              }
+
+              if (parking.status == "Maintenance") {
+                showCustomDialogWarning(context, "Maintenance");
               }
 
               if (parking.status == "FULL") {
