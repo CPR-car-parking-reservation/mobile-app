@@ -52,11 +52,7 @@ class _ParkingSlots extends State<ParkingSlots> {
       'flutter_client_${DateTime.now().millisecondsSinceEpoch}_$v4',
       1883,
     );
-    // client = MqttServerClient.withPort(
-    //   'broker.hivemq.com',
 
-    //   1883,
-    // );
     client.keepAlivePeriod = 60;
     client.onConnected = onConnected;
     client.onDisconnected = onDisconnected;
