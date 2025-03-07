@@ -178,7 +178,7 @@ class _AddCarPageState extends State<AddCarPage> {
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 18,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w700,
                                     fontFamily: fontFamily,
                                   ),
                                 ),

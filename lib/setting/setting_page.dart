@@ -99,7 +99,7 @@ class _SettingState extends State<Setting> with RouteAware {
                                     '$baseUrl${profile.image_url}'),
                                 radius: 30,
                               ),
-                              const SizedBox(width: 3),
+                              const SizedBox(width:7 ),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,6 +113,7 @@ class _SettingState extends State<Setting> with RouteAware {
                                             Text(
                                               'Name :',
                                               style: TextStyle(
+                                                fontSize: 15,
                                                 color: Colors.red,
                                                 fontFamily: fontFamily,
                                               ),
@@ -123,7 +124,7 @@ class _SettingState extends State<Setting> with RouteAware {
                                                 '${profile.name} ${profile.surname}',
                                                 style: TextStyle(
                                                   fontSize: 15,
-                                                  fontWeight: FontWeight.w400,
+                                                  fontWeight: FontWeight.w500,
                                                   fontFamily: fontFamily,
                                                   overflow:
                                                       TextOverflow.ellipsis,
@@ -135,8 +136,9 @@ class _SettingState extends State<Setting> with RouteAware {
                                         Row(
                                           children: [
                                             Text(
-                                              'Email :',
+                                              'Email : ',
                                               style: TextStyle(
+                                                fontSize: 15,
                                                 color: Colors.red,
                                                 fontFamily: fontFamily,
                                               ),
@@ -148,7 +150,7 @@ class _SettingState extends State<Setting> with RouteAware {
                                                 style: TextStyle(
                                                   fontSize: 15,
                                                   color: Colors.black,
-                                                  fontWeight: FontWeight.w400,
+                                                  fontWeight: FontWeight.w500,
                                                   fontFamily: fontFamily,
                                                   overflow:
                                                       TextOverflow.ellipsis,
@@ -162,6 +164,7 @@ class _SettingState extends State<Setting> with RouteAware {
                                             Text(
                                               'Phone :',
                                               style: TextStyle(
+                                                fontSize: 15,
                                                 color: Colors.red,
                                                 fontFamily: fontFamily,
                                               ),
@@ -172,7 +175,7 @@ class _SettingState extends State<Setting> with RouteAware {
                                                 profile.phone,
                                                 style: TextStyle(
                                                   fontSize: 15,
-                                                  fontWeight: FontWeight.w400,
+                                                  fontWeight: FontWeight.w500,
                                                   fontFamily: fontFamily,
                                                   overflow:
                                                       TextOverflow.ellipsis,
@@ -244,6 +247,7 @@ class _SettingState extends State<Setting> with RouteAware {
                               icon: const Icon(Icons.add, color: Colors.white),
                               label: const Text("Add Car",
                                   style: TextStyle(
+                                    fontWeight: FontWeight.w600,
                                       color: Colors.white,
                                       fontFamily: fontFamily)),
                             ),
@@ -256,6 +260,7 @@ class _SettingState extends State<Setting> with RouteAware {
                                   const Icon(Icons.logout, color: Colors.white),
                               label: const Text("Logout",
                                   style: TextStyle(
+                                    fontWeight: FontWeight.w600,
                                       color: Colors.white,
                                       fontFamily: fontFamily)),
                             ),
