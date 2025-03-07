@@ -81,7 +81,6 @@ class UserAndCarsLoaded extends SettingState {
   List<Object> get props => [profile, cars];
 }
 
-class CarLoading extends SettingState {}
 
 class CarLoaded extends SettingState {
   final car_data car;

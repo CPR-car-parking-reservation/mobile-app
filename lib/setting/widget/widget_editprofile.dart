@@ -4,7 +4,9 @@ import 'package:car_parking_reservation/bloc/setting/setting_bloc.dart';
 import 'package:car_parking_reservation/bloc/setting/setting_event.dart';
 import 'package:car_parking_reservation/bloc/setting/setting_state.dart';
 import 'package:car_parking_reservation/Widget/custom_dialog.dart';
+
 final String fontFamily = "amiko";
+
 void showChangePasswordModal(BuildContext context) {
   final settingBloc = context.read<SettingBloc>();
   final oldPasswordController = TextEditingController();
@@ -31,7 +33,7 @@ void showChangePasswordModal(BuildContext context) {
             ),
             backgroundColor: Colors.white,
             title: Text('Change Password',
-                style: TextStyle(fontFamily: "amiko", color: Colors.black)),
+                style: TextStyle(fontFamily: fontFamily, color: Colors.black)),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -64,7 +66,7 @@ void showChangePasswordModal(BuildContext context) {
                     ),
                     child: Text("Update",
                         style: TextStyle(
-                            fontFamily: "amiko",
+                            fontFamily: fontFamily,
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: 16)),
@@ -76,14 +78,13 @@ void showChangePasswordModal(BuildContext context) {
                     style: ElevatedButton.styleFrom(
                       padding:
                           EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                      backgroundColor:
-                          const Color.fromARGB(255, 251, 251, 251),
+                      backgroundColor: const Color.fromARGB(255, 251, 251, 251),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12)),
                     ),
                     child: Text("Cancel",
                         style: TextStyle(
-                            fontFamily: "amiko",
+                            fontFamily: fontFamily,
                             color: const Color.fromARGB(255, 0, 0, 0),
                             fontWeight: FontWeight.bold,
                             fontSize: 16)),
@@ -106,35 +107,33 @@ Widget buildPasswordField(String label, TextEditingController controller) {
       obscureText: true,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(fontFamily: "amiko", color: Colors.black),
+        labelStyle: TextStyle(fontFamily: fontFamily, color: Colors.black),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         filled: true,
         fillColor: Colors.grey[200],
       ),
-      style: TextStyle(fontFamily: "amiko", color: Colors.black),
+      style: TextStyle(fontFamily: fontFamily, color: Colors.black),
     ),
   );
 }
 
- Widget buildTextField(String labelText, IconData icon,
-      TextEditingController controller, TextInputType keyboardType,
-      {bool readOnly = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextField(
-        controller: controller,
-        readOnly: readOnly,
-        keyboardType: keyboardType,
-        decoration: InputDecoration(
-          labelStyle: TextStyle(fontFamily: fontFamily, color: Colors.black),
-          prefixIcon: Icon(icon, color: Colors.black),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-          filled: true,
-          fillColor: Colors.white,
-        ),
-        style: TextStyle(fontFamily: fontFamily, color: Colors.black),
+Widget buildTextField(String labelText, IconData icon,
+    TextEditingController controller, TextInputType keyboardType,
+    {bool readOnly = false}) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 8.0),
+    child: TextField(
+      controller: controller,
+      readOnly: readOnly,
+      keyboardType: keyboardType,
+      decoration: InputDecoration(
+        labelStyle: TextStyle(fontFamily: fontFamily, color: Colors.black),
+        prefixIcon: Icon(icon, color: Colors.black),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        filled: true,
+        fillColor: Colors.white,
       ),
-    );
-  }
-
-  
+      style: TextStyle(fontFamily: fontFamily, color: Colors.black),
+    ),
+  );
+}

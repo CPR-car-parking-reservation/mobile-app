@@ -84,7 +84,6 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     emit(SettingLoading());
     try {
       final car = await fetch_cars(event.carId);
-
       emit(CarLoaded(car: car));
     } catch (e) {
       emit(SettingError(message: e.toString()));
