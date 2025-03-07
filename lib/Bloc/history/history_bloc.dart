@@ -2,11 +2,8 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:car_parking_reservation/bloc/reserved/reserved_bloc.dart';
-import 'package:car_parking_reservation/model/history.dart';
+
 import 'package:car_parking_reservation/model/reservation.dart';
-import 'package:equatable/equatable.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,6 +18,12 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
       try {
         final currentData = await fetchData();
         log("Data: $currentData");
+        // currentData.sort(
+        //   (currnt_time, old_time) =>
+        //       (old_time.startAt ?? DateTime(0)).compareTo(
+        //     currnt_time.startAt ?? DateTime(0),
+        //   ),
+        // );
         emit(HistoryLoaded(history: currentData));
       } catch (e) {
         emit(HistoryError(e.toString()));
@@ -57,19 +60,7 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
         throw Exception("Unexpected data format");
       }
     } catch (e) {
-      throw Exception('Error: ${e.toString()}');
+      throw 'Error: ${e.toString()}';
     }
-
-    // if (response.statusCode == 200) {
-    //   // List<dynamic> data = jsonDecode(response.body);  // ok
-    //   List data = json.decode(response.body); // ok
-
-    //   return data
-    //       .map((e) => Reservation_Model.fromJson(e))
-    //       .toList(); // use method in class
-    // } else {
-    //   debugPrint('failed loading');
-    //   throw Exception('Failed to load data!');
-    // }
   }
 }

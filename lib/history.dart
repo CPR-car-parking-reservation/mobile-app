@@ -1,7 +1,6 @@
 import 'package:car_parking_reservation/Widget/custom_dialog.dart';
 import 'package:car_parking_reservation/bloc/history/history_bloc.dart';
 import 'package:car_parking_reservation/bloc/reserved/reserved_bloc.dart';
-import 'package:car_parking_reservation/model/history.dart';
 import 'package:car_parking_reservation/model/reservation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,10 +11,25 @@ class History extends StatefulWidget {
 
   @override
   State<History> createState() => _HistoryState();
+
+  static getStatusColor(String status) {
+    switch (status) {
+      case "CANCEL":
+        return Colors.red;
+      case "OCCUPIED":
+        return Colors.grey;
+      case "SUCCESS":
+        return Colors.amber;
+      case "EXPIRED":
+        return Colors.amber;
+      case "WAITING":
+      default:
+        return Colors.blue;
+    }
+  }
 }
 
 class _HistoryState extends State<History> {
-  late List<Map<String, String>> mockHistoryData;
   void initState() {
     super.initState();
     context.read<HistoryBloc>().add(FetchFirstHistory());
@@ -94,7 +108,7 @@ class _HistoryState extends State<History> {
                                                     fontSize: 16),
                                               ),
                                               Text(
-                                                "${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}:${date.millisecond.toString()}" ??
+                                                "${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}:${date.second.toString().padLeft(2, '0')}" ??
                                                     'N/A',
                                                 style: const TextStyle(
                                                     fontFamily: "Amiko",
@@ -144,7 +158,7 @@ class _HistoryState extends State<History> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: Container(
                                       height: 35,
-                                      width: 200,
+                                      width: 175,
                                       decoration: BoxDecoration(
                                         color: const Color(0xFF03174C),
                                         borderRadius: BorderRadius.circular(20),
@@ -175,10 +189,41 @@ class _HistoryState extends State<History> {
                                     ),
                                   ),
                                   Positioned(
-                                    left: 285,
-                                    bottom: 40,
+                                    right: 10,
+                                    top: 10,
                                     child: Container(
-                                      height: 50,
+                                      decoration: BoxDecoration(
+                                        color: History.getStatusColor(
+                                            history_user.status),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 5, vertical: 2.5),
+                                          child: Row(
+                                            children: [
+                                              Text(
+                                                history_user.status ?? 'N/A',
+                                                style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontFamily: "Amiko",
+                                                    fontSize: 10,
+                                                    fontWeight:
+                                                        FontWeight.w700),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    left: 285,
+                                    bottom: 20,
+                                    child: Container(
+                                      height: 20,
                                       width: 50,
                                       decoration: const BoxDecoration(
                                           color: Colors.white),

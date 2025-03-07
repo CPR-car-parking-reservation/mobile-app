@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:car_parking_reservation/Login/signup.dart';
+import 'package:car_parking_reservation/Widget/custom_dialog.dart';
 import 'package:car_parking_reservation/Widget/home.dart';
 import 'package:car_parking_reservation/admin/admin_home.dart';
 import 'package:car_parking_reservation/bloc/Login/login_bloc.dart';
@@ -21,8 +22,8 @@ class _SigninState extends State<Signin> {
   @override
   void initState() {
     super.initState();
-    // emailController.text = "user";
-    // passController.text = "12345678";
+    emailController.text = "user";
+    passController.text = "12345678";
   }
 
   @override
@@ -109,29 +110,10 @@ class _SigninState extends State<Signin> {
                     SizedBox(
                       height: 40,
                     ),
-                    BlocBuilder<LoginBloc, LoginState>(
-                      builder: (context, state) {
-                        log(state.toString());
-                        if (state is LoginLoading) {
-                          return ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFEF4637),
-                                elevation: 3),
-                            onPressed: () {
-                              context.read<LoginBloc>().add(onSubmit(
-                                  emailController.text, passController.text));
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 15, horizontal: 100),
-                              child: CircularProgressIndicator(
-                                backgroundColor: Colors.white,
-                                strokeWidth: 2.5,
-                                valueColor:
-                                    AlwaysStoppedAnimation<Color>(Colors.black),
-                              ),
-                            ),
-                          );
+                    BlocListener<LoginBloc, LoginState>(
+                      listener: (context, state) {
+                        if (state is LoginError) {
+                          showCustomDialogError(context, state.message);
                         }
                         if (state is LoginSuccess) {
                           if (state.role == "ADMIN") {
@@ -152,6 +134,33 @@ class _SigninState extends State<Signin> {
                               );
                             });
                           }
+                        }
+                      },
+                      child: BlocBuilder<LoginBloc, LoginState>(
+                        builder: (context, state) {
+                          log(state.toString());
+                          if (state is LoginLoading) {
+                            return ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFFEF4637),
+                                  elevation: 3),
+                              onPressed: () {
+                                context.read<LoginBloc>().add(onSubmit(
+                                    emailController.text, passController.text));
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 10, horizontal: 110),
+                                child: CircularProgressIndicator(
+                                  backgroundColor: const Color(0xFFEF4637),
+                                  strokeWidth: 3,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
+                                ),
+                              ),
+                            );
+                          }
+
                           return ElevatedButton(
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFFEF4637),
@@ -163,37 +172,18 @@ class _SigninState extends State<Signin> {
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
                                   vertical: 15, horizontal: 100),
-                              child: CircularProgressIndicator(),
+                              child: Text(
+                                "LOG IN",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: "Amiko",
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 16),
+                              ),
                             ),
                           );
-                        }
-
-                        return ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFFEF4637),
-                              elevation: 3),
-                          onPressed: () {
-                            context.read<LoginBloc>().add(onSubmit(
-                                emailController.text, passController.text));
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(builder: (context) => Home()),
-                            // );
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 15, horizontal: 100),
-                            child: Text(
-                              "LOG IN",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontFamily: "Amiko",
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 16),
-                            ),
-                          ),
-                        );
-                      },
+                        },
+                      ),
                     ),
                   ],
                 ),
