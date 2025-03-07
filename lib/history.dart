@@ -19,7 +19,7 @@ class History extends StatefulWidget {
       case "OCCUPIED":
         return Colors.grey;
       case "SUCCESS":
-        return Colors.amber;
+        return Colors.green;
       case "EXPIRED":
         return Colors.amber;
       case "WAITING":
