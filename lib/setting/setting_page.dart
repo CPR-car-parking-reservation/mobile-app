@@ -25,23 +25,6 @@ class Setting extends StatefulWidget {
 
 class _SettingState extends State<Setting> with RouteAware {
   String baseUrl = dotenv.env['BASE_URL'].toString();
-
-  @override
-  void didPopNext() {
-    loadToken();
-    context.read<SettingBloc>().add(LoadUserAndCars());
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   String userToken = '';
   void loadToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -49,6 +32,13 @@ class _SettingState extends State<Setting> with RouteAware {
       userToken = prefs.getString('token') ?? '';
     });
   }
+
+  @override
+  void didPopNext() {
+    loadToken();
+    context.read<SettingBloc>().add(LoadUserAndCars());
+  }
+
 
   void logout(BuildContext context) {
     Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
@@ -104,18 +94,12 @@ class _SettingState extends State<Setting> with RouteAware {
               const Spacer(),
               IconButton(
                 onPressed: () async {
-                  final result = await Navigator.push(
+                  await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => EditCarPage(car_id: car[index].id),
                     ),
                   );
-                  if (result is String) {
-                    // ignore: use_build_context_synchronously
-                    showCustomDialogSucess(context, result);
-                    // ignore: use_build_context_synchronously
-                    context.read<SettingBloc>().add(LoadUserAndCars());
-                  }
                 },
                 icon: const Icon(Icons.edit, color: Colors.orange),
               ),
@@ -420,7 +404,7 @@ class _SettingState extends State<Setting> with RouteAware {
                   ),
                 );
               }
-              return const Center(child: Text('No data available'));
+              return const SizedBox.shrink();
             },
           ),
         ),

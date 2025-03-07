@@ -8,8 +8,7 @@ abstract class SettingEvent {
   List<Object> get props => [];
 }
 
-
-class LoadUser extends SettingEvent {}
+// class LoadUser extends SettingEvent {}
 
 class LoadUserAndCars extends SettingEvent {}
 
