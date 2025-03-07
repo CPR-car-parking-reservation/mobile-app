@@ -23,6 +23,9 @@ void showChangePasswordModal(BuildContext context) {
             if (state is EditSuccess) {
               Navigator.pop(dialogContext);
               showCustomDialogSucess(context, state.message);
+              oldPasswordController.clear();
+              newPasswordController.clear();
+              confirmPasswordController.clear();
             } else if (state is EditError) {
               showCustomDialogError(context, state.message);
             }
