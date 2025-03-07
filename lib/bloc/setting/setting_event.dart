@@ -97,3 +97,5 @@ class UpdatePassword extends SettingEvent {
   @override
   List<Object> get props => [oldPassword, newPassword, confirm_password];
 }
+
+class LogoutUser extends SettingEvent {}

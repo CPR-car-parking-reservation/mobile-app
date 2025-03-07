@@ -1,3 +1,7 @@
+import 'dart:developer';
+
+import 'package:car_parking_reservation/Bloc/setting/setting_bloc.dart';
+import 'package:car_parking_reservation/Bloc/setting/setting_event.dart';
 import 'package:car_parking_reservation/Login/signin.dart';
 import 'package:car_parking_reservation/bloc/navigator/navigator_bloc.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:car_parking_reservation/setting/editcar.dart';
 import 'package:car_parking_reservation/model/car.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 const String fontFamily = "amiko";
 
@@ -37,19 +42,19 @@ ListView listviewshow(List<car_data> car) {
                         fontWeight: FontWeight.w600)),
                 Text(car[index].license_plate,
                     style: const TextStyle(
-                      color: Colors.black,
+                        color: Colors.black,
                         fontSize: 15,
                         fontWeight: FontWeight.w500,
                         fontFamily: fontFamily)),
                 Text(car[index].car_model,
                     style: const TextStyle(
-                       fontSize: 15,
+                        fontSize: 15,
                         color: Color(0xFF6C6C6C),
                         fontFamily: fontFamily,
                         fontWeight: FontWeight.w500)),
                 Text(car[index].car_type,
                     style: const TextStyle(
-                       fontSize: 15,
+                        fontSize: 15,
                         color: Color(0xFF6C6C6C),
                         fontFamily: fontFamily,
                         fontWeight: FontWeight.w500)),
@@ -75,73 +80,81 @@ ListView listviewshow(List<car_data> car) {
     itemCount: car.length,
   );
 }
-void logout(BuildContext context) {
-    Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => const Signin()),
-      (route) => false,
-    );
-    context.read<NavigatorBloc>().add(ChangeIndex(index: 0));
-  }
 
+void logout(BuildContext context) {
+  SharedPreferences.getInstance().then((prefs) {
+    prefs.remove('token');
+    log('logout: ${prefs.getString('token')}');
+  });
+
+  
+  Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+    MaterialPageRoute(builder: (context) => const Signin()),
+    (route) => false,
+  );
+
+  context.read<NavigatorBloc>().add(ChangeIndex(index: 0));
+}
 
 void confirmLogout(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: const Text(
-            "Log out",
-            style: TextStyle(
-              fontFamily: fontFamily,
-            ),
+  showDialog(
+    context: context,
+    builder: (BuildContext dialogContext) {
+      return AlertDialog(
+        backgroundColor: Colors.white,
+        title: const Text(
+          "Log out",
+          style: TextStyle(
+            fontFamily: fontFamily,
           ),
-          content: const Text(
-            "Are you sure you want to log out?",
-            style: TextStyle(
-              fontFamily: fontFamily,
-              fontSize: 16,
-            ),
+        ),
+        content: const Text(
+          "Are you sure you want to log out?",
+          style: TextStyle(
+            fontFamily: fontFamily,
+            fontSize: 16,
           ),
-          actions: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    logout(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                    backgroundColor: const Color.fromARGB(255, 255, 0, 0),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                  ),
-                  child: Text("Confirm",
-                      style: TextStyle(
-                          fontFamily: fontFamily,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16)),
+        ),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  logout(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                  backgroundColor: Colors.red,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                 ),
-                ElevatedButton(
-                  onPressed: () => Navigator.pop(dialogContext),
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                    backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                  ),
-                  child: Text("Cancel",
-                      style: TextStyle(
-                          fontFamily: fontFamily,
-                          color: Color.fromARGB(255, 0, 0, 0),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16)),
+                child: Text("Confirm",
+                    style: TextStyle(
+                        fontFamily: fontFamily,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16)),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(dialogContext),
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                  backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                 ),
-              ],
-            ),
-          ],
-        );
-      },
-    );
-  }
+                child: Text("Cancel",
+                    style: TextStyle(
+                        fontFamily: fontFamily,
+                        color: Color.fromARGB(255, 0, 0, 0),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16)),
+              ),
+            ],
+          ),
+        ],
+      );
+    },
+  );
+}

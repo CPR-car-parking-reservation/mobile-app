@@ -22,6 +22,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     on<LoadUserAndCars>(_onLoadUserAndCars);
     on<UpdateProfile>(_onUpdateProfile);
     on<UpdatePassword>(_onUpdatePassword);
+    on<LogoutUser>(onlogoutUser);
   }
 
   Future<void> _onLoadUserAndCars(
@@ -275,4 +276,36 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
       emit(SettingError(message: 'Error: ${e.toString()}'));
     }
   }
+
+  Future<void> onlogoutUser(LogoutUser event, Emitter<SettingState> emit) async {
+    emit(SettingLoading());
+    log('Calling LogoutUser');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString('token')!;
+    try {
+      final url = Uri.parse('$baseUrl/logout');
+      var request = http.MultipartRequest('POST', url);
+      
+      request.headers.addAll({
+        'Content-Type': 'application/json',
+        'Authorization' : 'Bearer $token',
+      });
+
+      var response = await request.send();
+      final responseBody = await response.stream.bytesToString();
+      final responseJson = json.decode(responseBody);
+
+      if(response.statusCode == 200){
+        prefs.setString('token', responseJson['token']);
+        emit(SettingSuccess(message: responseJson['message']));
+        log('Logout Success ${responseJson['message']}');
+      } else {
+        emit(SettingError(message: responseJson['message']));
+      }
+
+    } catch (e) {
+      emit(SettingError(message: 'Error: ${e.toString()}'));
+    }
+  }
+  
 }
