@@ -6,6 +6,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:car_parking_reservation/bloc/setting/setting_bloc.dart';
 
+const String fontFamily = "amiko";
+
 Widget buildTextField(
     String label, IconData icon, TextEditingController controller) {
   return TextField(
@@ -63,7 +65,7 @@ Widget buildDropdownField({
               value,
               style: const TextStyle(
                 color: Colors.black,
-                fontFamily: "amiko",
+                fontFamily: fontFamily,
               ),
             ),
           );
@@ -159,13 +161,13 @@ void confirmDeleteCar(BuildContext context, String carId) {
         title: const Text(
           "Delete Car",
           style: TextStyle(
-            fontFamily: "amiko",
+            fontFamily: fontFamily,
           ),
         ),
         content: const Text(
           "Are you sure you want to delete this car?",
           style: TextStyle(
-            fontFamily: "amiko",
+            fontFamily: fontFamily,
             fontSize: 16,
           ),
         ),
@@ -186,7 +188,7 @@ void confirmDeleteCar(BuildContext context, String carId) {
                 ),
                 child: Text("Delete",
                     style: TextStyle(
-                        fontFamily: "amiko",
+                        fontFamily: fontFamily,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 16)),
@@ -201,7 +203,7 @@ void confirmDeleteCar(BuildContext context, String carId) {
                 ),
                 child: Text("Cancel",
                     style: TextStyle(
-                        fontFamily: "amiko",
+                        fontFamily: fontFamily,
                         color: Color.fromARGB(255, 0, 0, 0),
                         fontWeight: FontWeight.bold,
                         fontSize: 16)),
@@ -213,4 +215,3 @@ void confirmDeleteCar(BuildContext context, String carId) {
     },
   );
 }
-
