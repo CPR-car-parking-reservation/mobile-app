@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:car_parking_reservation/Widget/custom_dialog.dart';
 import 'package:car_parking_reservation/bloc/history/history_bloc.dart';
 import 'package:car_parking_reservation/bloc/reserved/reserved_bloc.dart';
@@ -77,8 +79,14 @@ class _HistoryState extends State<History> {
                         itemCount: state.history.length,
                         itemBuilder: (context, index) {
                           final history_user = state.history[index];
-                          final history_date = history_user.startAt;
-                          final date = DateTime.parse(history_date.toString());
+                          final history_date_start = history_user.startAt;
+                          var history_date_end = history_user.endAt == null
+                              ? ''
+                              : history_user.endAt;
+
+                          final date_start =
+                              DateTime.parse(history_date_start.toString());
+
                           return Center(
                             child: Padding(
                               padding: EdgeInsets.all(10),
@@ -108,7 +116,7 @@ class _HistoryState extends State<History> {
                                                     fontSize: 16),
                                               ),
                                               Text(
-                                                "${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}:${date.second.toString().padLeft(2, '0')}" ??
+                                                "${date_start.hour.toString().padLeft(2, '0')}:${date_start.minute.toString().padLeft(2, '0')}:${date_start.second.toString().padLeft(2, '0')}" ??
                                                     'N/A',
                                                 style: const TextStyle(
                                                     fontFamily: "Amiko",
@@ -126,7 +134,10 @@ class _HistoryState extends State<History> {
                                                     fontSize: 16),
                                               ),
                                               Text(
-                                                'N/A',
+                                                history_date_end.toString() ==
+                                                        ''
+                                                    ? 'N/A'
+                                                    : "${(DateTime.parse(history_date_end.toString())).hour.toString().padLeft(2, '0')}:${(DateTime.parse(history_date_end.toString())).minute.toString().padLeft(2, '0')}:${(DateTime.parse(history_date_end.toString())).second.toString()}",
                                                 style: const TextStyle(
                                                     fontFamily: "Amiko",
                                                     fontSize: 16),
@@ -176,7 +187,7 @@ class _HistoryState extends State<History> {
                                                   fontWeight: FontWeight.w700),
                                             ),
                                             Text(
-                                              "${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year.toString()}" ??
+                                              "${date_start.day.toString().padLeft(2, '0')}-${date_start.month.toString().padLeft(2, '0')}-${date_start.year.toString()}" ??
                                                   'N/A',
                                               style: const TextStyle(
                                                 color: Colors.white,
