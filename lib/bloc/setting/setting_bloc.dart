@@ -14,7 +14,6 @@ import 'package:http_parser/http_parser.dart';
 
 class SettingBloc extends Bloc<SettingEvent, SettingState> {
   final String? baseUrl = dotenv.env['BASE_URL'];
-
   SettingBloc() : super(SettingInitial()) {
     on<AddCar>(_onAddCar);
     on<UpdateCar>(_onUpdateCar);
@@ -208,7 +207,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString('token')!;
     emit(UserLoading());
-    
+
     try {
       final url = Uri.parse('$baseUrl/profile');
       final request = http.MultipartRequest('PUT', url)
