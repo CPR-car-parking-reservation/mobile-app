@@ -1,4 +1,3 @@
-import 'package:car_parking_reservation/bloc/navigator/navigator_bloc.dart';
 import 'package:car_parking_reservation/model/car.dart';
 import 'package:car_parking_reservation/model/profile.dart';
 import 'package:car_parking_reservation/setting/addcar.dart';
@@ -7,12 +6,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:car_parking_reservation/bloc/setting/setting_bloc.dart';
 import 'package:car_parking_reservation/bloc/setting/setting_event.dart';
 import 'package:car_parking_reservation/bloc/setting/setting_state.dart';
-import 'package:car_parking_reservation/setting/editcar.dart';
 import 'package:car_parking_reservation/setting/editprofile.dart';
-import 'package:car_parking_reservation/Login/signin.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:car_parking_reservation/widget/custom_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:car_parking_reservation/setting/widget/widget_setting_page.dart';
 
 const String fontFamily = "amiko";
 
@@ -25,23 +23,6 @@ class Setting extends StatefulWidget {
 
 class _SettingState extends State<Setting> with RouteAware {
   String baseUrl = dotenv.env['BASE_URL'].toString();
-
-  @override
-  void didPopNext() {
-    loadToken();
-    context.read<SettingBloc>().add(LoadUserAndCars());
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   String userToken = '';
   void loadToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -50,144 +31,10 @@ class _SettingState extends State<Setting> with RouteAware {
     });
   }
 
-  void logout(BuildContext context) {
-    Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => const Signin()),
-      (route) => false,
-    );
-    context.read<NavigatorBloc>().add(ChangeIndex(index: 0));
-  }
-
-  ListView listviewshow(List<car_data> car) {
-    String baseUrl = dotenv.env['BASE_URL'].toString();
-    return ListView.separated(
-      itemBuilder: (context, index) {
-        return Container(
-          margin: const EdgeInsets.symmetric(vertical: 6),
-          decoration: BoxDecoration(
-              color: Colors.white, borderRadius: BorderRadius.circular(12)),
-          padding: const EdgeInsets.all(12),
-          child: Row(
-            children: [
-              Image.network(
-                '$baseUrl${car[index].image_url}',
-                width: 100,
-                height: 60,
-                fit: BoxFit.contain,
-              ),
-              const SizedBox(width: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text("License plate",
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontFamily: fontFamily,
-                          fontWeight: FontWeight.bold)),
-                  Text(car[index].license_plate,
-                      style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: fontFamily)),
-                  Text(car[index].car_model,
-                      style: const TextStyle(
-                          color: Colors.grey,
-                          fontFamily: fontFamily,
-                          fontWeight: FontWeight.w500)),
-                  Text(car[index].car_type,
-                      style: const TextStyle(
-                          color: Colors.grey,
-                          fontFamily: fontFamily,
-                          fontWeight: FontWeight.w500)),
-                ],
-              ),
-              const Spacer(),
-              IconButton(
-                onPressed: () async {
-                  final result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => EditCarPage(car_id: car[index].id),
-                    ),
-                  );
-                  if (result is String) {
-                    // ignore: use_build_context_synchronously
-                    showCustomDialogSucess(context, result);
-                    // ignore: use_build_context_synchronously
-                    context.read<SettingBloc>().add(LoadUserAndCars());
-                  }
-                },
-                icon: const Icon(Icons.edit, color: Colors.orange),
-              ),
-            ],
-          ),
-        );
-      },
-      separatorBuilder: (context, index) => const Divider(),
-      itemCount: car.length,
-    );
-  }
-
-  void confirmLogout(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: const Text(
-            "Log out",
-            style: TextStyle(
-              fontFamily: fontFamily,
-            ),
-          ),
-          content: const Text(
-            "Are you sure you want to log out?",
-            style: TextStyle(
-              fontFamily: fontFamily,
-              fontSize: 16,
-            ),
-          ),
-          actions: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    logout(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                    backgroundColor: const Color.fromARGB(255, 255, 0, 0),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                  ),
-                  child: Text("Confirm",
-                      style: TextStyle(
-                          fontFamily: fontFamily,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16)),
-                ),
-                ElevatedButton(
-                  onPressed: () => Navigator.pop(dialogContext),
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                    backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                  ),
-                  child: Text("Cancel",
-                      style: TextStyle(
-                          fontFamily: fontFamily,
-                          color: Color.fromARGB(255, 0, 0, 0),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16)),
-                ),
-              ],
-            ),
-          ],
-        );
-      },
-    );
+  @override
+  void didPopNext() {
+    loadToken();
+    context.read<SettingBloc>().add(LoadUserAndCars());
   }
 
   @override
@@ -252,7 +99,7 @@ class _SettingState extends State<Setting> with RouteAware {
                                     '$baseUrl${profile.image_url}'),
                                 radius: 30,
                               ),
-                              const SizedBox(width: 3),
+                              const SizedBox(width:7 ),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -266,6 +113,7 @@ class _SettingState extends State<Setting> with RouteAware {
                                             Text(
                                               'Name :',
                                               style: TextStyle(
+                                                fontSize: 15,
                                                 color: Colors.red,
                                                 fontFamily: fontFamily,
                                               ),
@@ -276,7 +124,7 @@ class _SettingState extends State<Setting> with RouteAware {
                                                 '${profile.name} ${profile.surname}',
                                                 style: TextStyle(
                                                   fontSize: 15,
-                                                  fontWeight: FontWeight.w400,
+                                                  fontWeight: FontWeight.w500,
                                                   fontFamily: fontFamily,
                                                   overflow:
                                                       TextOverflow.ellipsis,
@@ -288,8 +136,9 @@ class _SettingState extends State<Setting> with RouteAware {
                                         Row(
                                           children: [
                                             Text(
-                                              'Email :',
+                                              'Email : ',
                                               style: TextStyle(
+                                                fontSize: 15,
                                                 color: Colors.red,
                                                 fontFamily: fontFamily,
                                               ),
@@ -301,7 +150,7 @@ class _SettingState extends State<Setting> with RouteAware {
                                                 style: TextStyle(
                                                   fontSize: 15,
                                                   color: Colors.black,
-                                                  fontWeight: FontWeight.w400,
+                                                  fontWeight: FontWeight.w500,
                                                   fontFamily: fontFamily,
                                                   overflow:
                                                       TextOverflow.ellipsis,
@@ -315,6 +164,7 @@ class _SettingState extends State<Setting> with RouteAware {
                                             Text(
                                               'Phone :',
                                               style: TextStyle(
+                                                fontSize: 15,
                                                 color: Colors.red,
                                                 fontFamily: fontFamily,
                                               ),
@@ -325,7 +175,7 @@ class _SettingState extends State<Setting> with RouteAware {
                                                 profile.phone,
                                                 style: TextStyle(
                                                   fontSize: 15,
-                                                  fontWeight: FontWeight.w400,
+                                                  fontWeight: FontWeight.w500,
                                                   fontFamily: fontFamily,
                                                   overflow:
                                                       TextOverflow.ellipsis,
@@ -393,11 +243,11 @@ class _SettingState extends State<Setting> with RouteAware {
                                       .add(LoadUserAndCars());
                                 }
                               },
-                              backgroundColor:
-                                  const Color.fromRGBO(41, 206, 121, 1),
+                              backgroundColor: const Color(0xFF4CAF50),
                               icon: const Icon(Icons.add, color: Colors.white),
                               label: const Text("Add Car",
                                   style: TextStyle(
+                                    fontWeight: FontWeight.w600,
                                       color: Colors.white,
                                       fontFamily: fontFamily)),
                             ),
@@ -410,6 +260,7 @@ class _SettingState extends State<Setting> with RouteAware {
                                   const Icon(Icons.logout, color: Colors.white),
                               label: const Text("Logout",
                                   style: TextStyle(
+                                    fontWeight: FontWeight.w600,
                                       color: Colors.white,
                                       fontFamily: fontFamily)),
                             ),
@@ -420,7 +271,7 @@ class _SettingState extends State<Setting> with RouteAware {
                   ),
                 );
               }
-              return const Center(child: Text('No data available'));
+              return const SizedBox.shrink();
             },
           ),
         ),

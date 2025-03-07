@@ -3,6 +3,7 @@ import 'package:car_parking_reservation/Widget/custom_dialog.dart';
 import 'package:car_parking_reservation/bloc/setting/setting_bloc.dart';
 import 'package:car_parking_reservation/bloc/setting/setting_event.dart';
 import 'package:car_parking_reservation/bloc/setting/setting_state.dart';
+import 'package:car_parking_reservation/setting/widget/widget_addcar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -40,218 +41,155 @@ class _AddCarPageState extends State<AddCarPage> {
     }
   }
 
-  Widget buildTextField(
-      String label, IconData icon, TextEditingController controller) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextField(
-        controller: controller,
-        decoration: InputDecoration(
-          prefixIcon: Icon(icon, color: Colors.black),
-          filled: true,
-          fillColor: Colors.white,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-          labelText: label,
-          labelStyle: const TextStyle(
-              color: Colors.black, fontSize: 16, fontFamily: fontFamily),
-          floatingLabelBehavior: FloatingLabelBehavior.never,
-        ),
-        style: const TextStyle(color: Colors.black, fontFamily: fontFamily),
-      ),
-    );
-  }
-
-  Widget buildDropdownField() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: DropdownButtonFormField<String>(
-        value: selectedType,
-        decoration: InputDecoration(
-          prefixIcon: Icon(Icons.category, color: Colors.black),
-          filled: true,
-          fillColor: Colors.white,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none,
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.black, width: 1),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.blue, width: 2),
-          ),
-          labelStyle: const TextStyle(
-              color: Colors.black, fontSize: 16, fontFamily: fontFamily),
-          floatingLabelBehavior: FloatingLabelBehavior.never,
-        ),
-        items: ['Fuels', 'Electric'].map((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(
-              value,
-              style: const TextStyle(
-                color: Colors.black,
-                fontFamily: fontFamily,
-              ),
-            ),
-          );
-        }).toList(),
-        onChanged: (newValue) {
-          setState(() {
-            selectedType = newValue!;
-          });
-        },
-        style: const TextStyle(color: Colors.black, fontFamily: fontFamily),
-        dropdownColor: Colors.white,
-        icon: const Icon(Icons.arrow_drop_down, color: Colors.black),
-        iconSize: 24,
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<SettingBloc, SettingState>(
       listener: (context, state) {
         if (state is SettingSuccess) {
           Navigator.pop(context, state.message);
-          //  showCustomDialog(context, state.message);
         } else if (state is SettingError) {
           showCustomDialogError(context, state.message);
         }
       },
       child: Scaffold(
         backgroundColor: const Color(0xFF03174C),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: MediaQuery.of(context).size.height - 32,
-              ),
-              child: IntrinsicHeight(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        body: BlocBuilder<SettingBloc, SettingState>(
+          builder: (context, state) {
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: MediaQuery.of(context).size.height - 32,
+                  ),
+                  child: IntrinsicHeight(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        IconButton(
-                          icon:
-                              const Icon(Icons.arrow_back, color: Colors.white),
-                          onPressed: () {
-                            Navigator.pop(context);
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.arrow_back,
+                                  color: Colors.white),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            ),
+                            const Text(
+                              "Add Car",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: fontFamily,
+                              ),
+                            ),
+                            const SizedBox(width: 48),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        Divider(color: Colors.white70, thickness: 1.5),
+                        const SizedBox(height: 16),
+                        Stack(
+                          alignment: Alignment.bottomRight,
+                          children: [
+                            Card(
+                              elevation: 5,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Container(
+                                width: double.infinity,
+                                height: 200,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  image: imageFile != null
+                                      ? DecorationImage(
+                                          image: FileImage(imageFile!),
+                                          fit: BoxFit.cover,
+                                        )
+                                      : null,
+                                ),
+                                child: imageFile == null
+                                    ? Center(
+                                        child: IconButton(
+                                          onPressed: pickImage,
+                                          icon: const Icon(Icons.image,
+                                              color: Colors.grey, size: 150),
+                                          tooltip: 'เลือกภาพ',
+                                        ),
+                                      )
+                                    : null,
+                              ),
+                            ),
+                            if (imageFile != null)
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.orange,
+                                  shape: BoxShape.circle,
+                                  border:
+                                      Border.all(color: Colors.white, width: 2),
+                                ),
+                                child: IconButton(
+                                  icon: const Icon(Icons.edit,
+                                      size: 16, color: Colors.white),
+                                  onPressed: pickImage,
+                                ),
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        buildTextField("ป้ายทะเบียน", Icons.directions_car,
+                            plateController),
+                        buildTextField(
+                            "รุ่นรถ", Icons.car_repair, modelController),
+                        DropdownFieldWidget(),
+                        const SizedBox(height: 20),
+                        ElevatedButton(
+                          onPressed: () async {
+                            if (imageFile != null) {
+                              BlocProvider.of<SettingBloc>(context).add(AddCar(
+                                plate: plateController.text,
+                                model: modelController.text,
+                                type: selectedType,
+                                imageFile: imageFile!,
+                              ));
+                            } else {
+                              showCustomDialogWarning(context, 'กรุณาเลือกภาพ');
+                            }
                           },
-                        ),
-                        const Text(
-                          "Add Car",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: fontFamily,
-                          ),
-                        ),
-                        const SizedBox(
-                            width:
-                                48), // To balance the space taken by the back button
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Divider(color: Colors.white70, thickness: 1.5),
-                    const SizedBox(height: 16),
-                    Stack(
-                      alignment: Alignment.bottomRight,
-                      children: [
-                        Card(
-                          elevation: 5,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Container(
-                            width: double.infinity,
-                            height: 200,
-                            decoration: BoxDecoration(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF4CAF50),
+                            shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
-                              image: imageFile != null
-                                  ? DecorationImage(
-                                      image: FileImage(imageFile!),
-                                      fit: BoxFit.cover,
-                                    )
-                                  : null,
                             ),
-                            child: imageFile == null
-                                ? Center(
-                                    child: IconButton(
-                                      onPressed: pickImage,
-                                      icon: const Icon(Icons.image,
-                                          color: Colors.grey, size: 150),
-                                      tooltip: 'เลือกภาพ',
-                                    ),
-                                  )
-                                : null,
+                            minimumSize: const Size(
+                                double.infinity, 50), // Set width and height
                           ),
+                          child: state is SettingLoading
+                              ? const CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
+                                )
+                              : Text(
+                                  "Add Car",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                    fontFamily: fontFamily,
+                                  ),
+                                ),
                         ),
-                        if (imageFile != null)
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.orange,
-                              shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white, width: 2),
-                            ),
-                            child: IconButton(
-                              icon: const Icon(Icons.edit,
-                                  size: 16, color: Colors.white),
-                              onPressed: pickImage,
-                            ),
-                          ),
                       ],
                     ),
-                    const SizedBox(height: 20),
-                    buildTextField(
-                        "ป้ายทะเบียน", Icons.directions_car, plateController),
-                    buildTextField("รุ่นรถ", Icons.car_repair, modelController),
-                    buildDropdownField(),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () async {
-                        if (imageFile != null) {
-                          BlocProvider.of<SettingBloc>(context).add(AddCar(
-                            plate: plateController.text,
-                            model: modelController.text,
-                            type: selectedType,
-                            imageFile: imageFile!,
-                          ));
-                        } else {
-                          showCustomDialogWarning(context, 'กรุณาเลือกภาพ');
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF4CAF50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        minimumSize: const Size(
-                            double.infinity, 50), // Set width and height
-                      ),
-                      child: const Text(
-                        "Add Car",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: fontFamily,
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       ),
     );

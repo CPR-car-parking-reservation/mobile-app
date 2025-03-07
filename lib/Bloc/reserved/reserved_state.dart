@@ -50,8 +50,7 @@ class ReservedError extends ReservedState {
 
 class ReservedSuccess extends ReservedState {
   // State ที่โหลดข้อมูลไม่สำเร็จ จะมี error message ในนี้
-    final String reservationId;
-
+  final String reservationId;
   final String message;
 
   // สร้าง Constructor รับค่า message
@@ -59,4 +58,11 @@ class ReservedSuccess extends ReservedState {
 
   @override
   List<Object> get props => [message];
+}
+
+// State ที่โหลดข้อมูลไม่สำเร็จ จะมี error message ในนี้
+class ReservationCancelled extends ReservedState {
+  final String message;
+
+  ReservationCancelled(this.message);
 }
