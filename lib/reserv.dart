@@ -6,7 +6,6 @@ import 'package:car_parking_reservation/bloc/parking/parking_bloc.dart';
 import 'package:car_parking_reservation/bloc/reserved/reserved_bloc.dart';
 import 'package:car_parking_reservation/Qr-generator/qr_code.dart';
 import 'package:car_parking_reservation/model/car.dart';
-import 'package:car_parking_reservation/model/history.dart';
 import 'package:car_parking_reservation/setting/setting_page.dart';
 import 'package:car_parking_reservation/widget/custom_dialog.dart';
 import 'package:flutter/material.dart';
@@ -46,39 +45,25 @@ class _ReservState extends State<Reserv> {
     initializeDateFormatting();
     carData = [];
     context.read<ReservedBloc>().add(FectchFirstReserved());
-    _loadToken();
+
     super.initState();
   }
 
   String userToken = "";
   String baseUrl = dotenv.env['BASE_URL'].toString();
 
-  // ดึง token จาก SharedPreferences
-  void _loadToken() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      userToken = prefs.getString('token') ?? ''; // ถ้าไม่มี token จะใช้ค่าว่าง
-    });
-  }
-
-  // บันทึก reservation_id ลง SharedPreferences
-  void _saveReservationId(String reservationId) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('reservation_id', reservationId);
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<ReservedBloc, ReservedState>(
       listener: (context, state) {
         if (state is ReservedSuccess) {
-          _saveReservationId(state.reservationId);
           context.read<NavigatorBloc>().add(ChangeIndex(index: 1));
           Navigator.of(context).pop();
-    
+
           // context.read<NavigatorBloc>().add(ChangeIndex(index: 1 , reservationId: state.reservationId));
           showCustomDialogSucess(context, "Reservation Success");
         } else if (state is ReservedError) {
+          Navigator.of(context).pop();
           showCustomDialogError(context, state.message);
         }
       },
@@ -107,7 +92,7 @@ class _ReservState extends State<Reserv> {
             } else if (state is ReservedError) {
               return Center(child: Text(state.message));
             }
-    
+
             return SingleChildScrollView(
               child: Center(
                 child: Padding(
@@ -206,14 +191,12 @@ class _ReservState extends State<Reserv> {
                         children: [
                           Center(
                             child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 10),
+                              padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Row(
                                         mainAxisAlignment:
@@ -243,8 +226,8 @@ class _ReservState extends State<Reserv> {
                                             MainAxisAlignment.center,
                                         children: [
                                           Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 15),
+                                            padding:
+                                                const EdgeInsets.only(left: 15),
                                             child: Icon(
                                               Icons.access_time,
                                               color: Colors.yellow[700],
@@ -285,9 +268,9 @@ class _ReservState extends State<Reserv> {
                                     "${dateFormat.format(DateTime.now().toUtc().toLocal())}";
                                 String select_this_time =
                                     "${dateFormat.format(DateTime.now().toUtc().toLocal())}";
-    
+
                                 // log("${dateFormat.format(DateTime.now().toUtc().toLocal().add(Duration(hours: 7)))}");
-    
+
                                 context.read<ReservedBloc>().add(
                                     SendReservation(
                                         _selectedValue ?? '',
@@ -295,9 +278,9 @@ class _ReservState extends State<Reserv> {
                                         select_this_time));
                                 //log("car_id: ${_selectedValue}, parking_slot_id: ${historyData.parkingSlot.id}, start_time: ${historyData.start_at}");
                                 //log("$select_this_time");
-                                context
-                                    .read<NavigatorBloc>()
-                                    .add(ChangeIndex(index: 1));
+                                // context
+                                //     .read<NavigatorBloc>()
+                                //     .add(ChangeIndex(index: 1));
                               } else {
                                 showCustomDialogError(
                                     context, "Reservation Failed");

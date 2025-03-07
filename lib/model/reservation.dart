@@ -8,6 +8,7 @@ class Reservation_Model {
   final String parkingSlotId;
   final String carId;
   final ParkingSlot parkingSlot;
+  final String status;
   final Car car;
 
   Reservation_Model({
@@ -20,6 +21,7 @@ class Reservation_Model {
     required this.parkingSlotId,
     required this.carId,
     required this.parkingSlot,
+    required this.status,
     required this.car,
   });
 
@@ -28,12 +30,14 @@ class Reservation_Model {
       id: json['id'],
       userId: json['user_id'],
       createdAt: DateTime.parse(json['created_at']),
-      startAt: json['start_at'] != null ? DateTime.tryParse(json['start_at']) : null,
+      startAt:
+          json['start_at'] != null ? DateTime.tryParse(json['start_at']) : null,
       endAt: json['end_at'] != null ? DateTime.tryParse(json['end_at']) : null,
       updatedAt: DateTime.parse(json['updated_at']),
       parkingSlotId: json['parking_slot_id'],
       carId: json['car_id'],
       parkingSlot: ParkingSlot.fromJson(json['parking_slots']),
+      status: json['status'],
       car: Car.fromJson(json['car']),
     );
   }
