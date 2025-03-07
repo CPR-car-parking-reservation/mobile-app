@@ -24,7 +24,7 @@ class ParkingSlots extends StatefulWidget {
     switch (status) {
       case "FULL":
         return Colors.red;
-      case "Maintenance":
+      case "MAINTENANCE":
         return Colors.grey;
       case "RESERVED":
         return Colors.amber;
@@ -332,8 +332,8 @@ class ParkingSlotButton extends StatelessWidget {
                 showCustomDialogWarning(context, "Reserved");
               }
 
-              if (parking.status == "Maintenance") {
-                showCustomDialogWarning(context, "Maintenance");
+              if (parking.status == "MAINTENANCE") {
+                showCustomDialogMaintanace(context, "MAINTENANCE");
               }
 
               if (parking.status == "FULL") {
