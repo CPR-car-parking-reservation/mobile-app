@@ -14,14 +14,12 @@ import 'package:http_parser/http_parser.dart';
 
 class SettingBloc extends Bloc<SettingEvent, SettingState> {
   final String? baseUrl = dotenv.env['BASE_URL'];
-
   SettingBloc() : super(SettingInitial()) {
     on<AddCar>(_onAddCar);
     on<UpdateCar>(_onUpdateCar);
     on<DeleteCar>(_onDeleteCar);
     on<FetchCarById>(_onFetchCarById);
     on<LoadUserAndCars>(_onLoadUserAndCars);
-    on<LoadUser>(_onLoadUser);
     on<UpdateProfile>(_onUpdateProfile);
     on<UpdatePassword>(_onUpdatePassword);
   }
@@ -85,8 +83,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     emit(SettingLoading());
     try {
       final car = await fetch_cars(event.carId);
-      emit(SettingLoaded(cars: [car]));
-      add(LoadUserAndCars());
+      emit(CarLoaded(car: car));
     } catch (e) {
       emit(SettingError(message: e.toString()));
     }
@@ -115,7 +112,6 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
 
       var response = await request.send();
       final responseBody = await response.stream.bytesToString();
-
       final responseJson = json.decode(responseBody);
 
       if (response.statusCode == 200) {
@@ -164,7 +160,6 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
           contentType: MediaType('image', 'jpeg'),
         ));
       }
-
       var response = await request.send();
       final responseBody = await response.stream.bytesToString();
       final responseJson = json.decode(responseBody);
@@ -207,39 +202,12 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
 
   //--------------------------------------------------------------------------------
 
-  Future<void> _onLoadUser(LoadUser event, Emitter<SettingState> emit) async {
-    emit(SettingLoading());
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String token = prefs.getString('token')!;
-    try {
-      final userResponse = await http.get(
-        Uri.parse('$baseUrl/profile'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
-
-      final responseJson = json.decode(userResponse.body);
-
-      if (userResponse.statusCode == 200) {
-        final Map<String, dynamic> userJson = json.decode(userResponse.body);
-        final profile = Profile_data.fromJson(userJson);
-
-        emit(ProfileLoaded(profile: profile));
-      } else {
-        emit(SettingError(message: responseJson['message']));
-      }
-    } catch (e) {
-      emit(SettingError(message: e.toString()));
-    }
-  }
-
   Future<void> _onUpdateProfile(
       UpdateProfile event, Emitter<SettingState> emit) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString('token')!;
-    emit(SettingLoading());
+    emit(UserLoading());
+
     try {
       final url = Uri.parse('$baseUrl/profile');
       final request = http.MultipartRequest('PUT', url)
@@ -266,8 +234,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
         add(LoadUserAndCars());
         emit(SettingSuccess(message: responseJson['message']));
       } else {
-        add(LoadUserAndCars());
-        throw Exception(responseJson['message']);
+        throw responseJson['message'];
       }
     } catch (e) {
       emit(SettingError(message: 'Error: ${e.toString()}'));
