@@ -7,6 +7,7 @@ import 'package:car_parking_reservation/admin/admin_home.dart';
 import 'package:car_parking_reservation/bloc/Login/login_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Signin extends StatefulWidget {
   const Signin({super.key});
@@ -18,10 +19,24 @@ class Signin extends StatefulWidget {
 class _SigninState extends State<Signin> {
   final emailController = TextEditingController();
   final passController = TextEditingController();
+  Future<void> getToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    log('token: $token');
+    if (token != null || token != "") {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => Home()),
+        (route) => false,
+      );
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+    getToken();
+    log('initState');
   }
 
   @override
