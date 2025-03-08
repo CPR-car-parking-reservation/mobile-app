@@ -1,4 +1,5 @@
 //AdminHomePage
+import 'package:car_parking_reservation/Bloc/admin_bloc/admin_setting/admin_setting_bloc.dart';
 import 'package:car_parking_reservation/Bloc/admin_bloc/admin_dashboard/admin_dashboard_bloc.dart';
 import 'package:car_parking_reservation/Bloc/admin_bloc/admin_graph/admin_graph_bloc.dart';
 import 'package:car_parking_reservation/Bloc/admin_bloc/admin_reservation/admin_reservation_bloc.dart';
@@ -62,7 +63,10 @@ class AdminHomePage extends StatelessWidget {
                         child: AdminParkingPage(),
                       );
                     case 3:
-                      return AdminSettingPage();
+                      return BlocProvider(
+                        create: (context) => AdminSettingBloc(),
+                        child: AdminSettingPage(),
+                      );
                     default:
                       return SizedBox.shrink();
                   }

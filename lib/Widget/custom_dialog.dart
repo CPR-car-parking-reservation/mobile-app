@@ -167,3 +167,62 @@ void showCustomDialogError(BuildContext context, String message) {
     },
   );
 }
+
+
+void showCustomDialogMaintanace(BuildContext context, String message) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Column(
+          children: [
+            Icon(
+              Icons.build_circle_rounded,
+              color: Colors.grey,
+              size: 50,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 10,
+              ),
+              child: Center(
+                child: Text(
+                  message,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontFamily: "Amiko",
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                      color: const Color.fromARGB(255, 0, 0, 0)),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          Center(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.grey,
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Text(
+                  "OK",
+                  style: TextStyle(
+                      fontFamily: "Amiko",
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                      color: const Color.fromARGB(255, 0, 0, 0)),
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}

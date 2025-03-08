@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:car_parking_reservation/model/history.dart';
 import 'package:car_parking_reservation/model/reservation.dart';
 //import 'package:car_parking_reservation/model/reservation.dart';
 import 'package:equatable/equatable.dart';
@@ -38,6 +37,7 @@ class ReservedBloc extends Bloc<ReservedEvent, ReservedState> {
         final response =
             await postData(event.car_id, event.parking_slot_id, event.start_at);
         final responseBody = await response.stream.bytesToString();
+
         log("Response Body: $responseBody");
 
         final decodeResponse = json.decode(responseBody);
@@ -50,13 +50,14 @@ class ReservedBloc extends Bloc<ReservedEvent, ReservedState> {
               : '';
 
           log("Reservation ID: $reservationId");
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('reservation_id', reservationId);
 
           emit(ReservCreated(event.car_id, event.parking_slot_id,
               event.start_at, reservationId));
           emit(ReservedSuccess(
               reservationId: reservationId,
               message: decodeResponse['message']));
-          
         } else {
           throw Exception(
               decodeResponse['message'] ?? 'Failed to create reservation.');
@@ -68,31 +69,35 @@ class ReservedBloc extends Bloc<ReservedEvent, ReservedState> {
         emit(ReservedError(e.toString()));
       }
     });
+
+    // event สำหรับยกเลิกการจอง
+    on<CancelReservation>((event, emit) async {
+      emit(ReserveLoading());
+      try {
+        final response = await cancelReservation(event.reservationId);
+        final responseBody = response.body;
+        // log("Response Body: $responseBody");
+
+        final decodeResponse = json.decode(responseBody);
+        // log("Decoded Response: $decodeResponse");
+
+        if (response.statusCode == 200) {
+          emit(ReservationCancelled(decodeResponse['message']));
+          emit(ReservedInitial());
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('reservation_id', '');
+        } else {
+          throw Exception(
+              decodeResponse['message'] ?? 'Failed to cancel reservation.');
+        }
+      } catch (e) {
+        emit(ReservedError(e.toString()));
+      }
+    });
   }
+
   String baseUrl = dotenv.env['BASE_URL'].toString();
-  // Future<List<History_data>> fetchData() async {
-  //   debugPrint('url: $baseUrl');
-  //   final response =
-  //       await http.get(Uri.parse("$baseUrl/reservation"), headers: {
-  //     "Accept": "application/json",
-  //     "content-type": "application/json",
-  //   });
-
-  //   if (response.statusCode == 200) {
-  //     // List<dynamic> data = jsonDecode(response.body);  // ok
-  //     List data = json.decode(response.body); // ok
-
-  //     return data
-  //         .map((e) => History_data.fromJson(e))
-  //         .toList(); // use method in class
-  //   } else {
-  //     debugPrint('failed loading');
-  //     throw Exception('Failed to load data!');
-  //   }
-  // }
-
-  Future<http.StreamedResponse> postData(
-      carId, parkingSlotId, startAt) async {
+  Future<http.StreamedResponse> postData(carId, parkingSlotId, startAt) async {
     final url = Uri.parse("$baseUrl/reservation");
 
     var request = http.MultipartRequest('POST', url)
@@ -103,7 +108,6 @@ class ReservedBloc extends Bloc<ReservedEvent, ReservedState> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('token') ?? '';
     await prefs.setString('token', token);
-    
 
     request.headers.addAll({
       "Accept": "application/json",
@@ -145,5 +149,18 @@ class ReservedBloc extends Bloc<ReservedEvent, ReservedState> {
     } catch (e) {
       throw Exception('Error: ${e.toString()}');
     }
+  }
+
+  // ยกเลิกการจอง โดยการส่ง reservation_id ไปยัง API
+  Future<http.Response> cancelReservation(String reservationId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString('token') ?? '';
+    log(reservationId);
+    final url = Uri.parse('$baseUrl/reservation/cancel/id/$reservationId');
+    final response = await http.post(url, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    });
+    return response;
   }
 }

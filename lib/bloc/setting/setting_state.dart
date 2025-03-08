@@ -69,6 +69,8 @@ class ProfileLoaded extends SettingState {
     List<Object> get props => [profile];
 }
 
+class UserLoading extends SettingState {}
+
 class UserAndCarsLoaded extends SettingState {
   final Profile_data profile;
   final List<car_data> cars;
@@ -77,4 +79,13 @@ class UserAndCarsLoaded extends SettingState {
 
   @override
   List<Object> get props => [profile, cars];
+}
+
+
+class CarLoaded extends SettingState {
+  final car_data car;
+  const CarLoaded({required this.car});
+
+  @override
+  List<Object> get props => [car];
 }

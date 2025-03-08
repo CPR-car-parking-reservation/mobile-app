@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:car_parking_reservation/bloc/setting/setting_bloc.dart';
 import 'package:car_parking_reservation/bloc/setting/setting_event.dart';
 import 'package:car_parking_reservation/bloc/setting/setting_state.dart';
+import 'package:car_parking_reservation/setting/widget/widget_editprofile.dart';
 
 class EditProfilePage extends StatefulWidget {
   final Profile_data profile;
@@ -81,138 +82,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
         ));
   }
 
-  void _showChangePasswordModal(BuildContext context) {
-    final settingBloc = context.read<SettingBloc>();
-
-    final oldPasswordController = TextEditingController();
-    final newPasswordController = TextEditingController();
-    final confirmPasswordController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return BlocProvider.value(
-          value: settingBloc,
-          child: BlocListener<SettingBloc, SettingState>(
-            listener: (context, state) {
-              if (state is EditSuccess) {
-                Navigator.pop(dialogContext);
-                showCustomDialogSucess(context, state.message);
-              } else if (state is EditError) {
-                showCustomDialogError(context, state.message);
-              }
-            },
-            child: AlertDialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              backgroundColor: Colors.white,
-              title: Text('Change Password',
-                  style: TextStyle(fontFamily: fontFamily, color: Colors.black)),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  buildPasswordField('Old Password', oldPasswordController),
-                  const SizedBox(height: 10),
-                  buildPasswordField('New Password', newPasswordController),
-                  const SizedBox(height: 10),
-                  buildPasswordField(
-                      'Confirm Password', confirmPasswordController),
-                ],
-              ),
-              actions: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        context.read<SettingBloc>().add(UpdatePassword(
-                              oldPassword: oldPasswordController.text,
-                              newPassword: newPasswordController.text,
-                              confirm_password: confirmPasswordController.text,
-                            ));
-                      },
-                      style: ElevatedButton.styleFrom(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                        backgroundColor: Colors.green,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                      ),
-                      child: Text("Update",
-                          style: TextStyle(
-                              fontFamily: fontFamily,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16)),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(dialogContext).pop();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                        backgroundColor:
-                            const Color.fromARGB(255, 251, 251, 251),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                      ),
-                      child: Text("Cancel",
-                          style: TextStyle(
-                              fontFamily: fontFamily,
-                              color: const Color.fromARGB(255, 0, 0, 0),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16)),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget buildTextField(String labelText, IconData icon,
-      TextEditingController controller, TextInputType keyboardType,
-      {bool readOnly = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextField(
-        controller: controller,
-        readOnly: readOnly,
-        keyboardType: keyboardType,
-        decoration: InputDecoration(
-          labelStyle: TextStyle(fontFamily: fontFamily, color: Colors.black),
-          prefixIcon: Icon(icon, color: Colors.black),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-          filled: true,
-          fillColor: Colors.white,
-        ),
-        style: TextStyle(fontFamily: fontFamily, color: Colors.black),
-      ),
-    );
-  }
-
-  Widget buildPasswordField(String label, TextEditingController controller) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextField(
-        controller: controller,
-        obscureText: true,
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: TextStyle(fontFamily: fontFamily, color: Colors.black),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-          filled: true,
-          fillColor: Colors.grey[200],
-        ),
-        style: TextStyle(fontFamily: fontFamily, color: Colors.black),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -222,142 +91,147 @@ class _EditProfilePageState extends State<EditProfilePage> {
       child: BlocListener<SettingBloc, SettingState>(
         listener: (context, state) {
           if (state is SettingSuccess) {
-           
             Navigator.pop(context);
             showCustomDialogSucess(context, state.message);
           } else if (state is SettingError) {
             showCustomDialogError(context, state.message);
           }
         },
-        child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: const Color(0xFF03174C),
-            leading: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            title: Text(
-              "Edit Profile",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: fontFamily), // เรียกใช้ตัวแปร fontFamily
-            ),
-            centerTitle: true,
-          ),
-          backgroundColor: const Color(0xFF03174C),
-          body: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                children: [
-                  const SizedBox(height: 10),
-
-                  // Divider เส้นคั่น
-                  Divider(color: Colors.white70, thickness: 1.5),
-
-                  const SizedBox(height: 16),
-                  Stack(
-                    alignment: Alignment.bottomRight,
+        child: BlocBuilder<SettingBloc, SettingState>(
+          builder: (context, state) {
+            return Scaffold(
+              appBar: AppBar(
+                backgroundColor: const Color(0xFF03174C),
+                leading: IconButton(
+                  icon: Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                title: Text(
+                  "Edit Profile",
+                  style: TextStyle(color: Colors.white, fontFamily: fontFamily),
+                ),
+                centerTitle: true,
+              ),
+              backgroundColor: const Color(0xFF03174C),
+              body: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white, // สีขาวครอบ
-                        ),
-                        padding: const EdgeInsets.all(7.0),
-                        child: CircleAvatar(
-                          radius: 60,
-                          backgroundColor: Colors.white,
-                          child: ClipOval(
-                            child: imageFile != null
-                                ? Image.file(imageFile!,
-                                    fit: BoxFit.cover, width: 140, height: 140)
-                                : Image.network(
-                                    '$baseUrl${widget.profile.image_url}',
-                                    fit: BoxFit.cover,
-                                    width: 140,
-                                    height: 140),
+                      const SizedBox(height: 10),
+                      Divider(color: Colors.white70, thickness: 1.5),
+                      const SizedBox(height: 16),
+                      Stack(
+                        alignment: Alignment.bottomRight,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white, // สีขาวครอบ
+                            ),
+                            padding: const EdgeInsets.all(7.0),
+                            child: CircleAvatar(
+                              radius: 60,
+                              backgroundColor: Colors.white,
+                              child: ClipOval(
+                                child: imageFile != null
+                                    ? Image.file(imageFile!,
+                                        fit: BoxFit.cover,
+                                        width: 140,
+                                        height: 140)
+                                    : Image.network(
+                                        '$baseUrl${widget.profile.image_url}',
+                                        fit: BoxFit.cover,
+                                        width: 140,
+                                        height: 140),
+                              ),
+                            ),
                           ),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.orange,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white, width: 2),
+                            ),
+                            child: IconButton(
+                              icon: const Icon(Icons.edit,
+                                  size: 16, color: Colors.white),
+                              onPressed: () {
+                                pickImage();
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 40),
+                      buildTextField("Username", Icons.person,
+                          usernameController, TextInputType.text),
+                      buildTextField("Surname", Icons.person, surnameController,
+                          TextInputType.text),
+                      buildTextField("Phone", Icons.phone, phoneController,
+                          TextInputType.number),
+                      buildTextField("Email", Icons.email, emailController,
+                          TextInputType.text,
+                          readOnly: true),
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: _updateProfile,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: state is UserLoading
+                              ? CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
+                                )
+                              : Text(
+                                  "Update Profile",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: fontFamily),
+                                ),
                         ),
                       ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.orange,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 2),
-                        ),
-                        child: IconButton(
-                          icon: const Icon(Icons.edit,
-                              size: 16, color: Colors.white),
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ElevatedButton(
                           onPressed: () {
-                            pickImage();
+                            showChangePasswordModal(context);
                           },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            "Change Password",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: fontFamily),
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 40),
-                  buildTextField("Username", Icons.person, usernameController,
-                      TextInputType.text),
-                  buildTextField("Surname", Icons.person, surnameController,
-                      TextInputType.text),
-                  buildTextField("Phone", Icons.phone, phoneController,
-                      TextInputType.number),
-                  buildTextField(
-                      "Email", Icons.email, emailController, TextInputType.text,
-                      readOnly: true),
-                  const SizedBox(height: 20),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: _updateProfile,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: Text(
-                        "Update Profile",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: fontFamily),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        _showChangePasswordModal(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: Text(
-                        "Change Password",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: fontFamily),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       ),
     );

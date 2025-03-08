@@ -8,9 +8,6 @@ abstract class SettingEvent {
   List<Object> get props => [];
 }
 
-
-class LoadUser extends SettingEvent {}
-
 class LoadUserAndCars extends SettingEvent {}
 
 class FetchCarById extends SettingEvent {
@@ -81,7 +78,7 @@ class UpdateProfile extends SettingEvent {
   });
 
   @override
-  List<Object> get props => [name, surname,phone, imageFile ?? ''];
+  List<Object> get props => [name, surname, phone, imageFile ?? ''];
 }
 
 class UpdatePassword extends SettingEvent {
@@ -100,3 +97,5 @@ class UpdatePassword extends SettingEvent {
   @override
   List<Object> get props => [oldPassword, newPassword, confirm_password];
 }
+
+class LogoutUser extends SettingEvent {}

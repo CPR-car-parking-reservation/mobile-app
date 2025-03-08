@@ -9,9 +9,7 @@ import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/parking/parking_bloc.dart';
-// import 'package:uuid/data.dart';
-// import 'package:uuid/uuid.dart';
-// import 'package:uuid/rng.dart';
+import 'package:uuid/uuid.dart';
 
 /// Widget หลักที่ใช้แสดงที่จอดรถทั้งหมด
 class ParkingSlots extends StatefulWidget {
@@ -26,7 +24,7 @@ class ParkingSlots extends StatefulWidget {
     switch (status) {
       case "FULL":
         return Colors.red;
-      case "Maintenance":
+      case "MAINTENANCE":
         return Colors.grey;
       case "RESERVED":
         return Colors.amber;
@@ -47,63 +45,57 @@ enum MqttCurrentConnectionState {
 
 enum MqttSubscriptionState { IDLE, SUBSCRIBED }
 
-class MqttClientWrapper {
+// State ของ ParkingSlots
+class _ParkingSlots extends State<ParkingSlots> {
+  String selectedFloor = "F1"; // กำหนดชั้นที่เลือกเริ่มต้นเป็น F1
+
   late MqttServerClient client;
+  var uuid = Uuid();
+  var v4 = Uuid().v4();
 
   MqttCurrentConnectionState connectionState = MqttCurrentConnectionState.IDLE;
   MqttSubscriptionState subscriptionState = MqttSubscriptionState.IDLE;
 
-  // Async setup to prevent blocking the main thread
-  Future<void> prepareMqttClient() async {
-    _setupMqttClient();
-    await _connectClient();
-    _subscribeToTopic('cpr/from_server/trigger');
-  }
-
   Future<void> _connectClient() async {
-    try {
-      log('Client connecting....');
-      connectionState = MqttCurrentConnectionState.CONNECTING;
-      await client.connect('mobile2', 'Mobile2123');
-    } on Exception catch (e) {
-      log('Client exception - $e');
-      connectionState = MqttCurrentConnectionState.ERROR_WHEN_CONNECTING;
-      client.disconnect();
-      return;
-    }
+    log('Connecting to the broker...');
+    
+    
+    // Create a new MqttServerClient instance
 
-    if (client.connectionStatus?.state == MqttConnectionState.connected) {
-      connectionState = MqttCurrentConnectionState.CONNECTED;
-      log('Client connected');
-    } else {
-      log('ERROR: Client connection failed - Disconnecting. Status: ${client.connectionStatus}');
-      connectionState = MqttCurrentConnectionState.ERROR_WHEN_CONNECTING;
-      client.disconnect();
-    }
-  }
-
-  void _setupMqttClient() {
-    client =
-        MqttServerClient.withPort('61d93b772b6242a892508d48bf7f77ba.s1.eu.hivemq.cloud', 'mobile2', 8883);
+    client = MqttServerClient.withPort(
+        '61d93b772b6242a892508d48bf7f77ba.s1.eu.hivemq.cloud', 'mobile2', 8883);
     client.secure = true;
     client.securityContext = SecurityContext.defaultContext;
-    client.keepAlivePeriod = 20;
+    client.keepAlivePeriod = 60;
     client.onDisconnected = _onDisconnected;
     client.onConnected = _onConnected;
     client.onSubscribed = _onSubscribed;
-  }
+    connectionState = MqttCurrentConnectionState.CONNECTING;
+    await client.connect('mobile2', 'Mobile2123');
 
-  void _subscribeToTopic(String topicName) {
-    log('Subscribing to topic: $topicName');
-    client.subscribe(topicName, MqttQos.atMostOnce);
+    // Connect to the broker
+    try {
+      await client.connect();
+    } on NoConnectionException catch (e) {
+      log('Connection exception: $e');
+      rethrow;
+    } catch (e) {
+      log('Unexpected error: $e');
+      rethrow;
+    }
+
+    client.subscribe('cpr/from_server/trigger', MqttQos.atMostOnce);
     client.updates?.listen((List<MqttReceivedMessage<MqttMessage>> c) {
       final MqttPublishMessage recMess = c[0].payload as MqttPublishMessage;
       String message =
           MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
       log('Received message: $message');
+
+      if (message == "fetch slot") {
+        context.read<ParkingBloc>().add(RefrechParkingSlot());
+      }
     });
   }
-
 
   void _onSubscribed(String topic) {
     log('Subscription confirmed for topic: $topic');
@@ -119,12 +111,6 @@ class MqttClientWrapper {
     log('Client connected successfully');
     connectionState = MqttCurrentConnectionState.CONNECTED;
   }
-}
-
-// State ของ ParkingSlots
-class _ParkingSlots extends State<ParkingSlots> {
-  String selectedFloor = "F1"; // กำหนดชั้นที่เลือกเริ่มต้นเป็น F1
-  String message = 'Waiting for message...';
 
   // กรองเฉพาะที่จอดรถที่อยู่ในชั้นที่เลือก
   List<ParkingSlot> getFilteredSlots(List<ParkingSlot> slots) {
@@ -154,7 +140,7 @@ class _ParkingSlots extends State<ParkingSlots> {
   @override
   void initState() {
     context.read<ParkingBloc>().add(OnFirstParkingSlot());
-    MqttClientWrapper().prepareMqttClient();  
+    _connectClient();
     super.initState();
   }
 
@@ -346,8 +332,8 @@ class ParkingSlotButton extends StatelessWidget {
                 showCustomDialogWarning(context, "Reserved");
               }
 
-              if (parking.status == "Maintenance") {
-                showCustomDialogWarning(context, "Maintenance");
+              if (parking.status == "MAINTENANCE") {
+                showCustomDialogMaintanace(context, "MAINTENANCE");
               }
 
               if (parking.status == "FULL") {
