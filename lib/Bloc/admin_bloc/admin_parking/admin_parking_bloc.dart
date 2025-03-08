@@ -94,8 +94,8 @@ class AdminParkingBloc extends Bloc<AdminParkingEvent, AdminParkingState> {
 
       if (currentState is AdminParkingLoaded) {
         try {
-          final res = await updateParkingSlot(
-              event.floor_number, event.slot_number, event.id);
+          final res = await updateParkingSlot(event.floor_number,
+              event.slot_number, event.id, event.statusText);
           final responseBody = await res.stream.bytesToString();
           final decodedResponse = jsonDecode(responseBody);
 
@@ -204,14 +204,15 @@ class AdminParkingBloc extends Bloc<AdminParkingEvent, AdminParkingState> {
   }
 
   Future<http.StreamedResponse> updateParkingSlot(
-      id, slot_number, floor_number) async {
+      id, slot_number, floor_number, ststusText) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     //from data
     final url = Uri.parse("$baseUrl/admin/parking_slots/id/$id");
     var request = http.MultipartRequest('PUT', url)
       ..fields['slot_number'] = slot_number
-      ..fields['floor_number'] = floor_number;
+      ..fields['floor_number'] = floor_number
+      ..fields['status'] = ststusText;
     request.headers.addAll({
       "Accept": "application/json",
       "content-type": "application/json",

@@ -1,4 +1,7 @@
 //AdminHomePage
+import 'package:car_parking_reservation/Bloc/admin_bloc/admin_dashboard/admin_dashboard_bloc.dart';
+import 'package:car_parking_reservation/Bloc/admin_bloc/admin_graph/admin_graph_bloc.dart';
+import 'package:car_parking_reservation/Bloc/admin_bloc/admin_reservation/admin_reservation_bloc.dart';
 import 'package:car_parking_reservation/Bloc/admin_bloc/admin_user/admin_user_bloc.dart';
 import 'package:car_parking_reservation/Bloc/admin_bloc/admin_parking/admin_parking_bloc.dart';
 import 'package:car_parking_reservation/Bloc/admin_bloc/admin_navigator/admin_navigator_bloc.dart';
@@ -34,7 +37,20 @@ class AdminHomePage extends StatelessWidget {
                 child: () {
                   switch (state.index) {
                     case 0:
-                      return AdminDashBoard();
+                      return MultiBlocProvider(
+                        providers: [
+                          BlocProvider(
+                            create: (context) => AdminDashboardBloc(),
+                          ),
+                          BlocProvider(
+                            create: (context) => AdminGraphBloc(),
+                          ),
+                          BlocProvider(
+                            create: (context) => AdminReservationBloc(),
+                          ),
+                        ],
+                        child: AdminDashBoard(),
+                      );
                     case 1:
                       return BlocProvider(
                         create: (context) => AdminUserBloc(),
@@ -52,26 +68,40 @@ class AdminHomePage extends StatelessWidget {
                   }
                 }(),
               ),
-              bottomNavigationBar: BottomNavigationBar(
-                type: BottomNavigationBarType.fixed,
-                selectedItemColor: const Color.fromRGBO(3, 23, 76, 1),
-                unselectedItemColor: const Color.fromARGB(128, 2, 21, 73),
-                items: const <BottomNavigationBarItem>[
-                  BottomNavigationBarItem(
-                      icon: Icon(Icons.bar_chart_sharp), label: 'Dashboard'),
-                  BottomNavigationBarItem(
-                      icon: Icon(Icons.supervised_user_circle), label: 'Users'),
-                  BottomNavigationBarItem(
-                      icon: Icon(Icons.local_parking), label: 'Parking'),
-                  BottomNavigationBarItem(
-                      icon: Icon(Icons.settings), label: 'Setting'),
-                ],
-                currentIndex: state.index,
-                onTap: (index) {
-                  context
-                      .read<AdminNavigatorBloc>()
-                      .add(OnChangeIndex(index: index));
-                },
+              bottomNavigationBar: Container(
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      // ignore: deprecated_member_us
+                      color: Colors.black.withOpacity(0.5),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: BottomNavigationBar(
+                  type: BottomNavigationBarType.fixed,
+                  selectedItemColor: const Color.fromRGBO(3, 23, 76, 1),
+                  unselectedItemColor: const Color.fromARGB(128, 2, 21, 73),
+                  items: const <BottomNavigationBarItem>[
+                    BottomNavigationBarItem(
+                        icon: Icon(Icons.bar_chart_sharp), label: 'Dashboard'),
+                    BottomNavigationBarItem(
+                        icon: Icon(Icons.supervised_user_circle),
+                        label: 'Users'),
+                    BottomNavigationBarItem(
+                        icon: Icon(Icons.local_parking), label: 'Parking'),
+                    BottomNavigationBarItem(
+                        icon: Icon(Icons.settings), label: 'Setting'),
+                  ],
+                  currentIndex: state.index,
+                  onTap: (index) {
+                    context
+                        .read<AdminNavigatorBloc>()
+                        .add(OnChangeIndex(index: index));
+                  },
+                ),
               ),
             );
           }

@@ -23,8 +23,9 @@ class OnUpdate extends AdminParkingEvent {
   final String id;
   final String slot_number;
   final String floor_number;
+  final String statusText;
 
-  OnUpdate(this.id, this.slot_number, this.floor_number);
+  OnUpdate(this.id, this.slot_number, this.floor_number, this.statusText);
 }
 
 class OnCreate extends AdminParkingEvent {

@@ -17,7 +17,7 @@ class AdminUserBloc extends Bloc<AdminUserEvent, AdminUserState> {
       emit(AdminUserLoading());
       try {
         final data = await fetchUsers("");
-        // log(data.toString());
+        log("data: $data");
         emit(AdminUserLoaded(users: data));
       } catch (e) {
         emit(AdminUserError(message: e.toString()));
