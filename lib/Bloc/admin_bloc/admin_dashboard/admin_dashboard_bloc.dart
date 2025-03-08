@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
@@ -13,12 +14,14 @@ part 'admin_dashboard_state.dart';
 
 class AdminDashboardBloc
     extends Bloc<AdminDashboardEvent, AdminDashboardState> {
+  Timer? _timer;
   AdminDashboardBloc() : super(AdminDashboardInitial()) {
     on<AdminDashboardOnLoad>((event, emit) async {
       emit(AdminDashboardLoading());
       try {
         final data = await fetchDashboard();
         emit(AdminDashboardLoaded(adminDashboardData: data));
+        _startAutoRefresh();
       } catch (e) {
         emit(AdminDashboardError(message: e.toString()));
       }
@@ -58,5 +61,18 @@ class AdminDashboardBloc
     } catch (e) {
       throw e.toString();
     }
+  }
+
+  void _startAutoRefresh() {
+    _timer?.cancel(); // ยกเลิก Timer เดิมก่อน
+    _timer = Timer.periodic(const Duration(seconds: 30), (timer) {
+      add(AdminDashboardRefresh()); // Trigger event ทุก 30 วินาที
+    });
+  }
+
+  @override
+  Future<void> close() {
+    _timer?.cancel(); // ปิด Timer เมื่อ Bloc ถูกปิด
+    return super.close();
   }
 }

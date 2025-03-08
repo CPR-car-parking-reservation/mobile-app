@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
@@ -12,6 +13,7 @@ part 'admin_graph_event.dart';
 part 'admin_graph_state.dart';
 
 class AdminGraphBloc extends Bloc<AdminGraphEvent, AdminGraphState> {
+  Timer? _timer;
   AdminGraphBloc() : super(AdminGraphInitial()) {
     on<AdminGraphOnLoad>((event, emit) async {
       emit(AdminGraphLoading());
@@ -23,6 +25,7 @@ class AdminGraphBloc extends Bloc<AdminGraphEvent, AdminGraphState> {
             month: event.month,
             year: event.year,
             type: event.type));
+        _startAutoRefresh();
       } catch (e) {
         emit(AdminGraphError(message: e.toString()));
       }
@@ -71,5 +74,18 @@ class AdminGraphBloc extends Bloc<AdminGraphEvent, AdminGraphState> {
     } catch (e) {
       throw e.toString();
     }
+  }
+
+  void _startAutoRefresh() {
+    _timer?.cancel(); // ยกเลิก Timer เดิมก่อน
+    _timer = Timer.periodic(const Duration(seconds: 30), (timer) {
+      add(AdminGraphOnRefresh());
+    });
+  }
+
+  @override
+  Future<void> close() {
+    _timer?.cancel(); // ปิด Timer เมื่อ Bloc ถูกปิด
+    return super.close();
   }
 }

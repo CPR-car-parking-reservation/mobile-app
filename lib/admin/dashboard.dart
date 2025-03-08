@@ -123,9 +123,16 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
   void initState() {
     super.initState();
     dateCtl.text = DateTime.now().toString().split(" ")[0];
+    _loadGraphAndReservations();
+  }
+
+  Future<void> _loadGraphAndReservations() async {
+    await Future.delayed(Duration(milliseconds: 100));
     context.read<AdminDashboardBloc>().add(AdminDashboardOnLoad());
+    await Future.delayed(Duration(milliseconds: 100));
     context.read<AdminGraphBloc>().add(AdminGraphOnLoad(
         month: selectedMonth, year: selectedYear, type: "Reservation"));
+    await Future.delayed(Duration(milliseconds: 100));
     context
         .read<AdminReservationBloc>()
         .add(AdminReservationOnLoad(date: dateCtl.text, order: selectedSort));

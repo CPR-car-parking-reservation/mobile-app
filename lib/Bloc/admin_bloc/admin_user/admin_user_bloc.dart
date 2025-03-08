@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
@@ -12,6 +13,7 @@ part 'admin_user_event.dart';
 part 'admin_user_state.dart';
 
 class AdminUserBloc extends Bloc<AdminUserEvent, AdminUserState> {
+  Timer? _timer;
   AdminUserBloc() : super(AdminUserInitial()) {
     on<OnUsersPageLoad>((event, emit) async {
       emit(AdminUserLoading());
@@ -76,5 +78,18 @@ class AdminUserBloc extends Bloc<AdminUserEvent, AdminUserState> {
     } catch (e) {
       throw e;
     }
+  }
+
+  void _startAutoRefresh() {
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 30), (timer) {
+      add(OnRefresh());
+    });
+  }
+
+  @override
+  Future<void> close() {
+    _timer?.cancel();
+    return super.close();
   }
 }

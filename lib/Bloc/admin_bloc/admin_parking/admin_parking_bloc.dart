@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
@@ -12,6 +13,7 @@ part 'admin_parking_event.dart';
 part 'admin_parking_state.dart';
 
 class AdminParkingBloc extends Bloc<AdminParkingEvent, AdminParkingState> {
+  Timer? _timer;
   AdminParkingBloc() : super(AdminParkingInitial()) {
     on<OnParkingPageLoad>((event, emit) async {
       emit(AdminParkingLoading());
@@ -19,6 +21,7 @@ class AdminParkingBloc extends Bloc<AdminParkingEvent, AdminParkingState> {
         List<ModelParkingSlot> data = await fetchParkingSlot("", "", "");
         List<ModelFloor> floorsData = await fetchFloor();
         emit(AdminParkingLoaded(parkings: data, floors: floorsData));
+        _startAutoRefresh();
       } catch (e) {
         emit(AdminParkingError(message: e.toString()));
       }
@@ -242,5 +245,18 @@ class AdminParkingBloc extends Bloc<AdminParkingEvent, AdminParkingState> {
     var response = await request.send();
 
     return response;
+  }
+
+  void _startAutoRefresh() {
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 30), (timer) {
+      add(OnRefresh());
+    });
+  }
+
+  @override
+  Future<void> close() {
+    _timer?.cancel();
+    return super.close();
   }
 }
