@@ -118,7 +118,7 @@ class _AddCarPageState extends State<AddCarPage> {
                                           onPressed: pickImage,
                                           icon: const Icon(Icons.image,
                                               color: Colors.grey, size: 150),
-                                          tooltip: 'เลือกภาพ',
+                                          tooltip: 'select an image.',
                                         ),
                                       )
                                     : null,
@@ -141,10 +141,10 @@ class _AddCarPageState extends State<AddCarPage> {
                           ],
                         ),
                         const SizedBox(height: 20),
-                        buildTextField("ป้ายทะเบียน", Icons.directions_car,
+                        buildTextField("License plate", Icons.directions_car,
                             plateController),
                         buildTextField(
-                            "รุ่นรถ", Icons.car_repair, modelController),
+                            "Car Models", Icons.car_repair, modelController),
                         DropdownFieldWidget(),
                         const SizedBox(height: 20),
                         ElevatedButton(
@@ -157,7 +157,7 @@ class _AddCarPageState extends State<AddCarPage> {
                                 imageFile: imageFile!,
                               ));
                             } else {
-                              showCustomDialogWarning(context, 'กรุณาเลือกภาพ');
+                              showCustomDialogWarning(context, 'Please select an image.');
                             }
                           },
                           style: ElevatedButton.styleFrom(

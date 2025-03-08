@@ -54,7 +54,7 @@ Widget buildDropdownField({
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(color: Colors.blue, width: 2),
           ),
-          labelText: "ประเภทรถ",
+          labelText: "Car type",
           labelStyle: const TextStyle(color: Colors.black, fontSize: 16),
           floatingLabelBehavior: FloatingLabelBehavior.never,
         ),

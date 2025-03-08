@@ -8,6 +8,8 @@ import 'package:car_parking_reservation/bloc/setting/setting_event.dart';
 import 'package:car_parking_reservation/bloc/setting/setting_state.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+const String fontFamily = "amiko";
+
 class EditCarPage extends StatefulWidget {
   // ignore: non_constant_identifier_names
   final String car_id;
@@ -35,7 +37,8 @@ class _EditCarPageState extends State<EditCarPage> {
     plateController = TextEditingController();
     modelController = TextEditingController();
     typeController = TextEditingController();
-    BlocProvider.of<SettingBloc>(context).add(FetchCarById(carId: widget.car_id));
+    BlocProvider.of<SettingBloc>(context)
+        .add(FetchCarById(carId: widget.car_id));
   }
 
   @override
@@ -70,7 +73,7 @@ class _EditCarPageState extends State<EditCarPage> {
                 child: Text(
                   'Error: ${state.message}',
                   style: const TextStyle(
-                    fontFamily: "amiko",
+                    fontFamily: fontFamily,
                   ),
                 ),
               );
@@ -98,7 +101,8 @@ class _EditCarPageState extends State<EditCarPage> {
                             icon: const Icon(Icons.arrow_back,
                                 color: Colors.white),
                             onPressed: () {
-                              BlocProvider.of<SettingBloc>(context).add(LoadUserAndCars());
+                              BlocProvider.of<SettingBloc>(context)
+                                  .add(LoadUserAndCars());
                               Navigator.pop(context, true);
                             },
                           ),
@@ -108,7 +112,7 @@ class _EditCarPageState extends State<EditCarPage> {
                               color: Colors.white,
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
-                              fontFamily: "amiko",
+                              fontFamily:fontFamily,
                             ),
                           ),
                           const SizedBox(width: 48),
@@ -132,11 +136,11 @@ class _EditCarPageState extends State<EditCarPage> {
                         },
                       ),
                       const SizedBox(height: 20),
-                      buildTextField("ป้ายทะเบียนรถ", Icons.directions_car,
+                      buildTextField("License plate", Icons.directions_car,
                           plateController),
                       const SizedBox(height: 10),
                       buildTextField(
-                          "รุ่นรถ", Icons.car_repair, modelController),
+                          "Car Models", Icons.car_repair, modelController),
                       const SizedBox(height: 10),
                       buildDropdownField(
                         selectedTypeNotifier: selectedTypeNotifier,
@@ -154,9 +158,8 @@ class _EditCarPageState extends State<EditCarPage> {
                                 plate: plateController.text,
                                 model: modelController.text,
                                 type: selectedTypeNotifier.value!,
-                                imageFile: imagePath != null
-                                    ? File(imagePath!)
-                                    : null,
+                                imageFile:
+                                    imagePath != null ? File(imagePath!) : null,
                               ),
                             );
                           },
@@ -177,7 +180,7 @@ class _EditCarPageState extends State<EditCarPage> {
                                     color: Colors.white,
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
-                                    fontFamily: "amiko",
+                                    fontFamily: fontFamily,
                                   ),
                                 ),
                         ),
@@ -202,7 +205,7 @@ class _EditCarPageState extends State<EditCarPage> {
                               color: Colors.white,
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              fontFamily: "amiko",
+                              fontFamily: fontFamily,
                             ),
                           ),
                         ),
@@ -212,7 +215,7 @@ class _EditCarPageState extends State<EditCarPage> {
                 ),
               );
             }
-            return Container();
+            return const SizedBox.shrink();
           },
         ),
       ),

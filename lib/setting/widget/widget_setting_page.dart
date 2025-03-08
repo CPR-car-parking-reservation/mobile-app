@@ -1,7 +1,4 @@
 import 'dart:developer';
-
-import 'package:car_parking_reservation/Bloc/setting/setting_bloc.dart';
-import 'package:car_parking_reservation/Bloc/setting/setting_event.dart';
 import 'package:car_parking_reservation/Login/signin.dart';
 import 'package:car_parking_reservation/bloc/navigator/navigator_bloc.dart';
 import 'package:flutter/material.dart';
@@ -87,7 +84,6 @@ void logout(BuildContext context) {
     log('logout: ${prefs.getString('token')}');
   });
 
-  
   Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
     MaterialPageRoute(builder: (context) => const Signin()),
     (route) => false,
