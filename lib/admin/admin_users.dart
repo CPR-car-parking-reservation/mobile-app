@@ -36,7 +36,13 @@ class _AdminUserPageState extends State<AdminUserPage> {
     context.read<AdminUserBloc>().add(SetLoading());
     bool isConnected = await mqttService.connect();
     if (isConnected) {
-      // log("MQTT Connected, now loading users...");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('MQTT Connected Successfully!'),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 2),
+        ),
+      );
       context.read<AdminUserBloc>().add(OnUsersPageLoad());
 
       mqttSubscription = mqttService.messageStream.listen((message) {

@@ -25,9 +25,9 @@ class MqttService {
     }
 
     final String clientId = 'client_${DateTime.now().millisecondsSinceEpoch}';
-    final String mqttBroker = dotenv.env['MQTT_BROKER'] ?? 'test.mosquitto.org';
-    final String mqttUsername = dotenv.env['MQTT_USERNAME'] ?? '';
-    final String mqttPassword = dotenv.env['MQTT_PASSWORD'] ?? '';
+    final String mqttBroker = dotenv.env['MQTT_BROKER']!;
+    final String mqttUsername = dotenv.env['MQTT_USERNAME']!;
+    final String mqttPassword = dotenv.env['MQTT_PASSWORD']!;
 
     client = MqttServerClient.withPort(mqttBroker, clientId, 8883);
     client.secure = true;
@@ -51,7 +51,7 @@ class MqttService {
 
   void _subscribe() {
     if (!_isSubscribed) {
-      final String topic = dotenv.env['MQTT_ADMIN_TOPIC'] ?? 'admin_topic';
+      final String topic = dotenv.env['MQTT_MOBILE_TOPIC']!;
       client.subscribe(topic, MqttQos.atMostOnce);
       client.updates?.listen((List<MqttReceivedMessage<MqttMessage>> c) {
         final MqttPublishMessage recMess = c[0].payload as MqttPublishMessage;

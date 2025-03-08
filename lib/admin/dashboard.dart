@@ -48,7 +48,13 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
     bool isConnected = await mqttService.connect();
     if (isConnected) {
       _loadGraphAndReservations();
-
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('MQTT Connected Successfully!'),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 2),
+        ),
+      );
       mqttSubscription = mqttService.messageStream.listen((message) {
         if (message == "fetch slot" ||
             message == "fetch user" ||

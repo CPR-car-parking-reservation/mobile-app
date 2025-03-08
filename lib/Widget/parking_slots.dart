@@ -80,10 +80,17 @@ class _ParkingSlots extends State<ParkingSlots> {
     context.read<ParkingBloc>().add(SetLoading());
     bool isConnected = await mqttService.connect();
     if (isConnected) {
-      // log("MQTT Connected, now loading users...");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('MQTT Connected Successfully!'),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 2),
+        ),
+      );
       context.read<ParkingBloc>().add(OnFirstParkingSlot());
 
       mqttSubscription = mqttService.messageStream.listen((message) {
+        log(message);
         if (message == "fetch slot") {
           context.read<ParkingBloc>().add(RefrechParkingSlot());
         }
