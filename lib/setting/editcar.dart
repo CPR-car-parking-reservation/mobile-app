@@ -55,7 +55,7 @@ class _EditCarPageState extends State<EditCarPage> {
       listener: (context, state) {
         if (state is SettingSuccess) {
           showCustomDialogSucess(context, state.message);
-          Navigator.pop(context, state.message);
+          Navigator.pop(context, true);
         } else if (state is SettingError) {
           showCustomDialogWarning(context, state.message);
         }
@@ -101,8 +101,6 @@ class _EditCarPageState extends State<EditCarPage> {
                             icon: const Icon(Icons.arrow_back,
                                 color: Colors.white),
                             onPressed: () {
-                              BlocProvider.of<SettingBloc>(context)
-                                  .add(LoadUserAndCars());
                               Navigator.pop(context, true);
                             },
                           ),

@@ -70,6 +70,7 @@ class _DropdownFieldWidgetState extends State<DropdownFieldWidget> {
             child: Text(
               value,
               style: const TextStyle(
+                fontSize: 16 , 
                 color: Colors.black,
                 fontFamily: fontFamily,
               ),
