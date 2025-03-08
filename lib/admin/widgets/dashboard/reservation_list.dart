@@ -71,7 +71,7 @@ class _AdminListViewHistoryState extends State<AdminListViewHistory> {
                                   fontSize: 14),
                             ),
                             Text(
-                              "${history_user.user.name}",
+                              "${history_user.user.name} ${history_user.user.surname}",
                               style: const TextStyle(
                                   fontFamily: "Amiko", fontSize: 14),
                             ),
