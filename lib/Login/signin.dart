@@ -23,7 +23,7 @@ class _SigninState extends State<Signin> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     log('token: $token');
-    if (token != null || token != "") {
+    if (token != null) {
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => Home()),
