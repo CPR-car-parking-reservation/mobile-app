@@ -18,6 +18,7 @@ class AdminUserBloc extends Bloc<AdminUserEvent, AdminUserState> {
     on<OnUsersPageLoad>((event, emit) async {
       emit(AdminUserLoading());
       try {
+        log("call bloc fetchUsers");
         final data = await fetchUsers("");
         log("data: $data");
         emit(AdminUserLoaded(users: data));
@@ -49,6 +50,10 @@ class AdminUserBloc extends Bloc<AdminUserEvent, AdminUserState> {
           search: newSearch,
         ));
       }
+    });
+
+    on<SetLoading>((event, emit) async {
+      emit(AdminUserLoading());
     });
   }
 

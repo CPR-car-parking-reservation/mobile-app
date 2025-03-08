@@ -20,3 +20,5 @@ final class OnSearch extends AdminUserEvent {
 
   const OnSearch({this.search});
 }
+
+final class SetLoading extends AdminUserEvent {}

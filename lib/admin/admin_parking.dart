@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
@@ -5,6 +6,7 @@ import 'package:car_parking_reservation/Bloc/admin_bloc/admin_parking/admin_park
 import 'package:car_parking_reservation/Widget/custom_dialog.dart';
 import 'package:car_parking_reservation/admin/widgets/parking/list_view.dart';
 import 'package:car_parking_reservation/model/admin/parking.dart';
+import 'package:car_parking_reservation/mqtt/mqtt_service.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,16 +14,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:uuid/uuid.dart';
-
-enum MqttCurrentConnectionState {
-  IDLE,
-  CONNECTING,
-  CONNECTED,
-  DISCONNECTED,
-  ERROR_WHEN_CONNECTING
-}
-
-enum MqttSubscriptionState { IDLE, SUBSCRIBED }
 
 class AdminParkingPage extends StatefulWidget {
   const AdminParkingPage({super.key});
@@ -31,81 +23,35 @@ class AdminParkingPage extends StatefulWidget {
 }
 
 class _AdminParkingPageState extends State<AdminParkingPage> {
-  late MqttServerClient client;
-  var uuid = Uuid();
-  var v4 = Uuid().v4();
-  //
-  var clientId =
-      Uuid().v4() + 'mobile' + DateTime.now().millisecondsSinceEpoch.toString();
-
-  MqttCurrentConnectionState connectionState = MqttCurrentConnectionState.IDLE;
-  MqttSubscriptionState subscriptionState = MqttSubscriptionState.IDLE;
-
-  Future<void> _connectClient() async {
-    final String clientId = Uuid().v4() +
-        'mobile' +
-        DateTime.now().millisecondsSinceEpoch.toString();
-    final String mqtt_broker = dotenv.env['MQTT_BROKER'].toString();
-    final String mqtt_username = dotenv.env['MQTT_USERNAME'].toString();
-    final String mqtt_password = dotenv.env['MQTT_PASSWORD'].toString();
-    final String mqtt_topic = dotenv.env['MQTT_ADMIN_TOPIC'].toString();
-
-    // Create a new MqttServerClient instance
-
-    client = MqttServerClient.withPort(mqtt_broker, clientId, 8883);
-    client.secure = true;
-    client.securityContext = SecurityContext.defaultContext;
-    client.keepAlivePeriod = 60;
-    client.onDisconnected = _onDisconnected;
-    client.onConnected = _onConnected;
-    client.onSubscribed = _onSubscribed;
-    connectionState = MqttCurrentConnectionState.CONNECTING;
-    await client.connect(mqtt_username, mqtt_password);
-
-    // Connect to the broker
-    try {
-      await client.connect();
-    } on NoConnectionException catch (e) {
-      log('Connection exception: $e');
-      rethrow;
-    } catch (e) {
-      log('Unexpected error: $e');
-      rethrow;
-    }
-
-    client.subscribe(mqtt_topic, MqttQos.atMostOnce);
-    client.updates?.listen((List<MqttReceivedMessage<MqttMessage>> c) {
-      final MqttPublishMessage recMess = c[0].payload as MqttPublishMessage;
-      String message =
-          MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
-      log('Received message: $message');
-
-      if (message == "fetch slot") {
-        context.read<AdminParkingBloc>().add(OnRefresh());
-      }
-    });
-  }
-
-  void _onSubscribed(String topic) {
-    log('Subscription confirmed for topic: $topic');
-    subscriptionState = MqttSubscriptionState.SUBSCRIBED;
-  }
-
-  void _onDisconnected() {
-    log('Client disconnected');
-    connectionState = MqttCurrentConnectionState.DISCONNECTED;
-  }
-
-  void _onConnected() {
-    log('Client connected successfully');
-    connectionState = MqttCurrentConnectionState.CONNECTED;
-  }
+  final mqttService = MqttService();
+  StreamSubscription<String>? mqttSubscription;
 
   @override
   void initState() {
     super.initState();
-    _connectClient();
-    context.read<AdminParkingBloc>().add(OnParkingPageLoad());
+    _initializeMqttAndLoadData();
+  }
+
+  Future<void> _initializeMqttAndLoadData() async {
+    context.read<AdminParkingBloc>().add(SetLoading());
+    bool isConnected = await mqttService.connect();
+    if (isConnected) {
+      context.read<AdminParkingBloc>().add(OnParkingPageLoad());
+
+      mqttSubscription = mqttService.messageStream.listen((message) {
+        if (message == "fetch slot") {
+          context.read<AdminParkingBloc>().add(OnRefresh());
+        }
+      });
+    } else {
+      log("MQTT Connection failed, skipping user load");
+    }
+  }
+
+  @override
+  void dispose() {
+    mqttSubscription?.cancel();
+    super.dispose();
   }
 
   final TextEditingController _searchController = TextEditingController();

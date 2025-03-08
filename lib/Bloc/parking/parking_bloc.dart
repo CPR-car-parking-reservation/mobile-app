@@ -14,6 +14,10 @@ class ParkingBloc extends Bloc<ParkingEvent, ParkingState> {
   Timer? _timer; // เพิ่มตัวจับเวลา
 
   ParkingBloc() : super(ParkingInitial()) {
+    on<SetLoading>((event, emit) {
+      emit(ParkingLoading());
+    });
+
     on<OnFirstParkingSlot>((event, emit) async {
       emit(ParkingLoading());
       try {
@@ -31,7 +35,8 @@ class ParkingBloc extends Bloc<ParkingEvent, ParkingState> {
       if (state is ParkingLoaded) {
         try {
           final parkingSlots = await onFetchData();
-          emit(ParkingLoaded(parkingSlots)); // อัปเดตสถานะโดยไม่ต้องแสดง Loading
+          emit(
+              ParkingLoaded(parkingSlots)); // อัปเดตสถานะโดยไม่ต้องแสดง Loading
         } catch (e) {
           emit(ParkingError("Now : Failed to load data!"));
         }
@@ -97,4 +102,3 @@ class ParkingBloc extends Bloc<ParkingEvent, ParkingState> {
     return super.close();
   }
 }
-

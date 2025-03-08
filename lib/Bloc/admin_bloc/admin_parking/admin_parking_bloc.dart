@@ -15,6 +15,10 @@ part 'admin_parking_state.dart';
 class AdminParkingBloc extends Bloc<AdminParkingEvent, AdminParkingState> {
   Timer? _timer;
   AdminParkingBloc() : super(AdminParkingInitial()) {
+    on<SetLoading>((event, emit) {
+      emit(AdminParkingLoading());
+    });
+
     on<OnParkingPageLoad>((event, emit) async {
       emit(AdminParkingLoading());
       try {

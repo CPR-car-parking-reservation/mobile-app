@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
 import 'package:car_parking_reservation/Widget/custom_dialog.dart';
 import 'package:car_parking_reservation/model/parking_slot.dart';
+import 'package:car_parking_reservation/mqtt/mqtt_service.dart';
 import 'package:car_parking_reservation/reserv.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mqtt_client/mqtt_client.dart';
@@ -36,86 +38,11 @@ class ParkingSlots extends StatefulWidget {
   }
 }
 
-enum MqttCurrentConnectionState {
-  IDLE,
-  CONNECTING,
-  CONNECTED,
-  DISCONNECTED,
-  ERROR_WHEN_CONNECTING
-}
-
-enum MqttSubscriptionState { IDLE, SUBSCRIBED }
-
 // State ของ ParkingSlots
 class _ParkingSlots extends State<ParkingSlots> {
   String selectedFloor = "F1"; // กำหนดชั้นที่เลือกเริ่มต้นเป็น F1
-
-  late MqttServerClient client;
-  var uuid = Uuid();
-  var v4 = Uuid().v4();
-
-  MqttCurrentConnectionState connectionState = MqttCurrentConnectionState.IDLE;
-  MqttSubscriptionState subscriptionState = MqttSubscriptionState.IDLE;
-
-  Future<void> _connectClient() async {
-    final String clientId = Uuid().v4() +
-        'mobile' +
-        DateTime.now().millisecondsSinceEpoch.toString();
-    final String mqtt_broker = dotenv.env['MQTT_BROKER'].toString();
-    final String mqtt_username = dotenv.env['MQTT_USERNAME'].toString();
-    final String mqtt_password = dotenv.env['MQTT_PASSWORD'].toString();
-    final String mqtt_topic = dotenv.env['MQTT_USER_TOPIC'].toString();
-
-    // Create a new MqttServerClient instance
-
-    client = MqttServerClient.withPort(mqtt_broker, clientId, 8883);
-    client.secure = true;
-    client.securityContext = SecurityContext.defaultContext;
-    client.keepAlivePeriod = 60;
-    client.onDisconnected = _onDisconnected;
-    client.onConnected = _onConnected;
-    client.onSubscribed = _onSubscribed;
-    connectionState = MqttCurrentConnectionState.CONNECTING;
-    await client.connect(mqtt_username, mqtt_password);
-
-    // Connect to the broker
-    try {
-      await client.connect();
-    } on NoConnectionException catch (e) {
-      log('Connection exception: $e');
-      rethrow;
-    } catch (e) {
-      log('Unexpected error: $e');
-      rethrow;
-    }
-
-    client.subscribe(mqtt_topic, MqttQos.atMostOnce);
-    client.updates?.listen((List<MqttReceivedMessage<MqttMessage>> c) {
-      final MqttPublishMessage recMess = c[0].payload as MqttPublishMessage;
-      String message =
-          MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
-      log('Received message: $message');
-
-      if (message == "fetch slot") {
-        context.read<ParkingBloc>().add(RefrechParkingSlot());
-      }
-    });
-  }
-
-  void _onSubscribed(String topic) {
-    log('Subscription confirmed for topic: $topic');
-    subscriptionState = MqttSubscriptionState.SUBSCRIBED;
-  }
-
-  void _onDisconnected() {
-    log('Client disconnected');
-    connectionState = MqttCurrentConnectionState.DISCONNECTED;
-  }
-
-  void _onConnected() {
-    log('Client connected successfully');
-    connectionState = MqttCurrentConnectionState.CONNECTED;
-  }
+  final mqttService = MqttService();
+  StreamSubscription<String>? mqttSubscription;
 
   // กรองเฉพาะที่จอดรถที่อยู่ในชั้นที่เลือก
   List<ParkingSlot> getFilteredSlots(List<ParkingSlot> slots) {
@@ -145,8 +72,25 @@ class _ParkingSlots extends State<ParkingSlots> {
   @override
   void initState() {
     context.read<ParkingBloc>().add(OnFirstParkingSlot());
-    _connectClient();
+    _initializeMqttAndLoadData();
     super.initState();
+  }
+
+  Future<void> _initializeMqttAndLoadData() async {
+    context.read<ParkingBloc>().add(SetLoading());
+    bool isConnected = await mqttService.connect();
+    if (isConnected) {
+      // log("MQTT Connected, now loading users...");
+      context.read<ParkingBloc>().add(OnFirstParkingSlot());
+
+      mqttSubscription = mqttService.messageStream.listen((message) {
+        if (message == "fetch slot") {
+          context.read<ParkingBloc>().add(RefrechParkingSlot());
+        }
+      });
+    } else {
+      log("MQTT Connection failed, skipping user load");
+    }
   }
 
   @override

@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
 import 'package:car_parking_reservation/Bloc/admin_bloc/admin_user/admin_user_bloc.dart';
 import 'package:car_parking_reservation/Widget/custom_dialog.dart';
 import 'package:car_parking_reservation/admin/widgets/users/user_list_view.dart';
+import 'package:car_parking_reservation/mqtt/mqtt_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -18,94 +20,39 @@ class AdminUserPage extends StatefulWidget {
   State<AdminUserPage> createState() => _AdminUserPageState();
 }
 
-enum MqttCurrentConnectionState {
-  IDLE,
-  CONNECTING,
-  CONNECTED,
-  DISCONNECTED,
-  ERROR_WHEN_CONNECTING
-}
-
-enum MqttSubscriptionState { IDLE, SUBSCRIBED }
-
 class _AdminUserPageState extends State<AdminUserPage> {
-  late MqttServerClient client;
-  var uuid = Uuid();
-  var v4 = Uuid().v4();
-  //
-  var clientId =
-      Uuid().v4() + 'mobile' + DateTime.now().millisecondsSinceEpoch.toString();
-
-  MqttCurrentConnectionState connectionState = MqttCurrentConnectionState.IDLE;
-  MqttSubscriptionState subscriptionState = MqttSubscriptionState.IDLE;
-
-  Future<void> _connectClient() async {
-    final String clientId = Uuid().v4() +
-        'mobile' +
-        DateTime.now().millisecondsSinceEpoch.toString();
-    final String mqtt_broker = dotenv.env['MQTT_BROKER'].toString();
-    final String mqtt_username = dotenv.env['MQTT_USERNAME'].toString();
-    final String mqtt_password = dotenv.env['MQTT_PASSWORD'].toString();
-    final String mqtt_topic = dotenv.env['MQTT_ADMIN_TOPIC'].toString();
-
-    // Create a new MqttServerClient instance
-
-    client = MqttServerClient.withPort(mqtt_broker, clientId, 8883);
-    client.secure = true;
-    client.securityContext = SecurityContext.defaultContext;
-    client.keepAlivePeriod = 60;
-    client.onDisconnected = _onDisconnected;
-    client.onConnected = _onConnected;
-    client.onSubscribed = _onSubscribed;
-    connectionState = MqttCurrentConnectionState.CONNECTING;
-    await client.connect(mqtt_username, mqtt_password);
-
-    // Connect to the broker
-    try {
-      await client.connect();
-    } on NoConnectionException catch (e) {
-      log('Connection exception: $e');
-      rethrow;
-    } catch (e) {
-      log('Unexpected error: $e');
-      rethrow;
-    }
-
-    client.subscribe(mqtt_topic, MqttQos.atMostOnce);
-    client.updates?.listen((List<MqttReceivedMessage<MqttMessage>> c) {
-      final MqttPublishMessage recMess = c[0].payload as MqttPublishMessage;
-      String message =
-          MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
-      log('Received message: $message');
-
-      if (message == "fetch user") {
-        context.read<AdminUserBloc>().add(OnRefresh());
-      }
-    });
-  }
-
-  void _onSubscribed(String topic) {
-    log('Subscription confirmed for topic: $topic');
-    subscriptionState = MqttSubscriptionState.SUBSCRIBED;
-  }
-
-  void _onDisconnected() {
-    log('Client disconnected');
-    connectionState = MqttCurrentConnectionState.DISCONNECTED;
-  }
-
-  void _onConnected() {
-    log('Client connected successfully');
-    connectionState = MqttCurrentConnectionState.CONNECTED;
-  }
-
   final TextEditingController _searchController = TextEditingController();
+  final mqttService = MqttService();
+  StreamSubscription<String>? mqttSubscription;
 
   @override
   void initState() {
-    context.read<AdminUserBloc>().add(OnUsersPageLoad());
-    _connectClient();
     super.initState();
+    context.read<AdminUserBloc>().add(OnUsersPageLoad());
+    _initializeMqttAndLoadData();
+  }
+
+  Future<void> _initializeMqttAndLoadData() async {
+    context.read<AdminUserBloc>().add(SetLoading());
+    bool isConnected = await mqttService.connect();
+    if (isConnected) {
+      // log("MQTT Connected, now loading users...");
+      context.read<AdminUserBloc>().add(OnUsersPageLoad());
+
+      mqttSubscription = mqttService.messageStream.listen((message) {
+        if (message == "fetch user") {
+          context.read<AdminUserBloc>().add(OnRefresh());
+        }
+      });
+    } else {
+      log("MQTT Connection failed, skipping user load");
+    }
+  }
+
+  @override
+  void dispose() {
+    mqttSubscription?.cancel();
+    super.dispose();
   }
 
   @override

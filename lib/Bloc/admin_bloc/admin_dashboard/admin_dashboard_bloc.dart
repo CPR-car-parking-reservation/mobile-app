@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:car_parking_reservation/Bloc/admin_bloc/admin_user/admin_user_bloc.dart';
 import 'package:car_parking_reservation/model/admin/dashboard.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -16,6 +17,9 @@ class AdminDashboardBloc
     extends Bloc<AdminDashboardEvent, AdminDashboardState> {
   Timer? _timer;
   AdminDashboardBloc() : super(AdminDashboardInitial()) {
+    on<SetLoading>((event, emit) {
+      emit(AdminDashboardLoading());
+    });
     on<AdminDashboardOnLoad>((event, emit) async {
       emit(AdminDashboardLoading());
       try {

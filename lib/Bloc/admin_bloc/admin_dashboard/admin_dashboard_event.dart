@@ -10,3 +10,5 @@ sealed class AdminDashboardEvent {
 final class AdminDashboardOnLoad extends AdminDashboardEvent {}
 
 final class AdminDashboardRefresh extends AdminDashboardEvent {}
+
+final class SetLoading extends AdminDashboardEvent {}

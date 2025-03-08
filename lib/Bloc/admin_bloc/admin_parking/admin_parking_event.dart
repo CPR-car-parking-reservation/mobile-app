@@ -5,6 +5,8 @@ sealed class AdminParkingEvent {}
 
 final class OnParkingPageLoad extends AdminParkingEvent {}
 
+final class SetLoading extends AdminParkingEvent {}
+
 class OnRefresh extends AdminParkingEvent {
   final String? search;
   final String? floor;
