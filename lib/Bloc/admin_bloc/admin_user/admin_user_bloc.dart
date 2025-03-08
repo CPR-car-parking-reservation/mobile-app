@@ -33,6 +33,21 @@ class AdminUserBloc extends Bloc<AdminUserEvent, AdminUserState> {
         emit(AdminUserError(message: e.toString()));
       }
     });
+
+    on<OnRefresh>((event, emit) async {
+      final currentState = state;
+
+      if (currentState is AdminUserLoaded) {
+        final newSearch = event.search ?? currentState.search;
+
+        final data = await fetchUsers(newSearch);
+
+        emit(AdminUserLoaded(
+          users: data,
+          search: newSearch,
+        ));
+      }
+    });
   }
 
   String baseUrl = dotenv.env['BASE_URL'].toString();

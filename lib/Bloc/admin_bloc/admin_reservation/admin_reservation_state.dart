@@ -13,13 +13,17 @@ final class AdminReservationLoading extends AdminReservationState {}
 
 final class AdminReservationLoaded extends AdminReservationState {
   final List<Model_History_data> adminReservationData;
+  final String date;
+  final String order;
 
   AdminReservationLoaded({
     required this.adminReservationData,
+    required this.date,
+    required this.order,
   });
 
   @override
-  List<Object> get props => [adminReservationData];
+  List<Object> get props => [adminReservationData, date, order];
 }
 
 final class AdminReservationError extends AdminReservationState {

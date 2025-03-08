@@ -14,15 +14,32 @@ part 'admin_graph_state.dart';
 class AdminGraphBloc extends Bloc<AdminGraphEvent, AdminGraphState> {
   AdminGraphBloc() : super(AdminGraphInitial()) {
     on<AdminGraphOnLoad>((event, emit) async {
-      log("AdminGraphOnLoad ${event.month} ${event.year} ${event.type}");
       emit(AdminGraphLoading());
       try {
         final data = await fetchGraph(event.month, event.year, event.type);
-        log("AdminGraphOnLoad ${data.length}");
-        emit(AdminGraphLoaded(adminGraphData: data));
+
+        emit(AdminGraphLoaded(
+            adminGraphData: data,
+            month: event.month,
+            year: event.year,
+            type: event.type));
       } catch (e) {
-        log(e.toString());
         emit(AdminGraphError(message: e.toString()));
+      }
+    });
+    on((AdminGraphOnRefresh event, emit) async {
+      final state = this.state;
+      if (state is AdminGraphLoaded) {
+        try {
+          final data = await fetchGraph(state.month, state.year, state.type);
+          emit(AdminGraphLoaded(
+              adminGraphData: data,
+              month: state.month,
+              year: state.year,
+              type: state.type));
+        } catch (e) {
+          emit(AdminGraphError(message: e.toString()));
+        }
       }
     });
   }

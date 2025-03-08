@@ -114,6 +114,26 @@ class AdminParkingBloc extends Bloc<AdminParkingEvent, AdminParkingState> {
         }
       }
     });
+
+    on<OnRefresh>((event, emit) async {
+      final currentState = state;
+
+      if (currentState is AdminParkingLoaded) {
+        final newSearch = event.search ?? currentState.search;
+        final newFloor = event.floor ?? currentState.floor;
+        final newStatus = event.status ?? currentState.status;
+
+        final data = await fetchParkingSlot(newSearch, newFloor, newStatus);
+
+        emit(AdminParkingLoaded(
+          floors: currentState.floors,
+          parkings: data,
+          search: newSearch,
+          floor: newFloor,
+          status: newStatus,
+        ));
+      }
+    });
   }
   String baseUrl = dotenv.env['BASE_URL'].toString();
 

@@ -9,6 +9,12 @@ sealed class AdminUserEvent {
 
 final class OnUsersPageLoad extends AdminUserEvent {}
 
+final class OnRefresh extends AdminUserEvent {
+  final String? search;
+
+  const OnRefresh({this.search});
+}
+
 final class OnSearch extends AdminUserEvent {
   final String? search;
 

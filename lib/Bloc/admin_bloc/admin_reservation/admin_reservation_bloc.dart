@@ -17,9 +17,25 @@ class AdminReservationBloc
       emit(AdminReservationLoading());
       try {
         final data = await fetchReservation(event.date, event.order);
-        emit(AdminReservationLoaded(adminReservationData: data));
+        emit(AdminReservationLoaded(
+            adminReservationData: data, date: event.date, order: event.order));
       } catch (e) {
         emit(AdminReservationError(message: e.toString()));
+      }
+    });
+
+    on<AdminReservationOnRefresh>((event, emit) async {
+      final state = this.state;
+      if (state is AdminReservationLoaded) {
+        try {
+          final data = await fetchReservation(state.date, state.order);
+          emit(AdminReservationLoaded(
+              adminReservationData: data,
+              date: state.date,
+              order: state.order));
+        } catch (e) {
+          emit(AdminReservationError(message: e.toString()));
+        }
       }
     });
   }

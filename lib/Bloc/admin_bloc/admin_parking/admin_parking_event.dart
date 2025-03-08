@@ -5,6 +5,14 @@ sealed class AdminParkingEvent {}
 
 final class OnParkingPageLoad extends AdminParkingEvent {}
 
+class OnRefresh extends AdminParkingEvent {
+  final String? search;
+  final String? floor;
+  final String? status;
+
+  OnRefresh({this.search, this.floor, this.status});
+}
+
 class OnSearch extends AdminParkingEvent {
   final String? search;
   final String? floor;

@@ -23,18 +23,4 @@ final class AdminReservationOnLoad extends AdminReservationEvent {
       ];
 }
 
-final class AdminReservationOnRefresh extends AdminReservationEvent {
-  final int date;
-  final String order;
-
-  AdminReservationOnRefresh({
-    required this.date,
-    required this.order,
-  });
-
-  @override
-  List<Object> get props => [
-        date,
-        order,
-      ];
-}
+final class AdminReservationOnRefresh extends AdminReservationEvent {}

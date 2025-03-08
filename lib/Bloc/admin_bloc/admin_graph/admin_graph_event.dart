@@ -22,15 +22,4 @@ final class AdminGraphOnLoad extends AdminGraphEvent {
   List<Object> get props => [month, year, type];
 }
 
-final class AdminGraphOnRefresh extends AdminGraphEvent {
-  final int month;
-  final int year;
-
-  AdminGraphOnRefresh({
-    required this.month,
-    required this.year,
-  });
-
-  @override
-  List<Object> get props => [month, year];
-}
+final class AdminGraphOnRefresh extends AdminGraphEvent {}

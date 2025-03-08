@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:car_parking_reservation/Widget/custom_dialog.dart';
 import 'package:car_parking_reservation/model/parking_slot.dart';
 import 'package:car_parking_reservation/reserv.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:flutter/material.dart';
@@ -57,13 +58,17 @@ class _ParkingSlots extends State<ParkingSlots> {
   MqttSubscriptionState subscriptionState = MqttSubscriptionState.IDLE;
 
   Future<void> _connectClient() async {
-    log('Connecting to the broker...');
-    
-    
+    final String clientId = Uuid().v4() +
+        'mobile' +
+        DateTime.now().millisecondsSinceEpoch.toString();
+    final String mqtt_broker = dotenv.env['MQTT_BROKER'].toString();
+    final String mqtt_username = dotenv.env['MQTT_USERNAME'].toString();
+    final String mqtt_password = dotenv.env['MQTT_PASSWORD'].toString();
+    final String mqtt_topic = dotenv.env['MQTT_USER_TOPIC'].toString();
+
     // Create a new MqttServerClient instance
 
-    client = MqttServerClient.withPort(
-        '61d93b772b6242a892508d48bf7f77ba.s1.eu.hivemq.cloud', 'mobile2', 8883);
+    client = MqttServerClient.withPort(mqtt_broker, clientId, 8883);
     client.secure = true;
     client.securityContext = SecurityContext.defaultContext;
     client.keepAlivePeriod = 60;
@@ -71,7 +76,7 @@ class _ParkingSlots extends State<ParkingSlots> {
     client.onConnected = _onConnected;
     client.onSubscribed = _onSubscribed;
     connectionState = MqttCurrentConnectionState.CONNECTING;
-    await client.connect('mobile2', 'Mobile2123');
+    await client.connect(mqtt_username, mqtt_password);
 
     // Connect to the broker
     try {
@@ -84,7 +89,7 @@ class _ParkingSlots extends State<ParkingSlots> {
       rethrow;
     }
 
-    client.subscribe('cpr/from_server/trigger', MqttQos.atMostOnce);
+    client.subscribe(mqtt_topic, MqttQos.atMostOnce);
     client.updates?.listen((List<MqttReceivedMessage<MqttMessage>> c) {
       final MqttPublishMessage recMess = c[0].payload as MqttPublishMessage;
       String message =

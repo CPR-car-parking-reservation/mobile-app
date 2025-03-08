@@ -23,6 +23,14 @@ class AdminDashboardBloc
         emit(AdminDashboardError(message: e.toString()));
       }
     });
+    on<AdminDashboardRefresh>((event, emit) async {
+      try {
+        final data = await fetchDashboard();
+        emit(AdminDashboardLoaded(adminDashboardData: data));
+      } catch (e) {
+        emit(AdminDashboardError(message: e.toString()));
+      }
+    });
   }
 
   String baseUrl = dotenv.env['BASE_URL'].toString();
