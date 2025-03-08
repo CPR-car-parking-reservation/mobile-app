@@ -3,8 +3,6 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:car_parking_reservation/model/admin/reservation.dart';
-import 'package:car_parking_reservation/model/history.dart';
-import 'package:equatable/equatable.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
