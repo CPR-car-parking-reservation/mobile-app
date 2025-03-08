@@ -4,7 +4,7 @@ import 'package:car_parking_reservation/model/admin/users.dart';
 class Model_History_data {
   final String id;
   final ModelParkingSlot parking_slots;
-  final String start_at;
+  final String created_at;
   final String? end_at;
   final String status;
   final price;
@@ -12,7 +12,7 @@ class Model_History_data {
 
   Model_History_data({
     required this.id,
-    required this.start_at,
+    required this.created_at,
     this.end_at,
     required this.parking_slots,
     required this.user,
@@ -26,7 +26,7 @@ class Model_History_data {
       user: ModelUsers.fromJson(json['user']),
       price: json['price'] ?? '',
       status: json['status'],
-      start_at: json['start_at'],
+      created_at: json['created_at'],
       end_at: json['end_at'] ?? '',
       parking_slots: ModelParkingSlot.fromJson(json['parking_slots']),
     );

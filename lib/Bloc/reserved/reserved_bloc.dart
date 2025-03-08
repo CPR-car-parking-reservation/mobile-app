@@ -34,8 +34,7 @@ class ReservedBloc extends Bloc<ReservedEvent, ReservedState> {
     on<SendReservation>((event, emit) async {
       emit(ReserveLoading());
       try {
-        final response =
-            await postData(event.car_id, event.parking_slot_id, event.start_at);
+        final response = await postData(event.car_id, event.parking_slot_id);
         final responseBody = await response.stream.bytesToString();
 
         log("Response Body: $responseBody");
@@ -53,8 +52,8 @@ class ReservedBloc extends Bloc<ReservedEvent, ReservedState> {
           SharedPreferences prefs = await SharedPreferences.getInstance();
           await prefs.setString('reservation_id', reservationId);
 
-          emit(ReservCreated(event.car_id, event.parking_slot_id,
-              event.start_at, reservationId));
+          emit(ReservCreated(
+              event.car_id, event.parking_slot_id, reservationId));
           emit(ReservedSuccess(
               reservationId: reservationId,
               message: decodeResponse['message']));
@@ -63,7 +62,7 @@ class ReservedBloc extends Bloc<ReservedEvent, ReservedState> {
               decodeResponse['message'] ?? 'Failed to create reservation.');
         }
 
-        log("Sent Data: car_id=${event.car_id}, parking_slot_id=${event.parking_slot_id}, start_at=${event.start_at}");
+        log("Sent Data: car_id=${event.car_id}, parking_slot_id=${event.parking_slot_id}");
       } catch (e) {
         log("Error: $e");
         emit(ReservedError(e.toString()));
@@ -97,13 +96,12 @@ class ReservedBloc extends Bloc<ReservedEvent, ReservedState> {
   }
 
   String baseUrl = dotenv.env['BASE_URL'].toString();
-  Future<http.StreamedResponse> postData(carId, parkingSlotId, startAt) async {
+  Future<http.StreamedResponse> postData(carId, parkingSlotId) async {
     final url = Uri.parse("$baseUrl/reservation");
 
     var request = http.MultipartRequest('POST', url)
       ..fields['car_id'] = carId
-      ..fields['parking_slot_id'] = parkingSlotId
-      ..fields['start_at'] = startAt;
+      ..fields['parking_slot_id'] = parkingSlotId;
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('token') ?? '';

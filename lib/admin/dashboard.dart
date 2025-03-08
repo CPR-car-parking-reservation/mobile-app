@@ -587,6 +587,20 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
                           return Center(child: Text(state.message));
                         }
                         if (state is AdminReservationLoaded) {
+                          if (state.adminReservationData.isEmpty) {
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.only(top: 30, bottom: 20),
+                              child: Center(
+                                  child: Text(
+                                "No reservation found",
+                                style: TextStyle(
+                                    fontFamily: "Amiko",
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w700),
+                              )),
+                            );
+                          }
                           return Padding(
                             padding: const EdgeInsets.only(top: 0, bottom: 0),
                             child: SizedBox(

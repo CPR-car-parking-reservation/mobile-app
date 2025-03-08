@@ -155,8 +155,11 @@ class _HistoryState extends State<History> {
                                                     fontSize: 16),
                                               ),
                                               Text(
-                                                "${NumberFormat("#,###.##").format(double.parse(history_user.price))} ฿" ??
-                                                    'N/A',
+                                                history_user.price.toString() ==
+                                                        ''
+                                                    ? 'N/A'
+                                                    : "${NumberFormat("#,###.##").format(double.parse(history_user.price.toString()))} ฿" ??
+                                                        'N/A',
                                                 style: const TextStyle(
                                                     fontFamily: "Amiko",
                                                     fontSize: 16),

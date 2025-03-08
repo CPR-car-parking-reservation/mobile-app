@@ -36,7 +36,7 @@ class _AdminListViewHistoryState extends State<AdminListViewHistory> {
       itemCount: widget.History.length,
       itemBuilder: (context, index) {
         final history_user = widget.History[index];
-        final history_date_start = history_user.start_at;
+        final history_date_start = history_user.created_at;
         var history_date_end =
             history_user.end_at == null ? '' : history_user.end_at;
 
@@ -123,8 +123,11 @@ class _AdminListViewHistoryState extends State<AdminListViewHistory> {
                                   fontSize: 14),
                             ),
                             Text(
-                              "${NumberFormat("#,###.##").format(double.parse(history_user.price))} ฿" ??
-                                  'N/A',
+                              history_user.price == null ||
+                                      history_user.price == ''
+                                  ? 'N/A'
+                                  : "${NumberFormat("#,###.##").format(double.parse(history_user.price.toString()))} ฿" ??
+                                      'N/A',
                               style: const TextStyle(
                                   fontFamily: "Amiko", fontSize: 14),
                             ),

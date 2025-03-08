@@ -31,10 +31,8 @@ class ReservCreated extends ReservedState {
   final String reservationId;
   final String car_id;
   final String parking_slot_id;
-  final String start_at;
 
-  ReservCreated(
-      this.car_id, this.parking_slot_id, this.start_at, this.reservationId);
+  ReservCreated(this.car_id, this.parking_slot_id, this.reservationId);
 }
 
 class ReservedError extends ReservedState {

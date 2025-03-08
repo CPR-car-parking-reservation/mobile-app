@@ -32,8 +32,9 @@ class Reservation_Model {
       id: json['id'],
       userId: json['user_id'],
       createdAt: DateTime.parse(json['created_at']),
-      startAt:
-          json['start_at'] != null ? DateTime.tryParse(json['start_at']) : null,
+      startAt: json['created_at'] != null
+          ? DateTime.tryParse(json['created_at'])
+          : null,
       endAt: json['end_at'] != null ? DateTime.tryParse(json['end_at']) : null,
       updatedAt: DateTime.parse(json['updated_at']),
       parkingSlotId: json['parking_slot_id'],

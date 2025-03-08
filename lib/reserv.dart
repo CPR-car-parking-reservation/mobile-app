@@ -272,16 +272,12 @@ class _ReservState extends State<Reserv> {
                               if (_selectedValue != null) {
                                 final String select_this_date =
                                     "${dateFormat.format(DateTime.now().toUtc().toLocal())}";
-                                String select_this_time =
-                                    "${dateFormat.format(DateTime.now().toUtc().toLocal())}";
 
                                 // log("${dateFormat.format(DateTime.now().toUtc().toLocal().add(Duration(hours: 7)))}");
 
                                 context.read<ReservedBloc>().add(
-                                    SendReservation(
-                                        _selectedValue ?? '',
-                                        widget.parking_slots_id ?? '',
-                                        select_this_time));
+                                    SendReservation(_selectedValue ?? '',
+                                        widget.parking_slots_id ?? ''));
                                 //log("car_id: ${_selectedValue}, parking_slot_id: ${historyData.parkingSlot.id}, start_time: ${historyData.start_at}");
                                 //log("$select_this_time");
                                 // context

@@ -75,7 +75,7 @@ class _SigninState extends State<Signin> {
                         filled: true,
                         fillColor: Colors.grey[100],
                         label: Text(
-                          "Email or Username",
+                          "Email",
                           style: TextStyle(
                               fontFamily: "Amiko", color: Colors.black45),
                         ),

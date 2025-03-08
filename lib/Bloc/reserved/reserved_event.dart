@@ -5,11 +5,9 @@ abstract class ReservedEvent {}
 class SendReservation extends ReservedEvent {
   final String car_id;
   final String parking_slot_id;
-  final String start_at;
 
-  SendReservation(this.car_id, this.parking_slot_id, this.start_at);
+  SendReservation(this.car_id, this.parking_slot_id);
 }
-
 
 // event สำหรับยกเลิกการจอง
 class CancelReservation extends ReservedEvent {
