@@ -54,7 +54,7 @@ class _SigninState extends State<Signin> {
                           Padding(
                             padding: const EdgeInsets.only(left: 20, top: 5),
                             child: Text(
-                              "Welcome Back!",
+                              "Welcome !",
                               style: TextStyle(
                                   fontSize: 28,
                                   fontFamily: "Amiko",
@@ -69,6 +69,14 @@ class _SigninState extends State<Signin> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
+                    Image.asset(
+                      "assets/images/LogoCARPAKING.png",
+                      height: 150,
+                      width: 400,
+                    ),
+                    SizedBox(
+                      height: 40,
+                    ),
                     TextFormField(
                       controller: emailController,
                       decoration: InputDecoration(

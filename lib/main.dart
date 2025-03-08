@@ -1,11 +1,10 @@
-
 import 'package:car_parking_reservation/Bloc/user/register/register_bloc.dart';
+import 'package:car_parking_reservation/Login/signin.dart';
 import 'package:car_parking_reservation/bloc/navigator/navigator_bloc.dart';
 import 'package:car_parking_reservation/bloc/reserved/reserved_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'Login/welcome.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: ".env");
@@ -33,13 +32,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "Car Parking Reservation",
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
-        useMaterial3: true,
-      ),
-      home: Welcome(),
-    );
+        title: "Car Parking Reservation",
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
+          useMaterial3: true,
+        ),
+        home: Signin());
   }
 }
