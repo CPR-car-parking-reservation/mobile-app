@@ -92,7 +92,9 @@ class AdminListViewParking extends StatelessWidget {
     final TextEditingController _slotNumberController = TextEditingController();
     _slotNumberController.text = parking.slotNumber;
     String? selectedFloor = parking.floor.floorNumber;
-    String? selectedStatus = parking.status;
+    String statusText =
+        parking.status == "MAINTENANCE" ? "MAINTENANCE" : "AVAILABLE";
+
     showDialog(
       context: context,
       builder: (context) {
@@ -163,6 +165,38 @@ class AdminListViewParking extends StatelessWidget {
                             selectedFloor = value); // ✅ อัปเดตค่าใน Dialog
                       },
                     ),
+                    const SizedBox(height: 10),
+                    const SizedBox(height: 5),
+                    const Text(
+                      "Status",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          fontFamily: "Amiko"),
+                    ),
+                    DropdownButtonFormField<String>(
+                      value: statusText,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        contentPadding:
+                            const EdgeInsets.symmetric(horizontal: 10),
+                      ),
+                      items: [
+                        DropdownMenuItem(
+                          value: "AVAILABLE",
+                          child: Text("AVAILABLE"),
+                        ),
+                        DropdownMenuItem(
+                          value: "MAINTENANCE",
+                          child: Text("MAINTENANCE"),
+                        ),
+                      ],
+                      onChanged: (value) {
+                        setState(
+                            () => statusText = value!); // ✅ อัปเดตค่าใน Dialog
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -170,7 +204,7 @@ class AdminListViewParking extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () {
                     bloc.add(OnUpdate(selectedFloor!,
-                        _slotNumberController.text, parking.id));
+                        _slotNumberController.text, parking.id, statusText));
                     Navigator.of(context).pop();
                   },
                   style: ElevatedButton.styleFrom(
@@ -272,7 +306,9 @@ class AdminListViewParking extends StatelessWidget {
                                         Expanded(
                                           child: Text(
                                             overflow: TextOverflow.ellipsis,
-                                            slot.status,
+                                            slot.status == "MAINTENANCE"
+                                                ? "MAINTENA..."
+                                                : slot.status,
                                             style: TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.bold,
