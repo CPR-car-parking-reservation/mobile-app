@@ -5,9 +5,8 @@ sealed class AdminSettingEvent {}
 final class OnSettingPageLoad extends AdminSettingEvent {}
 
 class OnUpdatePriceRate extends AdminSettingEvent {
-  final String priceRate;
-
-  OnUpdatePriceRate({required this.priceRate});
+  final  charge_rate;
+  OnUpdatePriceRate({required this.charge_rate});
 }
 
 class OnUpdatePassword extends AdminSettingEvent {

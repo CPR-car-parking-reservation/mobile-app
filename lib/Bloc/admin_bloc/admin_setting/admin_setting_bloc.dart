@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:developer';
+import 'dart:ffi';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -10,9 +12,16 @@ part 'admin_setting_state.dart';
 
 class AdminSettingBloc extends Bloc<AdminSettingEvent, AdminSettingState> {
   AdminSettingBloc() : super(AdminSettingInitial()) {
-    on<OnSettingPageLoad>((event, emit) {
-      emit(AdminSettingInitial());
+    on<OnSettingPageLoad>((event, emit) async {
+      try {
+        final charge_rate = await getPriceRate();
+
+        emit(AdminSettingChangeRatePrice(charge_rate: charge_rate));
+      } catch (e) {
+        emit(AdminSettingFailed(message: e.toString()));
+      }
     });
+
     on<OnUpdatePassword>((event, emit) async {
       emit(AdminSettingLoading());
 
@@ -23,11 +32,28 @@ class AdminSettingBloc extends Bloc<AdminSettingEvent, AdminSettingState> {
         final responseBody = jsonDecode(await response.stream.bytesToString());
         if (response.statusCode != 200) {
           throw responseBody['message'];
-          
-          
         }
         emit(AdminSettingSuccess(message: responseBody['message']));
-        
+      } catch (e) {
+        emit(AdminSettingFailed(message: e.toString()));
+      }
+    });
+
+    on<OnUpdatePriceRate>((event, emit) async {
+      emit(AdminSettingLoading());
+
+      try {
+        final response = await update_price_rate(event.charge_rate);
+        final responseBody = jsonDecode(response.body);
+
+        if (response.statusCode != 200) {
+          throw responseBody['message'];
+        }
+
+        // อัปเดตค่า charge_rate ใน state ทันทีหลังอัปเดตสำเร็จ
+        emit(AdminSettingChangeRatePrice(charge_rate: event.charge_rate));
+
+        emit(AdminSettingSuccess(message: responseBody['message']));
       } catch (e) {
         emit(AdminSettingFailed(message: e.toString()));
       }
@@ -54,5 +80,38 @@ class AdminSettingBloc extends Bloc<AdminSettingEvent, AdminSettingState> {
     var response = await request.send();
 
     return response;
+  }
+
+  Future<http.Response> update_price_rate(double charge_rate) async {
+    final perfs = await SharedPreferences.getInstance();
+    final token = perfs.getString('token');
+
+    final url = Uri.parse('$baseUrl/admin/setting/price');
+    final response = await http.put(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({'charge_rate': charge_rate}),
+    );
+
+    return response;
+  }
+
+  Future<dynamic> getPriceRate() async {
+    final perfs = await SharedPreferences.getInstance();
+    final token = perfs.getString('token');
+
+    final url = Uri.parse('$baseUrl/admin/setting/price');
+    final response = await http.get(url, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    });
+
+    final responseBody = jsonDecode(response.body);
+    log(responseBody.toString());
+
+    return (responseBody['data'] as num).toDouble(); // แปลงเป็น double
   }
 }
