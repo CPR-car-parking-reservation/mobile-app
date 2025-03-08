@@ -142,8 +142,14 @@ class _ReservState extends State<Reserv> {
                           ),
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<String>(
-                              hint: Text("Select License Plate",
-                                  style: TextStyle(color: Colors.grey)),
+                              hint: Text(
+                                  carData.isEmpty
+                                      ? "Please add your cars"
+                                      : "Select License Plate",
+                                  style: TextStyle(
+                                      color: carData.isEmpty
+                                          ? Colors.red
+                                          : Colors.grey)),
                               value: _selectedValue,
                               icon: Icon(Icons.arrow_drop_down_rounded,
                                   size: 36, color: Colors.black),

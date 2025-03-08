@@ -5,6 +5,7 @@ class Reservation_Model {
   final DateTime? startAt;
   final DateTime? endAt;
   final DateTime updatedAt;
+  final price;
   final String parkingSlotId;
   final String carId;
   final ParkingSlot parkingSlot;
@@ -17,6 +18,7 @@ class Reservation_Model {
     required this.createdAt,
     this.startAt,
     this.endAt,
+    required this.price,
     required this.updatedAt,
     required this.parkingSlotId,
     required this.carId,
@@ -38,6 +40,7 @@ class Reservation_Model {
       carId: json['car_id'],
       parkingSlot: ParkingSlot.fromJson(json['parking_slots']),
       status: json['status'],
+      price: json['price'] ?? '',
       car: Car.fromJson(json['car']),
     );
   }

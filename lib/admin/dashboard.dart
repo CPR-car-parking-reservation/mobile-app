@@ -124,6 +124,7 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
     super.initState();
     dateCtl.text = DateTime.now().toString().split(" ")[0];
     _loadGraphAndReservations();
+    _connectClient();
   }
 
   Future<void> _loadGraphAndReservations() async {

@@ -86,10 +86,10 @@ class _GenQRState extends State<GenQR> {
                         backgroundColor: Colors.white,
                       ),
                       SizedBox(height: 10),
-                      Text(
-                        reservationId,
-                        style: const TextStyle(color: Colors.white),
-                      ),
+                      // Text(
+                      //   reservationId,
+                      //   style: const TextStyle(color: Colors.white),
+                      // ),
                       SizedBox(height: 20),
                       ElevatedButton(
                         // Button to cancel reservation

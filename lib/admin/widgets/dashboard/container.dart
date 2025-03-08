@@ -118,7 +118,9 @@ class CustomLongContainer extends StatelessWidget {
                 ],
               ),
               Text(
-                NumberFormat("#,###.##").format(double.parse(value)),
+                title == 'Total Cash'
+                    ? "${NumberFormat("#,###.##").format(double.parse(value))} ฿"
+                    : "${NumberFormat("#,###.##").format(double.parse(value))}",
                 style: TextStyle(
                     fontFamily: "Amiko",
                     fontSize: 28,

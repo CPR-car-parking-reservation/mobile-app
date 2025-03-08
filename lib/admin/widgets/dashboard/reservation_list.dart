@@ -1,6 +1,7 @@
 import 'package:car_parking_reservation/model/admin/reservation.dart';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class AdminListViewHistory extends StatefulWidget {
   final List<Model_History_data> History;
@@ -122,7 +123,8 @@ class _AdminListViewHistoryState extends State<AdminListViewHistory> {
                                   fontSize: 14),
                             ),
                             Text(
-                              "${history_user.price.toString()} ฿",
+                              "${NumberFormat("#,###.##").format(double.parse(history_user.price))} ฿" ??
+                                  'N/A',
                               style: const TextStyle(
                                   fontFamily: "Amiko", fontSize: 14),
                             ),
