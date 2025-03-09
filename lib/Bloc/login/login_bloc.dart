@@ -11,6 +11,10 @@ part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc() : super(LoginInitial()) {
+    on<onPageLoad>((event, emit) {
+      log("onPageLoad LoginBloc");
+      emit(LoginInitial());
+    });
     on<onSubmit>((event, emit) async {
       emit(LoginLoading());
       try {

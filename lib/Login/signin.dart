@@ -1,10 +1,11 @@
 import 'dart:developer';
 
+import 'package:car_parking_reservation/Bloc/login/login_bloc.dart';
 import 'package:car_parking_reservation/Login/signup.dart';
 import 'package:car_parking_reservation/Widget/custom_dialog.dart';
 import 'package:car_parking_reservation/Widget/home.dart';
 import 'package:car_parking_reservation/admin/admin_home.dart';
-import 'package:car_parking_reservation/bloc/Login/login_bloc.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,10 +21,15 @@ class _SigninState extends State<Signin> {
   final emailController = TextEditingController();
   final passController = TextEditingController();
   Future<void> getToken() async {
+    log('In getToken');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     log('token: $token');
-    if (token != null) {
+    // ignore: unnecessary_null_comparison
+    if (token == null) {
+      log('Token is empty');
+    } else {
+      log('have token $token');
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => Home()),
@@ -36,13 +42,12 @@ class _SigninState extends State<Signin> {
   void initState() {
     super.initState();
     getToken();
-    log('initState');
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => LoginBloc(),
+      create: (context) => LoginBloc()..add(onPageLoad()),
       child: Scaffold(
         appBar: AppBar(
           title: Text(''),
