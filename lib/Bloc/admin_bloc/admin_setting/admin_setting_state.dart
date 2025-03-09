@@ -8,15 +8,27 @@ final class AdminSettingLoading extends AdminSettingState {}
 
 final class AdminSettingSuccess extends AdminSettingState {
   final String message;
+
   AdminSettingSuccess({required this.message});
 }
 
 final class AdminSettingFailed extends AdminSettingState {
   final String message;
+
   AdminSettingFailed({required this.message});
 }
 
 final class AdminSettingChangeRatePrice extends AdminSettingState {
   final charge_rate;
   AdminSettingChangeRatePrice({required this.charge_rate});
+}
+
+final class AdminSettingChangeRatePriceSuccess extends AdminSettingState {
+  final String message;
+  AdminSettingChangeRatePriceSuccess({required this.message});
+}
+
+final class AdminSettingChangeRatePriceError extends AdminSettingState {
+  final String message;
+  AdminSettingChangeRatePriceError({required this.message});
 }

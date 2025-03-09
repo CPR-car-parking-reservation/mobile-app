@@ -11,9 +11,17 @@ part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc() : super(LoginInitial()) {
-    on<onPageLoad>((event, emit) {
-      log("onPageLoad LoginBloc");
-      emit(LoginInitial());
+    on<onPageLoad>((event, emit) async {
+      final res = await checkRole();
+      final responseBody = res.body;
+      final decodedResponse = jsonDecode(responseBody);
+      if (res.statusCode != 200) {
+        // emit(LoginError(decodedResponse["message"] ?? ''));
+        emit(LoginInitial());
+      } else {
+        String role = decodedResponse["role"];
+        emit(LoginSuccess(role: role));
+      }
     });
     on<onSubmit>((event, emit) async {
       emit(LoginLoading());
@@ -50,6 +58,18 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     });
 
     var response = await request.send();
+    return response;
+  }
+
+  Future<http.Response> checkRole() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString('token') ?? '';
+    final url = Uri.parse("$baseUrl/login/check_role");
+    var response = await http.get(url, headers: {
+      "Accept": "application/json",
+      "content-type": "application/json",
+      "Authorization": "Bearer $token"
+    });
     return response;
   }
 }

@@ -13,6 +13,7 @@ part 'admin_setting_state.dart';
 class AdminSettingBloc extends Bloc<AdminSettingEvent, AdminSettingState> {
   AdminSettingBloc() : super(AdminSettingInitial()) {
     on<OnSettingPageLoad>((event, emit) async {
+      emit(AdminSettingLoading());
       try {
         final charge_rate = await getPriceRate();
 
@@ -50,12 +51,16 @@ class AdminSettingBloc extends Bloc<AdminSettingEvent, AdminSettingState> {
           throw responseBody['message'];
         }
 
-        // อัปเดตค่า charge_rate ใน state ทันทีหลังอัปเดตสำเร็จ
+        log(responseBody.toString());
+
+        emit(AdminSettingChangeRatePriceSuccess(
+            message: responseBody['message']));
         emit(AdminSettingChangeRatePrice(charge_rate: event.charge_rate));
 
-        emit(AdminSettingSuccess(message: responseBody['message']));
+        // emit(AdminSettingSuccess(
+        //     message: responseBody['message'], charge_rate: event.charge_rate));
       } catch (e) {
-        emit(AdminSettingFailed(message: e.toString()));
+        emit(AdminSettingChangeRatePriceError(message: e.toString()));
       }
     });
   }

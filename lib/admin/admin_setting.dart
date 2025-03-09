@@ -202,6 +202,10 @@ class _AdminSettingPageState extends State<AdminSettingPage> {
           confirmPasswordController.clear();
         } else if (state is AdminSettingFailed) {
           showCustomDialogError(context, state.message);
+        } else if (state is AdminSettingChangeRatePriceSuccess) {
+          showCustomDialogSucess(context, state.message);
+        } else if (state is AdminSettingChangeRatePriceError) {
+          showCustomDialogError(context, state.message);
         }
       },
       child: Scaffold(
@@ -299,21 +303,25 @@ class _AdminSettingPageState extends State<AdminSettingPage> {
                             SizedBox(height: 10),
                             BlocBuilder<AdminSettingBloc, AdminSettingState>(
                               builder: (context, state) {
-                                if(state is AdminSettingLoading){
-                                  return CircularProgressIndicator();
-                                }
-                                return Text(
-                                  state is AdminSettingChangeRatePrice
-                                      ? state.charge_rate.toStringAsFixed(
-                                          2) // แปลงเป็น string พร้อมทศนิยม 2 ตำแหน่ง
-                                      : '0.00',
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Amiko',
+                                if (state is AdminSettingLoading) {
+                                  return CircularProgressIndicator(
                                     color: Colors.green,
-                                  ),
-                                );
+                                  );
+                                }
+                                if (state is AdminSettingChangeRatePrice) {
+                                  return Text(
+                                    state.charge_rate.toStringAsFixed(
+                                        2) // แปลงเป็น string พร้อมทศนิยม 2 ตำแหน่ง
+                                    ,
+                                    style: TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Amiko',
+                                      color: Colors.green,
+                                    ),
+                                  );
+                                }
+                                return SizedBox();
                               },
                             ),
                           ],
