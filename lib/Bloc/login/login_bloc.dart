@@ -12,6 +12,7 @@ part 'login_state.dart';
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc() : super(LoginInitial()) {
     on<onPageLoad>((event, emit) async {
+      emit(LoginLoading());
       final res = await checkRole();
       final responseBody = res.body;
       final decodedResponse = jsonDecode(responseBody);
@@ -37,6 +38,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', token);
+        await prefs.setString('role', role);
 
         Future.delayed(Duration(seconds: 1));
         emit(LoginSuccess(role: role));

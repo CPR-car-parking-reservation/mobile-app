@@ -34,7 +34,7 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
   var selectedYear = DateTime.now().year;
   TextEditingController dateCtl = TextEditingController();
 
-  var selectedSort = "ASC";
+  var selectedSort = "DESC";
 
   @override
   void initState() {
