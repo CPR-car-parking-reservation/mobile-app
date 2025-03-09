@@ -37,13 +37,7 @@ class _AdminParkingPageState extends State<AdminParkingPage> {
     bool isConnected = await mqttService.connect();
     if (isConnected) {
       context.read<AdminParkingBloc>().add(OnParkingPageLoad());
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('MQTT Connected Successfully!'),
-          backgroundColor: Colors.green,
-          duration: Duration(seconds: 2),
-        ),
-      );
+
       mqttSubscription = mqttService.messageStream.listen((message) {
         if (message == "fetch slot") {
           context.read<AdminParkingBloc>().add(OnRefresh());
