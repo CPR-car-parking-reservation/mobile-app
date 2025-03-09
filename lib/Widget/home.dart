@@ -1,5 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:car_parking_reservation/Bloc/qr_bloc/qr_bloc_bloc.dart';
+import 'package:car_parking_reservation/Bloc/reserved/reserved_bloc.dart';
 import 'package:car_parking_reservation/Qr-generator/qr_code.dart';
 import 'package:car_parking_reservation/Widget/parking_slots.dart';
 import 'package:car_parking_reservation/bloc/history/history_bloc.dart';
@@ -46,7 +48,17 @@ class Home extends StatelessWidget {
                       child: ParkingSlots(),
                     );
                   case 1:
-                    return GenQR();
+                    return MultiBlocProvider(
+                      providers: [
+                        BlocProvider(
+                          create: (context) => QrBloc(),
+                        ),
+                        BlocProvider(
+                          create: (context) => ReservedBloc(),
+                        ),
+                      ],
+                      child: GenQR(),
+                    );
                   case 2:
                     return BlocProvider(
                       create: (context) => HistoryBloc(),
@@ -102,4 +114,3 @@ class Home extends StatelessWidget {
     );
   }
 }
-

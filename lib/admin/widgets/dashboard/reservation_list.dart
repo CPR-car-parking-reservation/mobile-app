@@ -36,9 +36,9 @@ class _AdminListViewHistoryState extends State<AdminListViewHistory> {
       itemCount: widget.History.length,
       itemBuilder: (context, index) {
         final history_user = widget.History[index];
-        final history_date_start = history_user.created_at;
+        final history_date_start = history_user.created_at!.toLocal();
         var history_date_end =
-            history_user.end_at == null ? '' : history_user.end_at;
+            history_user.end_at == null ? '' : history_user.end_at!.toLocal();
 
         final date_start = DateTime.parse(history_date_start.toString());
 

@@ -80,10 +80,13 @@ class _HistoryState extends State<History> {
                         itemCount: state.history.length,
                         itemBuilder: (context, index) {
                           final history_user = state.history[index];
-                          final history_date_start = history_user.startAt;
+
+                          //display local time zone
+                          final history_date_start =
+                              history_user.startAt!.toLocal();
                           var history_date_end = history_user.endAt == null
                               ? ''
-                              : history_user.endAt;
+                              : history_user.endAt!.toLocal();
 
                           final date_start =
                               DateTime.parse(history_date_start.toString());

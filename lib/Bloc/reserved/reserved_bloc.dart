@@ -48,10 +48,6 @@ class ReservedBloc extends Bloc<ReservedEvent, ReservedState> {
               ? decodeResponse['data']['id'] ?? ''
               : '';
 
-          log("Reservation ID: $reservationId");
-          SharedPreferences prefs = await SharedPreferences.getInstance();
-          await prefs.setString('reservation_id', reservationId);
-
           emit(ReservCreated(
               event.car_id, event.parking_slot_id, reservationId));
           emit(ReservedSuccess(
@@ -61,10 +57,7 @@ class ReservedBloc extends Bloc<ReservedEvent, ReservedState> {
           throw Exception(
               decodeResponse['message'] ?? 'Failed to create reservation.');
         }
-
-        log("Sent Data: car_id=${event.car_id}, parking_slot_id=${event.parking_slot_id}");
       } catch (e) {
-        log("Error: $e");
         emit(ReservedError(e.toString()));
       }
     });

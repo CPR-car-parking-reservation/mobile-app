@@ -21,15 +21,10 @@ class _SigninState extends State<Signin> {
   final emailController = TextEditingController();
   final passController = TextEditingController();
   Future<void> getToken() async {
-    log('In getToken');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    log('token: $token');
-    // ignore: unnecessary_null_comparison
-    if (token == null) {
-      log('Token is empty');
-    } else {
-      log('have token $token');
+
+    if (token != null) {
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => Home()),

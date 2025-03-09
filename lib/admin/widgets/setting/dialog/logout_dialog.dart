@@ -1,5 +1,6 @@
 import 'package:car_parking_reservation/Login/signin.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void logout_admin_dialog(BuildContext context) {
   showDialog(
@@ -13,6 +14,9 @@ void logout_admin_dialog(BuildContext context) {
         actions: <Widget>[
           TextButton(
             onPressed: () {
+              SharedPreferences.getInstance().then((prefs) {
+                prefs.remove('token');
+              });
               Navigator.pop(context); // ปิด Dialog
               Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (context) => const Signin()),

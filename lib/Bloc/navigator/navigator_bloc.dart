@@ -7,7 +7,6 @@ class NavigatorBloc extends Bloc<NavigatorBlocEvent, NavigatorBlocState> {
   NavigatorBloc() : super(NavigatorBlocStateInitial(index: 0)) {
     on<ChangeIndex>((event, emit) {
       emit(NavigatorBlocStateInitial(index: event.index));
-      // index: event.index, reservationId: event.reservationId));
     });
   }
 }
