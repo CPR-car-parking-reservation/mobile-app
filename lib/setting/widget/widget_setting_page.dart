@@ -1,8 +1,6 @@
 import 'dart:developer';
 import 'package:car_parking_reservation/Login/signin.dart';
 import 'package:car_parking_reservation/bloc/navigator/navigator_bloc.dart';
-import 'package:car_parking_reservation/bloc/setting/setting_bloc.dart';
-import 'package:car_parking_reservation/bloc/setting/setting_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -62,15 +60,14 @@ ListView listviewshow(List<car_data> car) {
             const Spacer(),
             IconButton(
               onPressed: () async {
-                final result = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => EditCarPage(car_id: car[index].id),
-                  ),
-                );
-                if (result == true) {
-                  context.read<SettingBloc>().add(LoadUserAndCars());
-                }
+                Future.delayed(Duration.zero, () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            EditCarPage(car_id: car[index].id)),
+                  );
+                });
               },
               icon: const Icon(Icons.edit, color: Colors.orange),
             ),

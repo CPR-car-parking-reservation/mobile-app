@@ -49,172 +49,184 @@ class _EditCarPageState extends State<EditCarPage> {
     super.dispose();
   }
 
+  Future<bool> _onWillPop() async {
+    context.read<SettingBloc>().add(LoadUserAndCars());
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocListener<SettingBloc, SettingState>(
-      listener: (context, state) {
-        if (state is SettingSuccess) {
-          showCustomDialogSucess(context, state.message);
-          Navigator.pop(context, true);
-        } else if (state is SettingError) {
-          showCustomDialogWarning(context, state.message);
-        }
-      },
-      child: Scaffold(
-        backgroundColor: const Color(0xFF03174C),
-        body: BlocBuilder<SettingBloc, SettingState>(
-          builder: (context, state) {
-            if (state is SettingLoading) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (state is SettingError) {
-              return Center(
-                child: Text(
-                  'Error: ${state.message}',
-                  style: const TextStyle(
-                    fontFamily: fontFamily,
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: BlocListener<SettingBloc, SettingState>(
+        listener: (context, state) {
+          if (state is SettingSuccess) {
+            showCustomDialogSucess(context, state.message);
+            Navigator.pop(context, true);
+          } else if (state is SettingError) {
+            showCustomDialogWarning(context, state.message);
+          }
+        },
+        child: Scaffold(
+          backgroundColor: const Color(0xFF03174C),
+          body: BlocBuilder<SettingBloc, SettingState>(
+            builder: (context, state) {
+              if (state is SettingLoading) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (state is SettingError) {
+                return Center(
+                  child: Text(
+                    'Error: ${state.message}',
+                    style: const TextStyle(
+                      fontFamily: fontFamily,
+                    ),
                   ),
-                ),
-              );
-            } else if (state is CarLoaded) {
-              final car = state.car;
-              // ตั้งค่าเริ่มต้นสำหรับ Dropdown
-              if (selectedTypeNotifier.value == null ||
-                  typeController.text.isEmpty) {
-                selectedTypeNotifier.value = car.car_type;
-                typeController.text = car.car_type;
-              }
-              plateController.text = car.license_plate;
-              modelController.text = car.car_model;
+                );
+              } else if (state is CarLoaded) {
+                final car = state.car;
+                // ตั้งค่าเริ่มต้นสำหรับ Dropdown
+                if (selectedTypeNotifier.value == null ||
+                    typeController.text.isEmpty) {
+                  selectedTypeNotifier.value = car.car_type;
+                  typeController.text = car.car_type;
+                }
+                plateController.text = car.license_plate;
+                modelController.text = car.car_model;
 
-              return SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.arrow_back,
-                                color: Colors.white),
-                            onPressed: () {
-                              Navigator.pop(context, true);
-                            },
-                          ),
-                          const Text(
-                            "Edit Car",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              fontFamily:fontFamily,
+                return SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.arrow_back,
+                                  color: Colors.white),
+                              onPressed: () {
+                                Navigator.pop(context, true);
+                                context
+                                    .read<SettingBloc>()
+                                    .add(LoadUserAndCars());
+                              },
                             ),
-                          ),
-                          const SizedBox(width: 48),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Divider(color: Colors.white70, thickness: 1.5),
-                      const SizedBox(height: 16),
-                      ValueListenableBuilder<File?>(
-                        valueListenable: imageNotifier,
-                        builder: (context, imageFile, child) {
-                          return ImageSection(
-                            baseImgUrl: baseUrl,
-                            car: car,
-                            imageFile: imageFile,
-                            onImagePicked: (file, path) {
-                              imageNotifier.value = file;
-                              imagePath = path;
-                            },
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 20),
-                      buildTextField("License plate", Icons.directions_car,
-                          plateController),
-                      const SizedBox(height: 10),
-                      buildTextField(
-                          "Car Models", Icons.car_repair, modelController),
-                      const SizedBox(height: 10),
-                      buildDropdownField(
-                        selectedTypeNotifier: selectedTypeNotifier,
-                        typeController: typeController,
-                      ),
-                      const SizedBox(height: 30),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            BlocProvider.of<SettingBloc>(context).add(
-                              UpdateCar(
-                                id: widget.car_id,
-                                plate: plateController.text,
-                                model: modelController.text,
-                                type: selectedTypeNotifier.value!,
-                                imageFile:
-                                    imagePath != null ? File(imagePath!) : null,
+                            const Text(
+                              "Edit Car",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: fontFamily,
                               ),
+                            ),
+                            const SizedBox(width: 48),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Divider(color: Colors.white70, thickness: 1.5),
+                        const SizedBox(height: 16),
+                        ValueListenableBuilder<File?>(
+                          valueListenable: imageNotifier,
+                          builder: (context, imageFile, child) {
+                            return ImageSection(
+                              baseImgUrl: baseUrl,
+                              car: car,
+                              imageFile: imageFile,
+                              onImagePicked: (file, path) {
+                                imageNotifier.value = file;
+                                imagePath = path;
+                              },
                             );
                           },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF4CAF50),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: state is UserLoading
-                              ? const CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.white),
-                                )
-                              : const Text(
-                                  "Update Car",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: fontFamily,
-                                  ),
+                        ),
+                        const SizedBox(height: 20),
+                        buildTextField("License plate", Icons.directions_car,
+                            plateController),
+                        const SizedBox(height: 10),
+                        buildTextField(
+                            "Car Models", Icons.car_repair, modelController),
+                        const SizedBox(height: 10),
+                        buildDropdownField(
+                          selectedTypeNotifier: selectedTypeNotifier,
+                          typeController: typeController,
+                        ),
+                        const SizedBox(height: 30),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              BlocProvider.of<SettingBloc>(context).add(
+                                UpdateCar(
+                                  id: widget.car_id,
+                                  plate: plateController.text,
+                                  model: modelController.text,
+                                  type: selectedTypeNotifier.value!,
+                                  imageFile: imagePath != null
+                                      ? File(imagePath!)
+                                      : null,
                                 ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            confirmDeleteCar(context, widget.car_id);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF4CAF50),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                             ),
-                          ),
-                          child: const Text(
-                            "Delete Car",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: fontFamily,
-                            ),
+                            child: state is UserLoading
+                                ? const CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white),
+                                  )
+                                : const Text(
+                                    "Update Car",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: fontFamily,
+                                    ),
+                                  ),
                           ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 10),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              confirmDeleteCar(context, widget.car_id);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text(
+                              "Delete Car",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: fontFamily,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              );
-            }
-            return const SizedBox.shrink();
-          },
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
         ),
       ),
     );

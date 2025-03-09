@@ -7,6 +7,7 @@ import 'package:car_parking_reservation/Widget/parking_slots.dart';
 import 'package:car_parking_reservation/bloc/history/history_bloc.dart';
 import 'package:car_parking_reservation/bloc/navigator/navigator_bloc.dart';
 import 'package:car_parking_reservation/bloc/parking/parking_bloc.dart';
+import 'package:car_parking_reservation/bloc/setting/setting_bloc.dart';
 import 'package:car_parking_reservation/history.dart';
 import 'package:car_parking_reservation/setting/setting_page.dart';
 
@@ -65,7 +66,10 @@ class Home extends StatelessWidget {
                       child: History(),
                     );
                   case 3:
-                    return Setting();
+                    return BlocProvider(
+                      create: (context) => SettingBloc(),
+                      child: Setting(),
+                    );
                   default:
                     return SizedBox.shrink();
                 }
