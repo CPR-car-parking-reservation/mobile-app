@@ -24,6 +24,14 @@ class Setting extends StatefulWidget {
 class _SettingState extends State<Setting> with RouteAware {
   String baseUrl = dotenv.env['BASE_URL'].toString();
   String userToken = '';
+
+  @override
+  void initState() {
+    super.initState();
+    loadToken();
+    context.read<SettingBloc>().add(LoadUserAndCars());
+  }
+
   void loadToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
