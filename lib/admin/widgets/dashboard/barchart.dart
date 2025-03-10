@@ -34,7 +34,7 @@ class BarChartSample2State extends State<BarChartSample2> {
           child:
               Text("No Data Available", style: TextStyle(color: Colors.white)));
     }
-    //find max value of data_number
+
     double maxY = 0;
     for (int i = 0; i < widget.data.length; i++) {
       if (widget.data[i].data_number > maxY) {
@@ -44,17 +44,14 @@ class BarChartSample2State extends State<BarChartSample2> {
     if (maxY == 0) {
       maxY = 100;
     }
-    maxY = (maxY * 1.1).ceilToDouble(); // เพิ่ม 20% margin
+    maxY = (maxY * 1.1).ceilToDouble();
 
-    // ปรับ maxY ให้เป็นค่าที่หาร 100 ลงตัว
     maxY = ((maxY / 100).ceil() * 100).toDouble();
 
-    // สร้างข้อมูลของ BarChart
     showingBarGroups = widget.data.asMap().entries.map((entry) {
       int index = entry.key;
       ModelGraph item = entry.value;
-      return makeGroupData(
-          index, item.data_number.toDouble()); // ใช้ค่าจริงจาก data
+      return makeGroupData(index, item.data_number.toDouble());
     }).toList();
 
     return Container(
@@ -83,8 +80,7 @@ class BarChartSample2State extends State<BarChartSample2> {
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Container(
-                  width: max(600,
-                      widget.data.length * 25), // ขยายความกว้างตามจำนวนข้อมูล
+                  width: max(600, widget.data.length * 25),
                   child: BarChart(
                     BarChartData(
                       maxY: maxY,
@@ -129,12 +125,11 @@ class BarChartSample2State extends State<BarChartSample2> {
     );
   }
 
-// ปรับแกน X ให้แสดงค่า day ของข้อมูลจริง
   Widget bottomTitles(double value, TitleMeta meta) {
     int index = value.toInt();
     if (index < 0 || index >= widget.data.length) return Container();
 
-    String day = widget.data[index].day.toString(); // ใช้ค่าจริงจาก data
+    String day = widget.data[index].day.toString();
 
     return SideTitleWidget(
       meta: meta,
@@ -157,11 +152,10 @@ class BarChartSample2State extends State<BarChartSample2> {
     ]);
   }
 
-// ปรับแกน Y ให้เป็นค่าอัตโนมัติ
   Widget leftTitles(double value, TitleMeta meta) {
     return SideTitleWidget(
       meta: meta,
-      space: 5,
+      space: 2,
       child: Text(
         value.toInt().toString(),
         style: const TextStyle(

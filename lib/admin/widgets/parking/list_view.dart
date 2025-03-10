@@ -44,6 +44,7 @@ class AdminListViewParking extends StatelessWidget {
           actions: [
             ElevatedButton(
               onPressed: () {
+                Navigator.of(context).pop();
                 bloc.add(OnDelete(id));
               },
               style: ElevatedButton.styleFrom(

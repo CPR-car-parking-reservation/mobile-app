@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:car_parking_reservation/Login/signin.dart';
 import 'package:car_parking_reservation/Widget/custom_dialog.dart';
 import 'package:car_parking_reservation/model/parking_slot.dart';
 import 'package:car_parking_reservation/mqtt/mqtt_service.dart';
@@ -230,6 +231,15 @@ class _ParkingSlots extends State<ParkingSlots> {
             ],
           );
         } else if (state is ParkingError) {
+          if (state.message == "Unauthorized!") {
+            Future.delayed(Duration.zero, () {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => Signin()),
+                (route) => false,
+              );
+            });
+          }
           return Center(child: Text(state.message));
         }
         return Container();

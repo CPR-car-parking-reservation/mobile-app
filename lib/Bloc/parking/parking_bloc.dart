@@ -6,6 +6,8 @@ import 'package:http/http.dart' as http;
 import 'package:car_parking_reservation/model/parking_slot.dart';
 import 'dart:convert';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 part 'parking_state.dart';
 part 'parking_event.dart';
 
@@ -26,7 +28,11 @@ class ParkingBloc extends Bloc<ParkingEvent, ParkingState> {
         // ตั้งค่าให้รีเฟรชทุก 30 วินาที
         _startAutoRefresh();
       } catch (e) {
-        emit(ParkingError("Now : Failed to load data!"));
+        if (e == 'Unauthorized!') {
+          emit(ParkingError("Unauthorized!"));
+        } else {
+          emit(ParkingError("Now : Failed to load data!"));
+        }
       }
     });
 
@@ -46,10 +52,13 @@ class ParkingBloc extends Bloc<ParkingEvent, ParkingState> {
   String baseUrl = dotenv.env['BASE_URL'].toString();
 
   Future<List<ParkingSlot>> onFetchData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
     final response =
         await http.get(Uri.parse("$baseUrl/parking_slots"), headers: {
       "Accept": "application/json",
       "content-type": "application/json",
+      "Authorization": "Bearer $token"
     });
 
     if (response.statusCode == 200) {
@@ -60,6 +69,11 @@ class ParkingBloc extends Bloc<ParkingEvent, ParkingState> {
       } else {
         throw Exception('Invalid response format!');
       }
+    }
+    if (response.statusCode == 401) {
+      prefs.remove('token');
+      prefs.remove('role');
+      throw 'Unauthorized!';
     } else {
       throw Exception('Failed to load data!');
     }

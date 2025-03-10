@@ -81,7 +81,6 @@ class AdminParkingBloc extends Bloc<AdminParkingEvent, AdminParkingState> {
           final responseBody = await res.stream.bytesToString();
           final decodedResponse = jsonDecode(responseBody);
           if (res.statusCode != 200) {
-            // คืนค่า message ออกจาก response
             throw decodedResponse["message"];
           }
           final data = await fetchParkingSlot("", "", "");
@@ -154,7 +153,7 @@ class AdminParkingBloc extends Bloc<AdminParkingEvent, AdminParkingState> {
       status ??= "";
       final response = await http.get(
           Uri.parse(
-              "${baseUrl}/admin/parking_slots?search=$seacrhText&floor=$floor&status=$status"),
+              "$baseUrl/admin/parking_slots?search=$seacrhText&floor=$floor&status=$status"),
           headers: {
             "Accept": "application/json",
             "content-type": "application/json",

@@ -1,10 +1,9 @@
 import 'dart:async';
-import 'dart:developer';
-import 'dart:io';
 
 import 'package:car_parking_reservation/Bloc/admin_bloc/admin_dashboard/admin_dashboard_bloc.dart';
 import 'package:car_parking_reservation/Bloc/admin_bloc/admin_graph/admin_graph_bloc.dart';
 import 'package:car_parking_reservation/Bloc/admin_bloc/admin_reservation/admin_reservation_bloc.dart';
+import 'package:car_parking_reservation/Login/signin.dart';
 import 'package:car_parking_reservation/Widget/custom_dialog.dart';
 import 'package:car_parking_reservation/admin/widgets/dashboard/barchart.dart';
 import 'package:car_parking_reservation/admin/widgets/dashboard/container.dart';
@@ -13,10 +12,6 @@ import 'package:car_parking_reservation/admin/widgets/dashboard/toppic.dart';
 import 'package:car_parking_reservation/mqtt/mqtt_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:mqtt_client/mqtt_client.dart';
-import 'package:mqtt_client/mqtt_server_client.dart';
-import 'package:uuid/uuid.dart';
 
 class AdminDashBoard extends StatefulWidget {
   const AdminDashBoard({super.key});
@@ -61,8 +56,6 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
           context.read<AdminReservationBloc>().add(AdminReservationOnRefresh());
         }
       });
-    } else {
-      log("MQTT Connection failed");
     }
   }
 
@@ -89,7 +82,18 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
               : (context.read<AdminGraphBloc>().state as AdminGraphError)
                   .message;
 
-          showCustomDialogError(context, errorMessage);
+          if (state is AdminDashboardError) {
+            if (state.message == "Unauthorized!") {
+              Future.delayed(Duration.zero, () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => Signin()),
+                  (route) => false,
+                );
+              });
+            }
+            showCustomDialogError(context, errorMessage);
+          }
         }
       },
       child: Scaffold(
@@ -217,27 +221,24 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(
-                                      color:
-                                          Colors.white), // เปลี่ยนสีขอบเป็นขาว
+                                  borderSide: BorderSide(color: Colors.white),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                   borderSide: BorderSide(
                                       color: const Color.fromARGB(255, 0, 0, 0),
-                                      width: 1), // ขอบสีขาวเมื่อไม่ได้โฟกัส
+                                      width: 1),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                   borderSide: BorderSide(
                                       color: const Color.fromARGB(255, 0, 0, 0),
-                                      width: 1.5), // ขอบสีเหลืองเมื่อโฟกัส
+                                      width: 1.5),
                                 ),
                                 contentPadding:
                                     const EdgeInsets.symmetric(horizontal: 10),
                               ),
                               value: selectedTitle,
-                              // ป้องกัน null
                               items: [
                                 DropdownMenuItem(
                                     value: "Reservation",

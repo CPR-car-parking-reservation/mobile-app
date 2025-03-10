@@ -18,9 +18,8 @@ class AdminUserBloc extends Bloc<AdminUserEvent, AdminUserState> {
     on<OnUsersPageLoad>((event, emit) async {
       emit(AdminUserLoading());
       try {
-        log("call bloc fetchUsers");
         final data = await fetchUsers("");
-        log("data: $data");
+
         emit(AdminUserLoaded(users: data));
       } catch (e) {
         emit(AdminUserError(message: e.toString()));

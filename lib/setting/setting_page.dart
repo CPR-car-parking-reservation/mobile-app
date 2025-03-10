@@ -10,6 +10,7 @@ import 'package:car_parking_reservation/setting/editprofile.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:car_parking_reservation/widget/custom_dialog.dart';
 import 'package:car_parking_reservation/setting/widget/widget_setting_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 const String fontFamily = "amiko";
 

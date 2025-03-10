@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:car_parking_reservation/model/car.dart';
 
 class ModelUsers {
@@ -10,7 +8,7 @@ class ModelUsers {
   final String phone;
   final String image_url;
   final String role;
-  final List<car_data> cars; // Change to List<car_data>
+  final List<car_data> cars;
 
   ModelUsers({
     required this.id,
@@ -20,7 +18,7 @@ class ModelUsers {
     required this.image_url,
     required this.phone,
     required this.role,
-    required this.cars, // Updated field
+    required this.cars,
   });
 
   factory ModelUsers.fromJson(Map<String, dynamic> json) {
@@ -32,7 +30,7 @@ class ModelUsers {
       phone: json["phone"],
       image_url: json["image_url"],
       role: json["role"],
-      cars: (json["car"] as List<dynamic>) // Fix: Parse list of cars
+      cars: (json["car"] as List<dynamic>)
           .map((car) => car_data.fromJson(car))
           .toList(),
     );

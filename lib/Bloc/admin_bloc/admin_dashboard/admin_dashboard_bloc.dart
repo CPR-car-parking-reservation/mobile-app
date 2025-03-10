@@ -27,7 +27,11 @@ class AdminDashboardBloc
         emit(AdminDashboardLoaded(adminDashboardData: data));
         _startAutoRefresh();
       } catch (e) {
-        emit(AdminDashboardError(message: e.toString()));
+        if (e == 'Unauthorized!') {
+          emit(AdminDashboardError(message: "Unauthorized!"));
+        } else {
+          emit(AdminDashboardError(message: e.toString()));
+        }
       }
     });
     on<AdminDashboardRefresh>((event, emit) async {
@@ -41,7 +45,6 @@ class AdminDashboardBloc
   }
 
   String baseUrl = dotenv.env['BASE_URL'].toString();
-
   Future<List<ModelDashboard>> fetchDashboard() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
@@ -58,8 +61,12 @@ class AdminDashboardBloc
         final List<dynamic> data = jsonData["data"];
 
         return data.map((e) => ModelDashboard.fromJson(e)).toList();
+      }
+      if (response.statusCode == 401) {
+        prefs.remove('token');
+        prefs.remove('role');
+        throw 'Unauthorized!';
       } else {
-        log(response.body);
         throw 'Failed to load data!';
       }
     } catch (e) {

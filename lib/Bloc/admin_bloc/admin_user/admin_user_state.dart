@@ -2,9 +2,6 @@ part of 'admin_user_bloc.dart';
 
 sealed class AdminUserState {
   const AdminUserState();
-
-  @override
-  List<Object> get props => [];
 }
 
 final class AdminUserInitial extends AdminUserState {}
