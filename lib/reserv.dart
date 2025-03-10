@@ -1,32 +1,31 @@
-import 'dart:developer';
-
-import 'package:car_parking_reservation/Widget/home.dart';
 import 'package:car_parking_reservation/bloc/navigator/navigator_bloc.dart';
-import 'package:car_parking_reservation/bloc/parking/parking_bloc.dart';
 import 'package:car_parking_reservation/bloc/reserved/reserved_bloc.dart';
-import 'package:car_parking_reservation/Qr-generator/qr_code.dart';
 import 'package:car_parking_reservation/model/car.dart';
-import 'package:car_parking_reservation/setting/setting_page.dart';
 import 'package:car_parking_reservation/widget/custom_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Reserv extends StatefulWidget {
   // Get the slot number, floor id, and status from the API
+  // ignore: non_constant_identifier_names
   final String? parking_slots_id;
+  // ignore: non_constant_identifier_names
   final String? slot_number;
+  // ignore: non_constant_identifier_names
   final String? floor_number;
   final String? status;
 
   const Reserv(
       {super.key,
+      // ignore: non_constant_identifier_names
       this.parking_slots_id,
+      // ignore: non_constant_identifier_names
       this.floor_number,
       this.status,
+      // ignore: non_constant_identifier_names
       this.slot_number});
 
   @override
@@ -49,7 +48,6 @@ class _ReservState extends State<Reserv> {
     super.initState();
   }
 
-  String userToken = "";
   String baseUrl = dotenv.env['BASE_URL'].toString();
 
   @override
@@ -59,8 +57,6 @@ class _ReservState extends State<Reserv> {
         if (state is ReservedSuccess) {
           context.read<NavigatorBloc>().add(ChangeIndex(index: 1));
           Navigator.of(context).pop();
-
-          // context.read<NavigatorBloc>().add(ChangeIndex(index: 1 , reservationId: state.reservationId));
           showCustomDialogSucess(context, "Reservation Success");
         } else if (state is ReservedError) {
           Navigator.of(context).pop();
@@ -170,6 +166,7 @@ class _ReservState extends State<Reserv> {
                                   child: Row(
                                     children: [
                                       Image.network(
+                                          // ignore: unnecessary_brace_in_string_interps
                                           "${baseUrl}${car.image_url}",
                                           height: 75,
                                           width: 75),
@@ -264,20 +261,18 @@ class _ReservState extends State<Reserv> {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(10),
+                        // ignore: avoid_unnecessary_containers
                         child: Container(
                           child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white),
+                            style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
                             onPressed: () async {
                               if (_selectedValue != null) {
-                                final String select_this_date =
-                                    "${dateFormat.format(DateTime.now().toUtc().toLocal())}";
-                                context.read<ReservedBloc>().add(
-                                    SendReservation(_selectedValue ?? '',
-                                        widget.parking_slots_id ?? ''));
+                                context.read<ReservedBloc>().add(SendReservation(
+                                  _selectedValue ?? '',
+                                  widget.parking_slots_id ?? '')
+                                  );
                               } else {
-                                showCustomDialogError(
-                                    context, "Reservation Failed");
+                                showCustomDialogError(context, "Reservation Failed");
                               }
                             },
                             child: Padding(
