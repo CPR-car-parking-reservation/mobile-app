@@ -16,10 +16,8 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       try {
         final res = await createUser(event.email, event.password,
             event.confirm_password, event.name, event.surname, event.phone);
-
         final responseBody = await res.stream.bytesToString();
         final decodedResponse = json.decode(responseBody);
-
         if (res.statusCode == 200) {
           emit(RegisterCreated(
               name: event.name,
@@ -30,13 +28,9 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
               phone: event.phone));
 
           emit(RegisterSuccess(message: decodedResponse['message']));
-        } 
-        else {
+        } else {
           throw decodedResponse['message'];
-          
         }
-
-        
       } catch (e) {
         emit(RegisterError(message: e.toString()));
         log(e.toString());
@@ -54,9 +48,6 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       String phone) async {
     final url = Uri.parse('$baseUrl/register');
 
-    log("Sending request to: $url");
-    log("Data: name=$name, email=$email, password=$password");
-
     var request = http.MultipartRequest('POST', url)
       ..fields['email'] = email
       ..fields['password'] = password
@@ -71,7 +62,6 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     });
 
     var response = await request.send();
-    log("Response status: ${response.statusCode}");
     return response;
   }
 }
