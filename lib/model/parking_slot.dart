@@ -1,18 +1,14 @@
 class ParkingSlot {
   String id;
-  // ignore: non_constant_identifier_names
   String slot_number;
   String status;
-  // ignore: non_constant_identifier_names
   String floor_id;
   Floor floor;
 
   ParkingSlot({
     required this.id,
-    // ignore: non_constant_identifier_names
     required this.slot_number,
     required this.status,
-    // ignore: non_constant_identifier_names
     required this.floor_id,
     required this.floor,
   });
@@ -36,12 +32,10 @@ class ParkingSlot {
 
 class Floor {
   String id;
-  // ignore: non_constant_identifier_names
   String floor_number;
 
   Floor({
     required this.id,
-    // ignore: non_constant_identifier_names
     required this.floor_number,
   });
 
