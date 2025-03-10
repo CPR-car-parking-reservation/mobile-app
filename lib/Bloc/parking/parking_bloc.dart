@@ -1,5 +1,4 @@
-import 'dart:async'; // เพิ่ม Timer
-import 'dart:developer';
+import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -41,29 +40,6 @@ class ParkingBloc extends Bloc<ParkingEvent, ParkingState> {
           emit(ParkingError("Now : Failed to load data!"));
         }
       }
-    });
-
-    on<SenderParkingSlot>((event, emit) {
-      if (state is ParkingLoaded) {
-        final currentList =
-            List<ParkingSlot>.from((state as ParkingLoaded).parkingSlots);
-        currentList.add(event.parkingSlot);
-        emit(ParkingLoaded(currentList));
-      } else {
-        emit(ParkingLoaded([event.parkingSlot]));
-      }
-    });
-
-    on<SelectParkingSlotToReserv>((event, emit) {
-      emit(ParkingLoading());
-      log("🚗 Selected Parking Slot: ${event.selectedSlot.id}");
-      log("🚗 Selected Parking Slot: ${event.selectedSlot.slot_number}");
-      log("🚗 Selected Parking Slot: ${event.selectedSlot.floor.floor_number}");
-      log("🚗 Selected Parking Slot: ${event.selectedSlot.status}");
-
-      emit(ParkingSlotSelected(event.selectedSlot));
-
-      log("🔹 State Changed to ParkingSlotSelected");
     });
   }
 
