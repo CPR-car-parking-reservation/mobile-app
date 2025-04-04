@@ -1,19 +1,13 @@
 import 'dart:async';
 import 'dart:developer';
-import 'dart:io';
-
 import 'package:car_parking_reservation/Login/signin.dart';
 import 'package:car_parking_reservation/Widget/custom_dialog.dart';
 import 'package:car_parking_reservation/model/parking_slot.dart';
 import 'package:car_parking_reservation/mqtt/mqtt_service.dart';
 import 'package:car_parking_reservation/reserv.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:mqtt_client/mqtt_client.dart';
-import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/parking/parking_bloc.dart';
-import 'package:uuid/uuid.dart';
 
 /// Widget หลักที่ใช้แสดงที่จอดรถทั้งหมด
 class ParkingSlots extends StatefulWidget {
@@ -84,7 +78,6 @@ class _ParkingSlots extends State<ParkingSlots> {
       context.read<ParkingBloc>().add(OnFirstParkingSlot());
 
       mqttSubscription = mqttService.messageStream.listen((message) {
-        log(message);
         if (message == "fetch slot") {
           context.read<ParkingBloc>().add(RefrechParkingSlot());
         }
